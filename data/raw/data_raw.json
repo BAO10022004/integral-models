@@ -1,0 +1,178 @@
+[
+    {
+        "Integral": "\\int_{a}^{1}xdx",
+        "action": "1"
+    },
+    {
+        "integrand": "\\int_{1}^{2}2*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}2*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{y}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x+\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}x*\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{x}*{\\sin(x)}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{x}{\\sin(x)}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{x+1}{\\sin(x)}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{x*1}{\\sin(x)}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{\\sin(x)}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\frac{\\frac{x}{2}}{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}1dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\sqrt{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\sqrt{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    }
+]

@@ -1,0 +1,46 @@
+integral_ai/
+│
+├── data/                  # Dataset
+│   ├── raw/               # Dữ liệu thô (expression)
+│   ├── processed/         # AST + action
+│   └── dataset.json       # state → action
+│
+├── generator/             # Sinh biểu thức
+│   ├── expr_generator.py
+│   └── rules.py
+│
+├── solver/                # Rule-based solver (tạo label)
+│   ├── integrator.py
+│   ├── rules/
+│   │   ├── power_rule.py
+│   │   ├── log_rule.py
+│   │   ├── substitution.py
+│   │   └── ...
+│   └── step_logger.py     # log state → action
+│
+├── model/                 # ML model
+│   ├── model.py           # GNN / Transformer
+│   ├── encoder.py         # encode AST
+│   ├── action_head.py     # classify action
+│   └── config.py
+│
+├── training/
+│   ├── train.py
+│   ├── loss.py
+│   └── metrics.py
+│
+├── inference/
+│   ├── predict.py         # dự đoán action
+│   └── pipeline.py        # solve tích phân bằng ML + rule
+│
+├── utils/
+│   ├── ast.py             # định nghĩa cây
+│   ├── parser.py          # latex → AST
+│   └── tokenizer.py
+│
+├── configs/
+│   └── config.yaml
+│
+├── checkpoints/           # model đã train
+│
+└── main.py
