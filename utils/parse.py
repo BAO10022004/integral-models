@@ -1,12 +1,29 @@
 import math
 import re
-
-from sympy import latex
-
-from integral_models.utils.helper import Helper
-from integral_models.utils.method import Method
+from turtle import left
+from utils.expr.trig.expr_cos import CosExprNode
+from utils.expr.trig.expr_sin import SinExprNode
+from utils.expr.operation.expr_add import AddExprNode
+from utils.expr.trig.expr_tan import TanExprNode
+from utils.expr.value.expr_const import ConstExprNode
+from utils.expr.expr_mono import MonoExprNode
+from utils.expr.operation.expr_mul import MulExprNode
+from utils.expr.operation.expr_sub import SubExprNode
+from utils.expr.value.expr_var import VarExprNode
+from utils.expr.operation.expr_frac import FracExprNode
 
 class Parse :
+    @staticmethod
+    def split_top(expr, op):
+        depth = 0
+        for i, c in enumerate(expr):
+            if c in "{(":
+                depth += 1
+            elif c in "})":
+                depth -= 1
+            elif c == op and depth == 0:
+                return expr[:i], expr[i+1:]
+        return None
     @staticmethod
     def parse_latex(latex: str, dee: str):
         latex = latex.strip()
@@ -19,7 +36,7 @@ class Parse :
         Parse.parse_mul,     # *
         Parse.parse_div,     # /
         Parse.parse_frac,    # \frac
-
+        
         # # function (phải TRƯỚC power)
         # parse_log,
         Parse.parse_sqrt,
@@ -28,8 +45,7 @@ class Parse :
         # parse_exp,     # e^{...}
 
         # parse_power,   # ^
-
-        Parse.parse_atom     
+        Parse.parse_atom
         ):
             node = parser(latex, dee, var)
             if node is not None:
@@ -39,97 +55,103 @@ class Parse :
     
     @staticmethod
     def parse_atom(latex, dee, var):
-        if Helper.is_integer(latex):
-            return Method(type="const", left=int(latex), var=var)
-    
+        latex = latex.strip().strip('{}')
+        
+        # Biến
         if latex == var:
-            return Method(type="var", left=latex, var=var)
-
-        return Method(type="atom", left=latex, var=var)
+            return VarExprNode(left=var, var=var)
+        
+        # Số
+        try:
+            return ConstExprNode(left=float(latex))
+        except ValueError:
+            pass
+        
+        return None
     @staticmethod
     def parse_add(latex, dee, var):
-        add = Helper.split_top(latex, '+')
+        add = Parse.split_top(latex, '+')
         if not add:
             return None
-        return Method(
-            type="add",
+        return AddExprNode(
+
             left= Parse.parse_latex(add[0], dee),
             right=Parse.parse_latex(add[1], dee),
             var=var
         )
     @staticmethod
     def parse_sub(latex, dee, var):
-        sub = Helper.split_top(latex, '-')
+        sub = Parse.split_top(latex, '-')
         if not sub:
             return None
 
-        return Method(
-            type="sub",
+        return SubExprNode(
             left= Parse.parse_latex(sub[0], dee) ,
             right= Parse.parse_latex(sub[1], dee),
             var=var
         )
     @staticmethod
     def parse_div(latex, dee, var):
-        div = Helper.split_top(latex, '/')
+        div = Parse.split_top(latex, '/')
         if div:
-            return Method(
-                type="frac",
+            return FracExprNode(
                 left=Parse.parse_latex(div[0], dee),
                 right=Parse.parse_latex(div[1], dee),
                 var=var
             )
         return None
+    
     @staticmethod
     def parse_mul(latex, dee, var):
-        mul = Helper.split_top(latex, '*')
+        mul = Parse.split_top(latex, '*')
         if not mul:
             return None
-        m = Method(
-            type="mul",
+        m = MulExprNode(
             left=Parse.parse_latex(mul[0], dee),
             right=Parse.parse_latex(mul[1], dee),
             var=var
         )
-        if m.left. m.right:
-            m = Method(
-                type="mono",
-                left=m.left,
-                right=Method(type="const", left=2, var=var),
-                var=var
-            )
-
         return m
     @staticmethod
     def parse_frac(latex, dee, var):
         frac = re.fullmatch(r'\\frac\{(.+)\}\{(.+)\}', latex)
         if not frac:
             return None
-        method = Method(
-            type="frac",
+        return FracExprNode(
             left=Parse.parse_latex(frac.group(1), dee),
             right=Parse.parse_latex(frac.group(2), dee),
             var=var
         )
-        if (method.left.type == "const" or method.left.type == "atom") and (method.right.type == "const" or method.right.type == "atom"):
-            method = Method(
-                type="div",
-                left=method.left,
-                right=method.right,
-                var=var
-            )
-        return method
     @staticmethod
     def parse_trig(latex, dee, var):
         trig = re.fullmatch(r'\\(sin|cos|tan|cot)\{(.+)\}', latex)
+        if not trig:
+            return None
         if trig:
-            return Method(
-                type=trig.group(1),
-                left=Parse.parse_latex(trig.group(2), dee),
-                right=None,
-                var=var
-            )
-        return None
+            if trig.group(1) == "sin":
+                return SinExprNode(
+                    left=Parse.parse_latex(trig.group(2), dee),
+                    var=var
+                )
+            if trig.group(1) == "cos":
+                return CosExprNode(
+                    left=Parse.parse_latex(trig.group(2), dee),
+                    var=var
+                )
+            if trig.group(1) == "tan":
+                return TanExprNode(
+                    left=Parse.parse_latex(trig.group(2), dee),
+                    var=var
+                )
+            if trig.group(1) == "cot":
+                return FracExprNode(
+                    left=1,
+                    right=TanExprNode(
+                        left=Parse.parse_latex(trig.group(2), dee),
+                        var=var
+                    ),
+                    var=var
+                )
 
     @staticmethod
     def parse_sqrt(latex, dee, var):
@@ -139,10 +161,9 @@ class Parse :
             n = sqrt_n.group(1)
             inside = Parse.parse_latex(sqrt_n.group(2), dee)
 
-            return Method(
-                type="mono",
+            return MonoExprNode(
                 left=inside,
-                right=Method(type="const", left=float((1/int(n)))),
+                right=ConstExprNode(left=float((1/int(n)))),
                 var=var
                 )
 
@@ -151,12 +172,7 @@ class Parse :
         if sqrt:
             inside = Parse.parse_latex(sqrt.group(1).replace('\\', ''), dee)
 
-            return Method(
-                type="mono",
-                left=inside,
-                right=Method(type="const", left=0.5),
-                var=var
-            )
+            return None
 
         return None
 

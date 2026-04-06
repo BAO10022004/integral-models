@@ -174,5 +174,297 @@
     {
         "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
         "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+\\sqrt[2]{x*x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+2*x+3*xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x-2*x+3*xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+2dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+2dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\frac{x+1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+1dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+3*xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+3*xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+3*xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+3*xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+2*xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+x*2dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+x*2dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x+xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\sin{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\sin{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+1dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}x+1dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*x + 3*xdx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3*\\frac{1}{x}dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} * 3dx",
+        "action": 1
+    },
+    {
+        "integrand": "\\int_{4}^{2}3*x+4*xdx",
+        "action": 1
     }
 ]

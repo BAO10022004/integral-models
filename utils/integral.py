@@ -1,7 +1,6 @@
 import re
-from integral_models.utils.action_data import ActionData
-from integral_models.utils.helper import Helper
-from integral_models.utils.printer import Printer
+from utils.action_data import ActionData
+from utils.printer import Printer
 
 class Integral:
   def __init__(self, latex: str):
@@ -21,10 +20,9 @@ class Integral:
             "dee": self.dee,
             "Antiderivative": self.antiderivative
         }
+  
   def _parse_latex(self):
-        from integral_models.utils.parse import Parse
-            # parse cận dưới & cận trên
-        # parse cận dưới & cận trên
+        from utils.parse import Parse
         limits = re.search(r'\\int_{(.*?)}\^{(.*?)}', self.latex)
         if limits:
             self.left = limits.group(1)
@@ -41,14 +39,7 @@ class Integral:
             f"integrand={self.integrand}, "
             f"dee={self.dee}), "
             f"Antiderivative={self.antiderivative})")
-  def integral_to_dict(self):
-    return {
-        "left": self.left,
-        "right": self.right,
-        "dee": self.dee,
-        "integrand": expr_to_dict(self.integrand),
-        "Antiderivative": self.antiderivative
-    }
+  
 #   def calculate(self):
 #     if not self.antiderivative:
 #       return self.calculate_antiderivative()
@@ -115,10 +106,3 @@ def expr_to_dict(e):
 
     return data
 
-if __name__ == "__main__":
-    latex = r"\int_{4}^{2}x+\sqrt[3]{x*x}dx"
-    I = Integral(latex)
-    I.integrand = I.integrand.simplify()
-    Printer.print_tree(I.integrand)
-    action = ActionData(integral=latex)
-    action.save()
