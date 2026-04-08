@@ -25,11 +25,33 @@ class Parse :
                 return expr[:i], expr[i+1:]
         return None
     @staticmethod
+    def strip_outer_brackets(latex: str) -> str:
+        """Bóc cặp ngoặc ngoài cùng nếu chúng bọc toàn bộ biểu thức."""
+        while True:
+            if (latex.startswith('(') and latex.endswith(')')) or \
+            (latex.startswith('{') and latex.endswith('}')):
+                # Kiểm tra xem ngoặc mở đầu có khớp với ngoặc đóng cuối không
+                depth = 0
+                paired = False
+                for i, c in enumerate(latex):
+                    if c in "({":
+                        depth += 1
+                    elif c in ")}":
+                        depth -= 1
+                    if depth == 0:
+                        paired = (i == len(latex) - 1)
+                        break
+                if paired:
+                    latex = latex[1:-1].strip()
+                    continue
+            break
+        return latex
+    @staticmethod
     def parse_latex(latex: str, dee: str):
         latex = latex.strip()
-        latex = latex.replace("(", "{").replace(")", "}")
+        latex = Parse.strip_outer_brackets(latex)
         var = dee[1:]
-    
+
         for parser in(
         Parse.parse_add,     # +
         Parse.parse_sub,     # -
@@ -42,9 +64,9 @@ class Parse :
         Parse.parse_sqrt,
         Parse.parse_trig,
         # parse_abs,
-        # parse_exp,     # e^{...}
+        # Parse.parse_exp,     # e^{...}
 
-        # parse_power,   # ^
+        Parse.parse_power,   # ^
         Parse.parse_atom
         ):
             node = parser(latex, dee, var)
@@ -100,7 +122,6 @@ class Parse :
                 var=var
             )
         return None
-    
     @staticmethod
     def parse_mul(latex, dee, var):
         mul = Parse.split_top(latex, '*')
@@ -152,7 +173,6 @@ class Parse :
                     ),
                     var=var
                 )
-
     @staticmethod
     def parse_sqrt(latex, dee, var):
         # căn bậc n
@@ -172,8 +192,35 @@ class Parse :
         if sqrt:
             inside = Parse.parse_latex(sqrt.group(1).replace('\\', ''), dee)
 
-            return None
+            return MonoExprNode(
+                left=inside,
+                right=ConstExprNode(left=float((1/2))),
+                var=var
+                )
 
         return None
+    @staticmethod
+    def parse_power(latex, dee, var):
+        power = re.fullmatch(r'\{(.+)\}\^\{?(.+?)\}?', latex)
+        if not power:
+            return None
+
+        base = Parse.parse_latex(power.group(1), dee)
+        exp  = power.group(2)
+
+        if exp.isdigit():
+            return MonoExprNode(
+                left=base,
+                right=ConstExprNode(left=float(exp)),
+                var=var
+            )
+
+        return MonoExprNode(    
+            left=base,
+            right=Parse.parse_latex(exp, dee),
+            var=var
+        )
+
+
 
 

@@ -4,15 +4,17 @@ from utils.expr.operation.expr_add import AddExprNode
 from utils.expr.operation.expr_sub import SubExprNode
 from utils.integral import Integral
 from utils.printer import Printer
+from utils.rules.equality import EqualityRule
+from utils.rules.exponential import Exponential
 from utils.rules.factor import Factor
 
 
 if __name__ == "__main__":
-    latex = r"\int_{4}^{2}3*x+4*xdx"
+    latex = r"\int_{0}^{1}{2*x+1}^{2}dx"
     I = Integral(latex)
     add = AddExprNode()
     sub = SubExprNode()
-    print("=== Trước simplify ===")
+    print("=== Trước simplify ===") 
     Printer.print_tree(I.integrand)
     I.integrand = I.integrand.simplify()
     Printer.print_tree(I.integrand)
@@ -20,6 +22,8 @@ if __name__ == "__main__":
         I.integrand = Factor.factor_common(I.integrand.left, I.integrand.right, sub)
         print("=== Sau factor ===")
         Printer.print_tree(I.integrand)
-    
+    I.integrand = EqualityRule.apply_rule_1(I.integrand, AddExprNode)
+    print("=== Sau exponential ===")
+    Printer.print_tree(I.integrand.simplify())
     action = ActionData(integral=latex)
     action.save()

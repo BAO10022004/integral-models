@@ -27,8 +27,8 @@ class MonoExprNode(ExprNode):
             return ConstExprNode(left=0)
         # nếu một trong hai là hằng số 1, trả về phần còn lại
         if isinstance(left_simplified, ConstExprNode) and left_simplified.left == 1:
-            return right_simplified
-        if isinstance(right_simplified, ConstExprNode) and right_simplified.left == 1:
             return left_simplified
+        # if isinstance(right_simplified, ConstExprNode) and right_simplified.left == 1:
+        #     return left_simplified
         # nếu không thể đơn giản hơn, trả về biểu thức mới với các phần đã được đơn giản hóa
         return MonoExprNode(left=left_simplified, right=right_simplified)

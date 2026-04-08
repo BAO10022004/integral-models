@@ -19,5 +19,5 @@ class ExprNode:
         raise NotImplementedError("Subclasses must implement simplify method")
     def is_leaf (self):
         raise NotImplementedError("Subclasses must implement is_end method")
-    def caculate(self, var_values):
+    def caculate(self, var_values = None):
         raise NotImplementedError("Subclasses must implement calculate method")
