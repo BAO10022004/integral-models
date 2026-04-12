@@ -15,7 +15,6 @@ class LogExprNode(ExprNode):
         if self.left is None:
             return self
         left_simplified = self.left.simplify()
-
         if isinstance(left_simplified, LogExprNode):
             return left_simplified.left
         return LogExprNode(left=left_simplified, var=self.var)

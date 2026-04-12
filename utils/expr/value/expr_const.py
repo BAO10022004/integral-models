@@ -10,9 +10,9 @@ class ConstExprNode(ExprNode):
         if not isinstance(e, ConstExprNode):
             return False
         return self.left == e.left
-    def simplify(self):
-        return self
+    def simplify(self,message = [], integral = [] ):
+        return message, integral, self
     def is_leaf(self):
         return True
-    def caculate(self, var_values = None):
+    def calculate(self, var_values):
         return self.left

@@ -96,7 +96,6 @@ class Parse :
         if not add:
             return None
         return AddExprNode(
-
             left= Parse.parse_latex(add[0], dee),
             right=Parse.parse_latex(add[1], dee),
             var=var
@@ -106,10 +105,9 @@ class Parse :
         sub = Parse.split_top(latex, '-')
         if not sub:
             return None
-
         return SubExprNode(
-            left= Parse.parse_latex(sub[0], dee) ,
-            right= Parse.parse_latex(sub[1], dee),
+            left=Parse.parse_latex(sub[0], dee),
+            right=Parse.parse_latex(sub[1], dee),
             var=var
         )
     @staticmethod
@@ -208,12 +206,12 @@ class Parse :
         base = Parse.parse_latex(power.group(1), dee)
         exp  = power.group(2)
 
-        if exp.isdigit():
-            return MonoExprNode(
-                left=base,
-                right=ConstExprNode(left=float(exp)),
-                var=var
-            )
+        # if exp.isdigit():
+        #     return MonoExprNode(
+        #         left=base,
+        #         right=ConstExprNode(left=float(exp)),
+        #         var=var
+        #     )
 
         return MonoExprNode(    
             left=base,

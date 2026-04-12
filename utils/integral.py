@@ -40,69 +40,14 @@ class Integral:
             f"dee={self.dee}), "
             f"Antiderivative={self.antiderivative})")
   
-#   def calculate(self):
-#     if not self.antiderivative:
-#       return self.calculate_antiderivative()
-#     else:
-#       return self.calculate_integral()
-#   def calculate_antiderivative(self):
-#       if self.integrand.type == "const":
-#           self.integrand = integral_const(self.integrand)
-#           self.antiderivative = True
-#           return self
-#       if self.integrand.type == "var":
-#           self.integrand = integral_var(self.integrand)
-#           self.antiderivative = True
-#           return self
-#       if self.integrand.type == "mono":
-#           self.integrand = integral_mono(self.integrand, self.dee[1:])
-#           self.antiderivative = True
-#           return self
-#       if self.integrand.type == "frac":
-#           self.integrand = integral_frac(self.integrand, self.dee[1:])
-#           self.antiderivative = True
-#           return self
-#       if self.integrand.type == "frac":
-#           self.integrand = integral_frac(self.integrand, self.dee[1:])
-#           self.antiderivative = True
-#           return self
 
-#   def calculate_integral(self):
-#     print(self)
-#     if not self.antiderivative:
-#         return None
-#     r = evaluate_at(self.integrand, self.dee, self.right).calculate()
-#     l = evaluate_at(self.integrand, self.dee, self.left).calculate()
-#     print(r, l)
-#     if r is None or l is None:
-#         raise ValueError("Không thể evaluate tích phân tại cận")
+  def calculate(self , var_values = None):
+        if not self.antiderivative:
+            return None
+        r = self.integrand.calculate(self.right)
+        l = self.integrand.calculate(self.left)
+        print(r, l)
+        if r is None or l is None:
+            raise ValueError("Không thể evaluate tích phân tại cận")
 
-#     return float(r) - float(l)
-def expr_to_dict(e):
-    if e is None:
-        return None
-
-    # hằng số
-    if isinstance(e, (int, float, str)):
-        return e
-
-    # Expr / Method
-    data = {
-        "type": e.type
-    }
-
-    if e.type == "var":
-        data["name"] = e.left
-        return data
-
-    if e.type == "const":
-        data["value"] = e.left
-        return data
-
-    # node tổng quát
-    data["left"] = expr_to_dict(e.left)
-    data["right"] = expr_to_dict(e.right)
-    data["var"] = e.var
-
-    return data
-
+        return float(r) - float(l)
