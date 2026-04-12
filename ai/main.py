@@ -13,7 +13,7 @@ from utils.rules.exponential import Exponential
 from utils.rules.factor import Factor
 from solver.rules.linearity_rule import IntegralRuleBase
 if __name__ == "__main__":
-    latex = r"\int_{0}^{1}2*{x}^{1}dx"
+    latex = r"\int_{0}^{1}{x}^{2}+1dx"
     
     message = []
     Integrand = []
@@ -30,13 +30,7 @@ if __name__ == "__main__":
     Step = MulExprNode(left=ConstExprNode(left=1), right=I)
     Step.right = IntegralRuleBase.apply(Step.right)
     Printer.print(Step)
-    Step.right.left = const_rule(Step.right.left)
-    Step.right.right = mono_rule(Step.right.right )
-    Printer.print(Step)
-
-
-    i = Step.calculate()
-    print(i)
+    print(Step.calculate())
 
     action = ActionData(integral=latex)
     action.save()

@@ -26,6 +26,7 @@ class MulExprNode(ExprNode):
     def calculate(self, var_values = None):
         if self.left is None or self.right is None:
             return None
+        
         left_value = self.left.calculate(var_values)
         right_value = self.right.calculate(var_values)
         if left_value is None or right_value is None:

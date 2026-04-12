@@ -24,8 +24,7 @@ class IntegralRuleBase:
             if isinstance(integral.integrand.left, ConstExprNode) or \
                isinstance(integral.integrand.right, ConstExprNode):
                 return IntegralRuleBase.integral_rule_mul(integral)
-        if isinstance(integral.integrand, ConstExprNode):
-            return IntegralRuleBase.integral_rule_const(integral)
+        
         return integral
 
     @staticmethod
@@ -46,8 +45,4 @@ class IntegralRuleBase:
         right = IntegralRuleBase._clone(integral, integral.integrand.right)
         return MulExprNode(left=left, right=right)
 
-    @staticmethod
-    def integral_rule_const(integral: Integral):
-        left  = IntegralRuleBase._clone(integral, integral.integrand.left)
-        right = IntegralRuleBase._clone(integral, integral.integrand.right)
-        return MulExprNode(left=left, right=right)
+    

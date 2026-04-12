@@ -5,15 +5,15 @@ from utils.expr.value.expr_const import ConstExprNode
 from utils.expr.value.expr_var import VarExprNode
 
 
-def const_rule(expr: ExprNode, dee):
+def var_rule(expr: ExprNode, dee):
     if  not isinstance(expr, ConstExprNode):
         return expr
-    if expr.left == 0:
-        return ConstExprNode(left=0)
-    if expr.left == 1:
-        return VarExprNode(left=dee)
-    
     return  MulExprNode(
-                left= expr,
-                right= VarExprNode(left=dee)
+                left= ConstExprNode(left=1/2),
+                right= MonoExprNode(
+                    left= VarExprNode(left=dee),
+                    right=ConstExprNode(
+                        left= 2
+                    )
+                )
             )

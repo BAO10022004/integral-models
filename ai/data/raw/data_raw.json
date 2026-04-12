@@ -1,364 +1,148 @@
 [
     {
         "Integral": "\\int_{a}^{1}xdx",
-        "action": "1"
+        "action": "-1"
     },
     {
         "integrand": "\\int_{1}^{2}2*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}2*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{y}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{y}{2}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\frac{1}{2}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{1}^{2}x*\\sin(x)dx",
-        "action": 1
+        "action": "-1"
     },
-    {
-        "integrand": "\\int_{1}^{2}\\sin(x)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}\\sin(x)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x+\\sin(x)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}x*\\sin(x)dx",
-        "action": 1
-    },
+    
     {
         "integrand": "\\int_{1}^{2}\\frac{x}*{\\sin(x)}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}\\frac{x}{\\sin(x)}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}\\frac{x+1}{\\sin(x)}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}\\frac{x*1}{\\sin(x)}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{\\sin(x)}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{1}^{2}\\frac{\\frac{x}{2}}{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}\\frac{\\frac{x}{2}}{2}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}1dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}\\sqrt{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}\\sqrt{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt{x}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+\\sqrt[3]{x*x}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}x+\\sqrt[2]{x*x}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}x+x+xdx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}x+2*x+3*xdx",
-        "action": 1
+        "action": "1"
     },
+    
     {
-        "integrand": "\\int_{4}^{2}x-2*x+3*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x-2*x+3*x+xdx",
-        "action": 1
+        "integrand": "\\int_{4}^{2}x+2dx",
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}x+2dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}x+2dx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}\\frac{1}{x}dx",
-        "action": 1
+        "action": "-1"
     },
     {
         "integrand": "\\int_{4}^{2}\\frac{x+1}{x}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}x+1dx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}2*x+xdx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}2*x+xdx",
-        "action": 1
+        "action": "1"
     },
+    
     {
-        "integrand": "\\int_{4}^{2}2*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*x+xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*x+xdx",
-        "action": 1
+        "integrand": "\\int_{4}^{2}2*x+3*xdx",
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}2*x+3*xdx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}2*x+3*xdx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}2*x+3*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*x+3*xdx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}2*x+2*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*x+x*2dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*x+x*2dx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}2*x+xdx",
-        "action": 1
+        "action": "1"
     },
     {
         "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
-        "action": 1
+        "action": "0"
     },
     {
         "integrand": "\\int_{4}^{2}\\sin{x}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}\\sin{x}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}\\frac{1}{x}dx",
-        "action": 1
+        "action": -1
     },
-    {
-        "integrand": "\\int_{4}^{2}\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}\\frac{1}{x}dx",
-        "action": 1
-    },
+    
     {
         "integrand": "\\int_{4}^{2}x+1dx",
         "action": 1
@@ -369,11 +153,11 @@
     },
     {
         "integrand": "\\int_{4}^{2}\\sin(x)dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}\\sin(x)dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}2*x + 3*xdx",
@@ -381,79 +165,11 @@
     },
     {
         "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\sin(x) + 3*\\sin(x)dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
@@ -461,7 +177,7 @@
     },
     {
         "integrand": "\\int_{4}^{2}2*\\frac{1}{x} * 3dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}3*x+4*xdx",
@@ -473,11 +189,11 @@
     },
     {
         "integrand": "\\int_{4}^{2}\\sin(x+1)dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}\\frac{1}{\\sin(x+1)}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{4}^{2}x+1*x-1dx",
@@ -489,7 +205,7 @@
     },
     {
         "integrand": "\\int_{4}^{2}(x+1)*(x-1)dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{4}^{2}x+1*x-1dx",
@@ -497,23 +213,23 @@
     },
     {
         "integrand": "\\int_{4}^{2}\\sin{x}dx",
-        "action": 1
+        "action": -1
     },
     {
         "integrand": "\\int_{4}^{2}\\frac{1}{\\sin{x+1}}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{0}^{1}\\frac{x}{\\tan{x}}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{0}^{1}\\sin{x}+\\cos{x}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{0}^{1}(x+1)*(x+2)+xdx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{0}^{2}x*x-x+1dx",
@@ -521,35 +237,20 @@
     },
     {
         "integrand": "\\int_{0}^{1}\\sin{x}*(x+1)dx",
-        "action": 1
+        "action": 0
     },
-    {
-        "integrand": "\\int_{0}^{1}\\sin{x}*(x+1)dx",
-        "action": 1
-    },
+ 
     {
         "integrand": "\\int_{0}^{1}\\sqrt[2]{x}dx",
-        "action": 1
+        "action": -1
     },
     {
         "integrand": "\\int_{0}^{1}\\sqrt[3]{x}dx",
-        "action": 1
+        "action": -1
     },
     {
         "integrand": "\\int_{0}^{1}\\sqrt{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}\\sqrt{x}*(x+1)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}\\sqrt{x}*(x+1)dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x*3dx",
-        "action": 1
+        "action": -1
     },
     {
         "integrand": "\\int_{0}^{1}{x}^{3}dx",
@@ -561,76 +262,26 @@
     },
     {
         "integrand": "\\int_{0}^{1}{x*\\sin{x}}^{3}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
+        "action": 2
     },
-    {
-        "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{2*x+1}^{2}dx",
-        "action": 1
-    },
+    
     {
         "integrand": "\\int_{0}^{1}{\\frac{1}{x}}^{2}dx",
-        "action": 1
+        "action": 0
     },
-    {
-        "integrand": "\\int_{0}^{1}{\\frac{1}{x}}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{\\frac{1}{x}}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{\\frac{1}{x}}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{\\frac{1}{x}}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{\\frac{1}{x}}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{\\frac{1}{x}}^{2}dx",
-        "action": 1
-    },
+
     {
         "integrand": "\\int_{0}^{1}x-x-1dx",
         "action": 1
@@ -643,10 +294,7 @@
         "integrand": "\\int_{0}^{1}x-2-1dx",
         "action": 1
     },
-    {
-        "integrand": "\\int_{0}^{1}x-x-1dx",
-        "action": 1
-    },
+    
     {
         "integrand": "\\int_{0}^{1}x+x-1dx",
         "action": 1
@@ -677,60 +325,38 @@
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
+    
     {
-        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x+1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
-    {
-        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
-    },
+    
     {
         "integrand": "\\int_{0}^{1}{x}^{2}-{4}^{2}dx",
         "action": 1
@@ -739,193 +365,44 @@
         "integrand": "\\int_{0}^{1}{x}^{2}-{3}^{2}dx",
         "action": 1
     },
+    
     {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}({x}^{2})-({3}^{2})dx",
-        "action": 1
+        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
+        "action": 0
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
+        "action": 2
     },
-    {
-        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x-1}^{2}dx",
-        "action": 1
-    },
+    
     {
         "integrand": "\\int_{0}^{1}{x-1}^{3}dx",
-        "action": 1
+        "action": 2
     },
     {
         "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
         "action": 1
     },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}{x}^{3}-{x}^{3}dx",
-        "action": 1
-    },
+    
     {
         "integrand": "\\int_{0}^{1}\\frac{1+x}{1+x}dx",
-        "action": 1
+        "action": 0
     },
     {
         "integrand": "\\int_{0}^{1}1*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*\\frac{1}{x}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*\\frac{1}{x}dx",
-        "action": 1
+        "action": -1
     },
     {
         "integrand": "\\int_{0}^{1}x+1dx",
@@ -943,98 +420,7 @@
         "integrand": "\\int_{0}^{1}x+1dx",
         "action": 1
     },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x+1dx",
-        "action": 1
-    },
+    
     {
         "integrand": "\\int_{0}^{1}x*1dx",
         "action": 1
@@ -1049,70 +435,29 @@
     },
     {
         "integrand": "\\int_{0}^{1}x*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x*xdx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}x*xdx",
-        "action": 1
+        "action": -1
     },
     {
         "integrand": "\\int_{0}^{1}{x}^{1}dx",
-        "action": 1
+        "action": -1
     },
     {
-        "integrand": "\\int_{0}^{1}{x}^{1}dx",
-        "action": 1
+        "integrand": "\\int_{0}^{1}{x}^{3}dx",
+        "action": -1
     },
     {
-        "integrand": "\\int_{0}^{1}{x}^{1}dx",
+        "integrand": "\\int_{0}^{1}8dx",
+        "action": -1
+    },
+    
+    {
+        "integrand": "\\int_{0}^{1}x+1dx",
         "action": 1
     },
+    
     {
-        "integrand": "\\int_{0}^{1}{x}^{1}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*{x}^{1}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*{x}^{1}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*{x}^{1}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*{x}^{1}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*{x}^{1}dx",
-        "action": 1
-    },
-    {
-        "integrand": "\\int_{0}^{1}2*{x}^{1}dx",
+        "integrand": "\\int_{0}^{1}{x}^{2}+1dx",
         "action": 1
     }
+    
 ]
