@@ -21,3 +21,9 @@ class ExprNode:
         raise NotImplementedError("Subclasses must implement is_end method")
     def calculate(self, var_values = None):
         raise NotImplementedError("Subclasses must implement calculate method")
+    def has_function(self, func_name):
+        raise NotImplementedError("Subclasses must implement has_function method")
+    def cont_function(self, func_name):
+        raise NotImplementedError("Subclasses must implement cont_function method")
+    def is_function(self):
+        raise NotImplementedError("Subclasses must implement is_function method")

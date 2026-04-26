@@ -1,11 +1,11 @@
-from utils.expr.expr_node import ExprNode
-from utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.expr_node import ExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
 
-class MonoExprNode(ExprNode):
+class PowerExprNode(ExprNode):
     def __init__(self, left=None, right=None, var=None):
         super().__init__(left=left, right=right, var=var)
     def _equals(self, e):
-        if not isinstance(e, MonoExprNode):
+        if not isinstance(e, PowerExprNode):
             return False
         # so sánh đệ quy
         return (
@@ -23,6 +23,29 @@ class MonoExprNode(ExprNode):
         if left_value is None or right_value is None:
             return None
         return float(left_value) ** float(right_value)
+    def has_function(self, func_name:ExprNode):
+        l = False
+        r = False
+
+        if self.left is not None:
+            l = self.left.has_function(func_name)
+
+        if self.right is not None:
+            r = self.right.has_function(func_name)
+        if isinstance(self, func_name) :
+            return  True
+        return l or r
+    def cont_function(self, func_name):
+        l =0
+        r =0
+        if self.left is not None:
+            l = self.left.cont_function(func_name) 
+        if self.right is not None:
+            r = self.right.cont_function(func_name) 
+        if isinstance(self, func_name) :
+            return l+r+1
+        return l + r
+
     def simplify(self, message = [], integral = []):
         if self.left is None or self.right is None:
             return message, integral, self
@@ -39,4 +62,4 @@ class MonoExprNode(ExprNode):
         if isinstance(right_simplified, ConstExprNode) and right_simplified.left == 0:
             message.append("Áp dụng quy tắc nhân với 0")
             return message, integral, ConstExprNode(left=0)
-        return message, integral, MonoExprNode(left=left_simplified, right=right_simplified)
+        return message, integral, PowerExprNode(left=left_simplified, right=right_simplified)

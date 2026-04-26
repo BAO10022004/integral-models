@@ -1,0 +1,59 @@
+.integral-wrap {
+  perspective: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+/* ký hiệu tích phân */
+.integral-3d {
+  font-size: 120px;
+  font-weight: bold;
+  color: #f5c842;
+
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease;
+
+  /* glow */
+  text-shadow:
+    0 0 10px rgba(245,200,66,0.8),
+    0 0 30px rgba(245,200,66,0.4);
+
+  /* gradient ánh sáng */
+  background: linear-gradient(
+    180deg,
+    #fff,
+    #f5c842,
+    #d9a800
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: floatIntegral 4s ease-in-out infinite;
+}
+
+/* floating nhẹ */
+@keyframes floatIntegral {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.integral-3d::after {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(
+    circle,
+    rgba(245,200,66,0.25),
+    transparent 70%
+  );
+  z-index: -1;
+  filter: blur(20px);
+}.integral-3d:hover {
+  animation: electricShake 0.2s infinite;
+}
+
+@keyframes electricShake {
+  0%,100% { transform: translate(0,0); }
+  50% { transform: translate(1px,-1px); }
+}

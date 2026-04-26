@@ -1,544 +1,775 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, History, Sparkles, Brain, Calculator, Trash2, Cpu, ChevronLeft, ChevronRight, Delete, CornerDownLeft, X, MoveLeft, MoveRight, User, LogIn, UserPlus, LogOut, CheckCircle2 } from 'lucide-react';
-import { BlockMath, InlineMath } from 'react-katex';
-import * as math from 'mathjs';
-import confetti from 'canvas-confetti';
-import 'mathlive';
-
-const IntegralIcon = ({ size = 24, color = 'currentColor' }) => (
-  <svg 
-    width={size} 
-    height={size * 2} 
-    viewBox="0 0 24 48" 
-    fill="none" 
-    stroke={color} 
-    strokeWidth="3.5" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <path d="M18 6C18 2 12 2 12 10V38C12 46 6 46 6 42" />
-  </svg>
-);
-
-const App = () => {
-  const [expression, setExpression] = useState('');
-  const [diffVar, setDiffVar] = useState('x');
-  const [lowerBound, setLowerBound] = useState('');
-  const [upperBound, setUpperBound] = useState('');
-  const [result, setResult] = useState(null);
-  const [isSolving, setIsSolving] = useState(false);
-  const [history, setHistory] = useState([]);
-  const [steps, setSteps] = useState([]);
-  const [isDefinite, setIsDefinite] = useState(false);
-  const [user, setUser] = useState(null);
-  const [authVisible, setAuthVisible] = useState(false);
-  const [authMode, setAuthMode] = useState('login');
-  const [authForm, setAuthForm] = useState({ email: '', password: '', name: '' });
-
-  const mainInputRef = useRef(null);
-  const mathFieldRef = useRef(null);
-
-  useEffect(() => {
-    if (mathFieldRef.current) {
-      mathFieldRef.current.addEventListener('input', (ev) => {
-        setExpression(ev.target.value);
-      });
-      
-      // Customize math-field appearance
-      mathFieldRef.current.style.fontSize = '1.8rem';
-      mathFieldRef.current.style.width = '100%';
-      mathFieldRef.current.style.background = 'transparent';
-      mathFieldRef.current.style.color = 'white';
-      mathFieldRef.current.style.border = 'none';
-      mathFieldRef.current.focus();
-    }
-  }, []);
-
-  // Mock solving logic for demo purposes (Graduation Project level UI)
-  const solveIntegral = async () => {
-    if (!expression.trim()) return;
-    
-    setIsSolving(true);
-    setResult(null);
-    setSteps([]);
-
-    // Simulate "Neural Calculation" delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    try {
-      // Basic mock logic for common integrals to show off UI
-      let resultLaTeX = '';
-      let resultSteps = [];
-      
-      const expr = expression.toLowerCase().replace(/\s/g, '');
-      
-      if (expr === 'x') {
-        resultLaTeX = '\\frac{x^2}{2} + C';
-        resultSteps = [
-          'Áp dụng công thức lũy thừa: \\int x^n dx = \\frac{x^{n+1}}{n+1} + C',
-          'Với n = 1, ta có: \\int x^1 dx = \\frac{x^{1+1}}{1+1} + C',
-          'Kết quả: \\frac{x^2}{2} + C'
-        ];
-      } else if (expr.includes('sin(x)')) {
-        resultLaTeX = '-\\cos(x) + C';
-        resultSteps = [
-          'Xác định nguyên hàm cơ bản của hàm lượng giác.',
-          '\\int \\sin(x) dx = -\\cos(x) + C'
-        ];
-      } else if (expr.includes('cos(x)')) {
-        resultLaTeX = '\\sin(x) + C';
-        resultSteps = [
-          'Xác định nguyên hàm cơ bản của hàm lượng giác.',
-          '\\int \\cos(x) dx = \\sin(x) + C'
-        ];
-      } else if (expr === 'e^x' || expr === 'exp(x)') {
-        resultLaTeX = 'e^x + C';
-        resultSteps = [
-          'Hàm số e^x là hàm số đặc biệt có nguyên hàm bằng chính nó.',
-          '\\int e^x dx = e^x + C'
-        ];
-      } else {
-        // Fallback for demo: show a generic but professional result
-        resultLaTeX = '\\text{Phức tạp... Hãy thử các hàm cơ bản như x, sin(x), e^x}';
-        resultSteps = ['Đang phát triển thuật toán giải tích phân phức tạp...'];
-      }
-
-      setResult(resultLaTeX);
-      setSteps(resultSteps);
-      
-      const newHistoryItem = {
-        expr: expression,
-        res: resultLaTeX,
-        id: Date.now()
-      };
-      setHistory(prev => [newHistoryItem, ...prev].slice(0, 5));
-      
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#00f2ff', '#7000ff', '#ff00c8']
-      });
-
-      // Special handling for history display
-      const displayExpr = isDefinite 
-        ? `\\int_{${lowerBound || 'a'}}^{${upperBound || 'b'}} ${expression} d${diffVar}` 
-        : `\\int ${expression} d${diffVar}`;
-
-    } catch (err) {
-      console.error(err);
-      setResult('\\text{Lỗi cú pháp. Vui lòng nhập định dạng hợp lệ.}');
-    } finally {
-      setIsSolving(false);
-    }
-  };
-
-  const clearHistory = () => setHistory([]);
-
-  const insertSymbol = (symbol) => {
-    if (mathFieldRef.current) {
-      mathFieldRef.current.executeCommand(['insert', symbol]);
-      mathFieldRef.current.focus();
-    }
-  };
-
-  const symbols = [
-    { label: 'x', val: 'x' },
-    { label: 'y', val: 'y' },
-    { label: 'z', val: 'z' },
-    { label: 'n', val: 'n' },
-    { label: 'x^n', val: '^' },
-    { label: 'x²', val: '^2' },
-    { label: '√', val: 'sqrt(' },
-    { label: 'π', val: 'pi' },
-    { label: 'sin', val: 'sin(' },
-    { label: 'cos', val: 'cos(' },
-    { label: 'ln', val: 'ln(' },
-    { label: 'log', val: 'log(' },
-    { label: 'abs', val: 'abs(' },
-    { label: 'e', val: 'e' }
-  ];
-
-  const handleAction = (action) => {
-    const input = mainInputRef.current;
-    if (!input) return;
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
-
-    if (action === 'delete') {
-      mathFieldRef.current?.executeCommand('deleteBackward');
-    } else if (action === 'left') {
-      mathFieldRef.current?.executeCommand('moveBackward');
-    } else if (action === 'right') {
-      mathFieldRef.current?.executeCommand('moveForward');
-    }
-    mathFieldRef.current?.focus();
-  };
-
-  const handleAuth = (e) => {
-    e.preventDefault();
-    if (authMode === 'register') {
-      setUser({ name: authForm.name || 'User', email: authForm.email });
-    } else {
-      setUser({ name: authForm.email.split('@')[0] || 'Member', email: authForm.email });
-    }
-    setAuthVisible(false);
-    confetti({
-      particleCount: 150,
-      spread: 100,
-      origin: { y: 0.3 }
-    });
-  };
-
-  const logout = () => {
-    setUser(null);
-    setAuthForm({ email: '', password: '', name: '' });
-  };
-
-  return (
-    <div className="app-root">
-      <div className="liquid-bg" />
-      <div className="orb orb-primary" />
-      <div className="orb orb-secondary" />
-
-      {/* Auth Modal Overlay */}
-      <AnimatePresence>
-        {authVisible && (
-          <motion.div 
-            className="auth-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setAuthVisible(false)}
-          >
-            <motion.div 
-              className="glass-panel auth-card"
-              initial={{ scale: 0.8, opacity: 0, y: 50 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.8, opacity: 0, y: 50 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="close-auth" onClick={() => setAuthVisible(false)}>
-                <X size={20} />
-              </button>
-
-              <div className="auth-header">
-                <h2>{authMode === 'login' ? 'CHÀO MỪNG TRỞ LẠI' : 'TẠO TÀI KHOẢN MỚI'}</h2>
-                <p>{authMode === 'login' ? 'Đăng nhập để lưu lịch sử và đồng bộ dữ liệu.' : 'Tham gia cộng đồng toán học Aura ngay hôm nay.'}</p>
-              </div>
-
-              <form onSubmit={handleAuth} className="auth-form">
-                {authMode === 'register' && (
-                  <div className="form-group">
-                    <label>Họ và Tên</label>
-                    <input 
-                      type="text" 
-                      placeholder="Nguyễn Văn A" 
-                      required 
-                      value={authForm.name}
-                      onChange={e => setAuthForm({...authForm, name: e.target.value})}
-                    />
-                  </div>
-                )}
-                <div className="form-group">
-                  <label>Email</label>
-                  <input 
-                    type="email" 
-                    placeholder="example@aura.edu" 
-                    required 
-                    value={authForm.email}
-                    onChange={e => setAuthForm({...authForm, email: e.target.value})}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Mật khẩu</label>
-                  <input 
-                    type="password" 
-                    placeholder="••••••••" 
-                    required 
-                    value={authForm.password}
-                    onChange={e => setAuthForm({...authForm, password: e.target.value})}
-                  />
-                </div>
-
-                <button type="submit" className="btn-glass btn-primary w-full justify-center mt-4">
-                  {authMode === 'login' ? 'ĐĂNG NHẬP NGAY' : 'ĐĂNG KÝ TÀI KHOẢN'}
-                </button>
-              </form>
-
-              <div className="auth-footer">
-                {authMode === 'login' ? (
-                  <p>Chưa có tài khoản? <span onClick={() => setAuthMode('register')}>Đăng ký ngay</span></p>
-                ) : (
-                  <p>Đã có tài khoản? <span onClick={() => setAuthMode('login')}>Đăng nhập</span></p>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <main className="container">
-        {/* Navigation / Profile */}
-        <nav className="top-nav">
-          <div className="user-profile">
-            {user ? (
-              <div className="user-info-pill">
-                <CheckCircle2 size={16} className="text-primary" />
-                <span>{user.name}</span>
-                <button className="logout-btn" onClick={logout}><LogOut size={14} /></button>
-              </div>
-            ) : (
-              <button className="btn-glass auth-trigger" onClick={() => {
-                setAuthMode('login');
-                setAuthVisible(true);
-              }}>
-                <LogIn size={16} /> ĐĂNG NHẬP
-              </button>
-            )}
-          </div>
-        </nav>
-
-        {/* Header */}
-        <motion.header 
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="header-section"
-        >
-          <div className="badge floating">
-            <Sparkles size={16} /> Graduation Project 2026
-          </div>
-          <h1>INTEGRAL <span style={{ color: 'var(--primary)' }}>SOLVER</span></h1>
-          <p>Hệ thống hỗ trợ giải tích phân thông minh dùng AI tích hợp thuật toán ký hiệu.</p>
-        </motion.header>
-
-        {/* Input Terminal */}
-        <section className="math-input-container">
-          <motion.div 
-            className="glass-panel glass-card"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div 
-              className="input-wrapper" 
-              onClick={() => mainInputRef.current?.focus()}
-              style={{ cursor: 'text' }}
-            >
-              <div className="integral-input-group" onClick={(e) => e.stopPropagation()}>
-                <div className="bounds-inputs">
-                  <input 
-                    type="text" 
-                    className="bound-field upper" 
-                    placeholder="b"
-                    value={upperBound}
-                    onChange={(e) => {
-                      setUpperBound(e.target.value);
-                      setIsDefinite(true);
-                    }}
-                  />
-                  <IntegralIcon size={32} color="var(--primary)" />
-                  <input 
-                    type="text" 
-                    className="bound-field lower" 
-                    placeholder="a"
-                    value={lowerBound}
-                    onChange={(e) => {
-                      setLowerBound(e.target.value);
-                      setIsDefinite(true);
-                    }}
-                  />
-                </div>
-              </div>
-              <math-field 
-                ref={mathFieldRef}
-                placeholder="Nhập biểu thức..."
-              >
-                {expression}
-              </math-field>
-              <span className="input-suffix flex items-center" onClick={(e) => e.stopPropagation()}>
-                d
-                <input 
-                  type="text" 
-                  className="diff-var-input" 
-                  value={diffVar} 
-                  onChange={(e) => setDiffVar(e.target.value.slice(0, 1))}
-                  maxLength={1}
-                />
-              </span>
-            </div>
-
-            <div className="keyboard-container">
-              <div className="math-keyboard">
-                {/* Math & Var Section */}
-                <div className="kb-section">
-                  <div className="kb-grid-vars">
-                    <button className="kb-btn" onClick={() => insertSymbol('x')}>x</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('y')}>y</button>
-                    <button className="kb-btn shadow-accent" onClick={() => insertSymbol('^2')}>a²</button>
-                    <button className="kb-btn shadow-accent" onClick={() => insertSymbol('^')}>a^b</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('(')}>(</button>
-                    <button className="kb-btn" onClick={() => insertSymbol(')')}>)</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('<')}>&lt;</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('>')}>&gt;</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('abs(')}>|a|</button>
-                    <button className="kb-btn" onClick={() => insertSymbol(',')}>,</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('<=')}>&le;</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('>=')}>&ge;</button>
-                    <button className="kb-btn darker">ABC</button>
-                    <button className="kb-btn darker"><Calculator size={18}/></button>
-                    <button className="kb-btn" onClick={() => insertSymbol('sqrt(')}>&radic;</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('pi')}>&pi;</button>
-                  </div>
-                </div>
-
-                {/* Number Pad Section */}
-                <div className="kb-section">
-                  <div className="kb-grid-nums">
-                    {[7, 8, 9].map(n => <button key={n} className="kb-btn darker" onClick={() => insertSymbol(n.toString())}>{n}</button>)}
-                    <button className="kb-btn" onClick={() => insertSymbol('\\frac{#?}{#?}')}>&divide;</button>
-                    {[4, 5, 6].map(n => <button key={n} className="kb-btn darker" onClick={() => insertSymbol(n.toString())}>{n}</button>)}
-                    <button className="kb-btn" onClick={() => insertSymbol('*')}>&times;</button>
-                    {[1, 2, 3].map(n => <button key={n} className="kb-btn darker" onClick={() => insertSymbol(n.toString())}>{n}</button>)}
-                    <button className="kb-btn" onClick={() => insertSymbol('-')}>&minus;</button>
-                    <button className="kb-btn darker" onClick={() => insertSymbol('0')}>0</button>
-                    <button className="kb-btn darker" onClick={() => insertSymbol('.')}>.</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('=')}>=</button>
-                    <button className="kb-btn" onClick={() => insertSymbol('+')}>+</button>
-                  </div>
-                </div>
-
-                {/* Actions Section */}
-                <div className="kb-section last">
-                  <div className="kb-grid-actions">
-                    <button className="kb-btn action-grey" style={{fontSize: '0.8rem'}}>chức năng</button>
-                    <div className="action-row">
-                      <button className="kb-btn darker" onClick={() => handleAction('left')}><MoveLeft size={20}/></button>
-                      <button className="kb-btn darker" onClick={() => handleAction('right')}><MoveRight size={20}/></button>
-                    </div>
-                    <button className="kb-btn darker" onClick={() => handleAction('delete')}><Delete size={20}/></button>
-                    <button className="kb-btn action-enter" onClick={solveIntegral}><CornerDownLeft size={20}/></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* Results Area */}
-        <AnimatePresence>
-          {result && (
-            <motion.section 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="results-section"
-            >
-              <div className="glass-panel result-card">
-                <div className="card-header">
-                  <Brain size={20} color="var(--accent)" />
-                  <span>KẾT QUẢ PHÂN TÍCH</span>
-                </div>
-                
-                <div className="math-display">
-                  <BlockMath 
-                    math={isDefinite 
-                      ? `\\int_{${lowerBound}}^{${upperBound}} ${expression} \\, d${diffVar} = ${result.replace(/x/g, diffVar)}` 
-                      : `\\int ${expression} \\, d${diffVar} = ${result.replace(/x/g, diffVar)}`
-                    } 
-                  />
-                </div>
-
-                <div className="steps-container">
-                  <h4>CÁC BƯỚC GIẢI CHI TIẾT:</h4>
-                  {steps.map((step, idx) => (
-                    <motion.div 
-                      key={idx} 
-                      className="step-item"
-                      initial={{ x: -20, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.1 * idx }}
-                    >
-                      <div className="step-number">{idx + 1}</div>
-                      <div className="step-content">
-                        {step.includes('\\') ? <InlineMath math={step} /> : step}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.section>
-          )}
-        </AnimatePresence>
-
-        {/* History & Dashboard */}
-        <div className="dashboard-grid">
-          <motion.div 
-            className="glass-panel dashboard-card"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <div className="card-header">
-              <History size={20} />
-              <span>LỊCH SỬ TRA CỨU</span>
-              <button className="clear-btn" onClick={clearHistory}>
-                <Trash2 size={16} />
-              </button>
-            </div>
-            <div className="history-list">
-              {history.length > 0 ? history.map(item => (
-                <div key={item.id} className="history-item" onClick={() => {
-                  setExpression(item.expr);
-                  // Optionally restore bounds if saved in history
-                }}>
-                  <span className="hist-expr">
-                   {item.expr.includes('\\int') ? <InlineMath math={item.expr} /> : `∫ ${item.expr} d${diffVar}`}
-                  </span>
-                  <ArrowRight size={14} />
-                </div>
-              )) : (
-                <div className="empty-state">Chưa có lịch sử</div>
-              )}
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="glass-panel dashboard-card"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            <div className="card-header">
-              <Cpu size={20} />
-              <span>THÔNG SỐ HỆ THỐNG</span>
-            </div>
-            <div className="stats-list">
-              <div className="stat-item">
-                <span className="label">Engine:</span>
-                <span className="value">Aura-X 2026</span>
-              </div>
-              <div className="stat-item">
-                <span className="label">Latent Speed:</span>
-                <span className="value">14.2 ms</span>
-              </div>
-              <div className="stat-item">
-                <span className="label">Accuracy:</span>
-                <span className="value">99.8%</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        <footer>
-          <p>© 2026 Graduation Project - Designed for Excellence</p>
-        </footer>
-      </main>
-
-    </div>
-  );
+import { useState, useRef, useEffect } from "react";
+import Navbar from "./components/layout/Navbar.jsx";
+import Integral3D from "./components/ui/Integral3D.jsx";
+const C = {
+  bg: "#030303",
+  card: "#0f0f0f",
+  surface: "#141414",
+  border: "#191919",
+  border2: "#1f1f1f",
+  muted: "#999",
+  muted2: "#b3b3b3",
+  text: "#e6e6e6",
+  yellow: "#FFE41F",
+  yellowDim: "#393414",
 };
 
-export default App;
+
+
+/* ─── SECTION BADGE ───────────────────────────────── */
+function SectionBadge({ label }) {
+  return (
+    <div style={{ display:"inline-flex", alignItems:"center", gap:4, marginBottom:16 }}>
+      <span style={{ color: C.yellow, fontSize: 13 }}>(</span>
+      <span style={{ color: C.muted, fontSize: 13 }}>{label}</span>
+      <span style={{ color: C.yellow, fontSize: 13 }}>)</span>
+    </div>
+  );
+}
+
+/* ─── HERO ────────────────────────────────────────── */
+function Hero({ onOpenSolver }) {
+  return (
+    <section style={{
+      padding: "80px 24px 60px", textAlign: "center",
+      background: C.bg, position: "relative", overflow: "hidden",
+    }}>
+      <div style={{
+        position:"absolute", inset:0, pointerEvents:"none",
+        background:`radial-gradient(ellipse 80% 60% at 50% 0%, #1a1400 0%, transparent 70%)`,
+      }}/>
+      <div style={{ position:"relative", maxWidth:680, margin:"0 auto" }}>
+        <a href="#" style={{
+          display:"inline-flex", alignItems:"center", gap:8,
+          background: C.surface, border:`1px solid ${C.border2}`,
+          borderRadius:100, padding:"6px 14px",
+          color: C.muted2, fontSize:13, textDecoration:"none", marginBottom:28,
+        }}>
+          <span style={{
+            background: C.yellow, color: C.bg,
+            fontSize:11, fontWeight:700, padding:"2px 8px", borderRadius:100,
+          }}>New</span>
+          Smart Meeting Notes
+        </a>
+
+        <h1 style={{
+          fontSize:"clamp(32px,6vw,58px)", fontWeight:800,
+          letterSpacing:"-1.5px", lineHeight:1.1,
+          color:"#fff", margin:"0 0 20px",
+        }}>
+          Stop Taking Meeting Notes<br/>
+          <span style={{ color: C.yellow }}>During Important Calls</span>
+        </h1>
+
+        <p style={{ color: C.muted, fontSize:17, lineHeight:1.7, margin:"0 0 36px", maxWidth:520, marginInline:"auto" }}>
+          AI joins your calls, transcribes conversations, and generates action items
+          so you can focus entirely on participating and making decisions.
+        </p>
+
+        <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
+          <button style={{
+            background: C.yellow, border:"none", borderRadius:100,
+            color: C.bg, fontWeight:700, fontSize:15,
+            padding:"14px 28px", cursor:"pointer", fontFamily:"Manrope,sans-serif",
+          }}>Start 14-Day Trial</button>
+          <button style={{
+            background:"transparent", border:`1px solid ${C.border2}`,
+            borderRadius:100, color: C.muted2, fontSize:15,
+            padding:"14px 28px", cursor:"pointer", fontFamily:"Manrope,sans-serif",
+          }}>Watch Demo</button>
+        </div>
+
+        <p style={{ color:"#555", fontSize:13, marginTop:28 }}>
+          Trusted by the world's most innovative teams
+        </p>
+        <div style={{ display:"flex", justifyContent:"center", gap:32, marginTop:16, flexWrap:"wrap" }}>
+          {["Zoom","Slack","Notion","Linear","Figma","Jira","Loom"].map(b => (
+            <span key={b} style={{ color:"#444", fontSize:13, fontWeight:600, letterSpacing:".04em" }}>{b}</span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── STATS ───────────────────────────────────────── */
+function Stats() {
+  const items = [
+    { num:"50k+", label:"Teams using our AI" },
+    { num:"20+",  label:"Languages supported" },
+    { num:"140+", label:"Countries served" },
+    { num:"80+",  label:"Platform integrations" },
+  ];
+  return (
+    <section style={{ padding:"60px 24px", background: C.bg }}>
+      <div style={{ maxWidth:900, margin:"0 auto", textAlign:"center" }}>
+        <SectionBadge label="Stats" />
+        <h2 style={{ color:"#fff", fontSize:36, fontWeight:800, letterSpacing:"-1px", margin:"0 0 8px" }}>
+          Numbers That Matter
+        </h2>
+        <p style={{ color: C.muted, marginBottom:40 }}>
+          See why thousands of teams trust our AI to transform their meeting experience.
+        </p>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:16 }}>
+          {items.map(({ num, label }) => (
+            <div key={label} style={{
+              background: C.card, border:`1px solid ${C.border}`,
+              borderRadius:18, padding:"28px 20px",
+            }}>
+              <div style={{ fontSize:40, fontWeight:700, color:"#fff", letterSpacing:"-2px" }}>{num}</div>
+              <div style={{ color: C.muted, fontSize:14, marginTop:6 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── FEATURES ────────────────────────────────────── */
+function Features() {
+  const items = [
+    { title:"Never Miss a Word", desc:"Industry-leading speech-to-text accuracy across 20+ languages and accents." },
+    { title:"No More Blurry Recordings", desc:"AI fixes poor lighting, shaky cameras, and low resolution to deliver crisp, clear video." },
+    { title:"AI Meeting Leadership", desc:"Help leaders focus on discussions while AI handles agenda tracking and engagement." },
+    { title:"Smart File Processing", desc:"Upload files from any platform and let AI extract key insights and content." },
+    { title:"Crystal Clear Audio", desc:"AI removes background noise and enhances voice clarity for perfect playback." },
+    { title:"Complete Meeting Archive", desc:"Access and download meeting files organized by date, project, or participant." },
+  ];
+  return (
+    <section style={{ padding:"60px 24px", background: C.bg }}>
+      <div style={{ maxWidth:960, margin:"0 auto" }}>
+        <div style={{ textAlign:"center", marginBottom:40 }}>
+          <SectionBadge label="Features" />
+          <h2 style={{ color:"#fff", fontSize:36, fontWeight:800, letterSpacing:"-1px", margin:"0 0 8px" }}>
+            What Makes Us Different
+          </h2>
+          <p style={{ color: C.muted }}>Exclusive AI features that give your team a competitive advantage in meetings.</p>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))", gap:14 }}>
+          {items.map(({ title, desc }) => (
+            <div key={title} style={{
+              background: C.card, border:`1px solid ${C.border}`,
+              borderRadius:18, padding:24,
+              transition:"border-color .2s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.borderColor="#2a2a2a"}
+            onMouseLeave={e => e.currentTarget.style.borderColor=C.border}
+            >
+              <div style={{
+                width:40, height:40, borderRadius:10,
+                background: C.yellowDim, marginBottom:16,
+                display:"flex", alignItems:"center", justifyContent:"center",
+              }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.yellow} strokeWidth="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <h3 style={{ color:"#fff", fontSize:16, fontWeight:700, margin:"0 0 8px", letterSpacing:"-.3px" }}>{title}</h3>
+              <p style={{ color: C.muted, fontSize:14, lineHeight:1.65, margin:0 }}>{desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── PROCESS ─────────────────────────────────────── */
+function Process() {
+  const steps = [
+    { n:"Step 1", title:"Schedule & Connect", desc:"Seamlessly integrate with your calendar and automatically join scheduled meetings across all platforms, ensuring you stay connected, on time, and fully prepared." },
+    { n:"Step 2", title:"AI-Powered Note Taking", desc:"Our intelligent assistant captures every discussion, decision, and action item in real-time with perfect accuracy, keeping your team aligned and informed at all times." },
+    { n:"Step 3", title:"Clear Audio Processing", desc:"Advanced audio processing ensures optimal sound quality for precise transcription and better meeting experiences, allowing every word to be captured clearly and effortlessly." },
+  ];
+  return (
+    <section style={{ padding:"60px 24px", background: C.bg }}>
+      <div style={{ maxWidth:700, margin:"0 auto" }}>
+        <div style={{ textAlign:"center", marginBottom:40 }}>
+          <SectionBadge label="Process" />
+          <h2 style={{ color:"#fff", fontSize:36, fontWeight:800, letterSpacing:"-1px", margin:0 }}>How It Works</h2>
+        </div>
+        {steps.map(({ n, title, desc }) => (
+          <div key={n} style={{
+            background: C.card, border:`1px solid ${C.border}`,
+            borderRadius:18, padding:"28px 28px", marginBottom:14,
+            display:"flex", gap:24, alignItems:"flex-start",
+          }}>
+            <span style={{
+              background: C.yellow, color: C.bg,
+              fontSize:12, fontWeight:800, padding:"4px 12px",
+              borderRadius:100, whiteSpace:"nowrap", flexShrink:0, marginTop:2,
+            }}>{n}</span>
+            <div>
+              <h3 style={{ color:"#fff", fontSize:18, fontWeight:700, margin:"0 0 8px" }}>{title}</h3>
+              <p style={{ color: C.muted, fontSize:14, lineHeight:1.7, margin:0 }}>{desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ─── INTEGRAL SOLVER SECTION ──────────────────────── */
+const KB_KEYS = [
+  {l:"x",v:"x"},{l:"y",v:"y"},{l:"n",v:"n"},{l:"π",v:"pi"},{l:"e",v:"e"},{l:"(",v:"("},{l:")",v:")"},
+  {l:"x²",v:"x^2"},{l:"xⁿ",v:"x^"},{l:"√",v:"sqrt("},{l:"ln",v:"ln("},{l:"log",v:"log("},{l:"sin",v:"sin("},{l:"cos",v:"cos("},
+  {l:"tan",v:"tan("},{l:"abs",v:"abs("},{l:"1/x",v:"1/"},{l:"sinh",v:"sinh("},{l:"cosh",v:"cosh("},{l:"asin",v:"asin("},{l:"⌫",v:"DEL"},
+];
+const QUICK = [
+  {e:"x",lo:"",hi:""},{e:"x^2",lo:"",hi:""},{e:"x^3",lo:"",hi:""},
+  {e:"sin(x)",lo:"",hi:""},{e:"cos(x)",lo:"",hi:""},{e:"e^x",lo:"",hi:""},
+  {e:"ln(x)",lo:"",hi:""},{e:"1/(1+x^2)",lo:"",hi:""},
+];
+const QUICK_DEF = [
+  {e:"x^2",lo:"0",hi:"1"},{e:"sin(x)",lo:"0",hi:"pi"},
+  {e:"x^2+1",lo:"-1",hi:"1"},{e:"e^x",lo:"0",hi:"1"},
+];
+
+function IntegralSolverSection() {
+  const [expr, setExpr] = useState("");
+  const [lo, setLo] = useState("");
+  const [hi, setHi] = useState("");
+  const [dv, setDv] = useState("x");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
+  const [history, setHistory] = useState([]);
+  const inputRef = useRef(null);
+
+  function insert(v) {
+    const el = inputRef.current;
+    if (!el) { setExpr(p => p + v); return; }
+    const s = el.selectionStart, e2 = el.selectionEnd;
+    const nv = expr.slice(0, s) + v + expr.slice(e2);
+    setExpr(nv);
+    setTimeout(() => { el.focus(); el.setSelectionRange(s + v.length, s + v.length); }, 0);
+  }
+
+  function delChar() {
+    const el = inputRef.current;
+    if (!el) return;
+    const s = el.selectionStart;
+    if (s > 0) {
+      const nv = expr.slice(0, s - 1) + expr.slice(s);
+      setExpr(nv);
+      setTimeout(() => { el.focus(); el.setSelectionRange(s - 1, s - 1); }, 0);
+    }
+  }
+
+  async function solve() {
+    if (!expr.trim()) return;
+    if ((lo && !hi) || (!lo && hi)) { setError("Tích phân xác định cần đủ cận trên và cận dưới."); return; }
+    setError(""); setResult(null); setLoading(true);
+    const isDef = lo && hi;
+    const intStr = isDef ? `∫[${lo} → ${hi}] (${expr}) d${dv}` : `∫ (${expr}) d${dv}`;
+    const prompt = `Giải tích phân sau, trả lời CHỈ bằng JSON thuần (không markdown, không text ngoài):
+
+{"integral":"${intStr}","result":"kết quả toán học rõ ràng","steps":["Bước 1: ...","Bước 2: ...","Bước 3: ..."],"definite_value":null}
+
+Nếu tích phân xác định điền giá trị số vào definite_value. Bước viết tiếng Việt, chi tiết. Biểu thức: ${intStr}`;
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1200, messages:[{role:"user",content:prompt}] }),
+      });
+      const data = await res.json();
+      const raw = data.content?.find(c => c.type === "text")?.text || "";
+      const m = raw.replace(/```json|```/g, "").trim().match(/\{[\s\S]*\}/);
+      if (!m) throw new Error("Không parse được phản hồi");
+      const parsed = JSON.parse(m[0]);
+      setResult(parsed);
+      setHistory(h => [{ expr, lo, hi, dv, result: parsed.result, id: Date.now() }, ...h].slice(0, 5));
+    } catch (e) {
+      setError("Lỗi: " + e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const isDef = lo || hi;
+
+  return (
+    <section id="integral-solver" style={{ padding:"60px 24px", background: C.bg }}>
+      <div style={{ maxWidth:780, margin:"0 auto" }}>
+        <div style={{ textAlign:"center", marginBottom:40 }}>
+          <SectionBadge label="Integral Solver" />
+          <h2 style={{ color:"#fff", fontSize:36, fontWeight:800, letterSpacing:"-1px", margin:"0 0 8px" }}>
+            Giải Tích Phân với AI
+          </h2>
+          <p style={{ color: C.muted, fontSize:15 }}>
+            Nhập biểu thức — Claude AI phân tích và trình bày từng bước chi tiết.
+          </p>
+        </div>
+
+        {/* Input Card */}
+        <div style={{
+          background: C.card, border:`1px solid ${C.border}`,
+          borderRadius:18, padding:24, marginBottom:14,
+        }}>
+          <div style={{
+            fontSize:10, fontWeight:800, letterSpacing:".1em",
+            color: C.muted, textTransform:"uppercase", marginBottom:12,
+          }}>Nhập tích phân cần giải</div>
+
+          {/* Input row */}
+          <div style={{
+            display:"flex", alignItems:"center", gap:10,
+            background: C.surface, border:`1px solid #252525`,
+            borderRadius:12, padding:"10px 14px",
+          }}>
+            {/* Bounds + integral symbol */}
+            <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+              <input value={hi} onChange={e => setHi(e.target.value)} placeholder="b"
+                style={{ background:"transparent", border:"none", borderBottom:`1px solid #444`,
+                  color: C.text, fontSize:11, width:34, textAlign:"center", outline:"none", padding:"2px" }} />
+              <span style={{ fontSize:44, color: C.yellow, fontStyle:"italic", lineHeight:1 }}>∫</span>
+              <input value={lo} onChange={e => setLo(e.target.value)} placeholder="a"
+                style={{ background:"transparent", border:"none", borderBottom:`1px solid #444`,
+                  color: C.text, fontSize:11, width:34, textAlign:"center", outline:"none", padding:"2px" }} />
+            </div>
+
+            <input ref={inputRef} value={expr}
+              onChange={e => setExpr(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && solve()}
+              placeholder="Nhập biểu thức..."
+              style={{
+                flex:1, background:"transparent", border:"none",
+                color: C.text, fontSize:22, outline:"none",
+                caretColor: C.yellow, fontFamily:"'Manrope',monospace", minWidth:0,
+              }} />
+
+            <div style={{ color: C.muted, fontSize:18, display:"flex", alignItems:"center", gap:3, whiteSpace:"nowrap" }}>
+              d<input value={dv} onChange={e => setDv(e.target.value.slice(-1)||"x")} maxLength={1}
+                style={{ background:"transparent", border:"none", borderBottom:`1px solid #444`,
+                  color: C.yellow, fontSize:18, width:22, textAlign:"center", outline:"none", fontWeight:800 }} />
+            </div>
+          </div>
+
+          {/* Keyboard */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:5, marginTop:12 }}>
+            {KB_KEYS.map(k => (
+              <button key={k.l} onClick={() => k.v === "DEL" ? delChar() : insert(k.v)}
+                style={{
+                  background: k.v === "DEL" ? "#1a0505" : C.surface,
+                  border:`1px solid ${k.v === "DEL" ? "#3a1515" : C.border}`,
+                  borderRadius:7, color: k.v === "DEL" ? "#f09595" : C.text,
+                  fontSize:12, padding:"7px 3px", cursor:"pointer",
+                  fontFamily:"'Manrope',monospace", transition:"all .12s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = k.v === "DEL" ? "#2a0a0a" : "#1e1e1e"}
+                onMouseLeave={e => e.currentTarget.style.background = k.v === "DEL" ? "#1a0505" : C.surface}
+              >{k.l}</button>
+            ))}
+          </div>
+
+          {/* Warnings */}
+          {isDef && (!lo || !hi) && (
+            <div style={{ background:"#1a0a00", border:"1px solid #3a1f00", borderRadius:8,
+              padding:"8px 12px", color:"#f0b595", fontSize:13, marginTop:10 }}>
+              Tích phân xác định cần điền đầy đủ cả cận trên và cận dưới.
+            </div>
+          )}
+
+          {/* Solve button */}
+          <button onClick={solve} disabled={loading || !expr.trim()}
+            style={{
+              width:"100%", background: C.yellow, border:"none", borderRadius:100,
+              color: C.bg, fontSize:14, fontWeight:800, padding:"13px 0",
+              cursor: loading || !expr.trim() ? "not-allowed" : "pointer",
+              marginTop:14, display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+              opacity: loading || !expr.trim() ? .5 : 1, fontFamily:"Manrope,sans-serif",
+              transition:"opacity .2s",
+            }}>
+            {loading ? (
+              <><SpinIcon /><span>Đang giải với Claude AI...</span></>
+            ) : (
+              <><span style={{ fontSize:16 }}>✦</span><span>Giải tích phân với AI</span></>
+            )}
+          </button>
+
+          {error && (
+            <div style={{ background:"#1a0505", border:"1px solid #4a0c0c", borderRadius:8,
+              padding:"10px 14px", color:"#f09595", fontSize:13, marginTop:10 }}>
+              {error}
+            </div>
+          )}
+        </div>
+
+        {/* Loading */}
+        {loading && (
+          <div style={{ background: C.card, border:`1px solid ${C.border}`, borderRadius:18, overflow:"hidden", marginBottom:14 }}>
+            <div style={{ background: C.surface, borderBottom:`1px solid ${C.border}`,
+              padding:"12px 18px", display:"flex", alignItems:"center", gap:8,
+              fontSize:11, fontWeight:800, color: C.muted, letterSpacing:".1em" }}>
+              <span style={{ width:8, height:8, borderRadius:"50%", background: C.yellow,
+                display:"inline-block", animation:"pulse 1s infinite" }} />
+              AI ĐANG TÍNH TOÁN
+            </div>
+            <div style={{ display:"flex", gap:8, alignItems:"center", justifyContent:"center", padding:"32px 0" }}>
+              {[0,1,2].map(i => (
+                <span key={i} style={{
+                  width:8, height:8, borderRadius:"50%", background: C.yellow,
+                  display:"inline-block",
+                  animation:`bounce 1.1s ${i*.2}s infinite`,
+                }} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Result */}
+        {result && !loading && (
+          <div style={{ background: C.card, border:`1px solid ${C.border}`, borderRadius:18, overflow:"hidden", marginBottom:14 }}>
+            <div style={{ background: C.surface, borderBottom:`1px solid ${C.border}`,
+              padding:"12px 18px", display:"flex", alignItems:"center", gap:8,
+              fontSize:11, fontWeight:800, color: C.muted, letterSpacing:".1em" }}>
+              <span style={{ width:8, height:8, borderRadius:"50%", background: C.yellow, display:"inline-block" }} />
+              KẾT QUẢ PHÂN TÍCH
+            </div>
+            <div style={{ padding:24 }}>
+              <div style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color: C.muted, textTransform:"uppercase", marginBottom:8 }}>Tích phân</div>
+              <div style={{ fontSize:15, color:"#fff", background: C.surface, borderRadius:10,
+                padding:"12px 16px", marginBottom:16, fontFamily:"monospace",
+                border:`1px solid ${C.border}`, lineHeight:1.5 }}>{result.integral}</div>
+
+              <div style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color: C.muted, textTransform:"uppercase", marginBottom:8 }}>Kết quả</div>
+              <div style={{ fontSize:22, color: C.yellow, background:"#0d0d00",
+                borderRadius:10, padding:"14px 16px", marginBottom:16,
+                fontFamily:"monospace", border:"1px solid #2a2500", fontWeight:700 }}>
+                = {result.result}
+              </div>
+
+              {result.definite_value !== null && result.definite_value !== undefined && (lo && hi) && (
+                <>
+                  <div style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color: C.muted, textTransform:"uppercase", marginBottom:8 }}>Giá trị số</div>
+                  <div style={{ fontSize:18, color:"#97c459", background:"#070f02",
+                    borderRadius:10, padding:"12px 16px", marginBottom:16,
+                    fontFamily:"monospace", border:"1px solid #1a3000" }}>
+                    ≈ {result.definite_value}
+                  </div>
+                </>
+              )}
+
+              {result.steps?.length > 0 && (
+                <>
+                  <div style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color: C.muted,
+                    textTransform:"uppercase", margin:"20px 0 10px" }}>Các bước giải chi tiết</div>
+                  {result.steps.map((step, i) => (
+                    <div key={i} style={{ display:"flex", gap:12, marginBottom:10, alignItems:"flex-start" }}>
+                      <span style={{
+                        minWidth:24, height:24, borderRadius:"50%",
+                        background:"#1a1300", color: C.yellow,
+                        fontSize:11, fontWeight:800, display:"flex",
+                        alignItems:"center", justifyContent:"center",
+                        flexShrink:0, marginTop:2, border:`1px solid #2a2000`,
+                      }}>{i + 1}</span>
+                      <div style={{
+                        fontSize:13, lineHeight:1.65, color: C.text,
+                        background: C.surface, borderRadius:8,
+                        padding:"8px 12px", border:`1px solid ${C.border}`,
+                        flex:1, fontFamily:"monospace",
+                      }}>{step}</div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Quick Examples */}
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14 }}>
+          <div style={{ background: C.card, border:`1px solid ${C.border}`, borderRadius:18, padding:20 }}>
+            <div style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color: C.muted, textTransform:"uppercase", marginBottom:12 }}>Ví dụ nhanh</div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
+              {QUICK.map(q => (
+                <button key={q.e} onClick={() => { setExpr(q.e); setLo(q.lo); setHi(q.hi); }}
+                  style={{
+                    background: C.surface, border:`1px solid ${C.border}`,
+                    borderRadius:8, color: C.text, fontSize:12,
+                    padding:"6px 10px", cursor:"pointer", fontFamily:"monospace",
+                    transition:"all .12s",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor="#3a3a00"}
+                  onMouseLeave={e => e.currentTarget.style.borderColor=C.border}
+                >{q.e}</button>
+              ))}
+            </div>
+          </div>
+          <div style={{ background: C.card, border:`1px solid ${C.border}`, borderRadius:18, padding:20 }}>
+            <div style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color: C.muted, textTransform:"uppercase", marginBottom:12 }}>Tích phân xác định</div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:7 }}>
+              {QUICK_DEF.map(q => (
+                <button key={q.e+q.lo} onClick={() => { setExpr(q.e); setLo(q.lo); setHi(q.hi); }}
+                  style={{
+                    background: C.surface, border:`1px solid ${C.border}`,
+                    borderRadius:8, color: C.text, fontSize:12,
+                    padding:"6px 10px", cursor:"pointer", fontFamily:"monospace",
+                    transition:"all .12s",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor="#3a3a00"}
+                  onMouseLeave={e => e.currentTarget.style.borderColor=C.border}
+                >{q.e} [{q.lo}→{q.hi}]</button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* History */}
+        {history.length > 0 && (
+          <div style={{ background: C.card, border:`1px solid ${C.border}`, borderRadius:18, padding:20 }}>
+            <div style={{ fontSize:10, fontWeight:800, letterSpacing:".1em", color: C.muted, textTransform:"uppercase", marginBottom:12 }}>Lịch sử tra cứu</div>
+            {history.map(h => (
+              <div key={h.id} onClick={() => { setExpr(h.expr); setLo(h.lo); setHi(h.hi); setDv(h.dv); }}
+                style={{
+                  display:"flex", alignItems:"center", justifyContent:"space-between",
+                  padding:"9px 8px", borderBottom:`1px solid ${C.border}`,
+                  cursor:"pointer", borderRadius:6, transition:"background .15s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background="#111"}
+                onMouseLeave={e => e.currentTarget.style.background="transparent"}
+              >
+                <div>
+                  <div style={{ fontSize:13, fontFamily:"monospace", color: C.text }}>∫ {h.expr} d{h.dv}</div>
+                  <div style={{ fontSize:11, color: C.muted, marginTop:2 }}>= {h.result}</div>
+                </div>
+                <span style={{ color:"#444", fontSize:13 }}>→</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function SpinIcon() {
+  return (
+    <span style={{ display:"inline-block", animation:"spin 1s linear infinite", fontSize:14 }}>✦</span>
+  );
+}
+
+/* ─── TESTIMONIALS ────────────────────────────────── */
+function Testimonials() {
+  const items = [
+    { text:"Callox has completely changed how I run client calls. I show up, speak freely, and everything's handled—notes, actions, follow-ups.", name:"Sarah Whitman", role:"Freelance UX Designer" },
+    { text:"We use Callox in every sprint planning and retro. It's made our dev process way more efficient and less reliant on memory.", name:"Sophie Allen", role:"Business Coach" },
+    { text:"Clients love how fast I follow up after meetings. They think I have a secret team. It's just Callox doing the heavy lifting.", name:"Anita Rao", role:"COO at Lumino Labs" },
+  ];
+  return (
+    <section style={{ padding:"60px 24px", background: C.bg }}>
+      <div style={{ maxWidth:960, margin:"0 auto" }}>
+        <div style={{ textAlign:"center", marginBottom:40 }}>
+          <SectionBadge label="Testimonials" />
+          <h2 style={{ color:"#fff", fontSize:36, fontWeight:800, letterSpacing:"-1px", margin:0 }}>What Our Users Say</h2>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:14 }}>
+          {items.map(({ text, name, role }) => (
+            <div key={name} style={{
+              background: C.surface, border:`1px solid ${C.border2}`,
+              borderRadius:18, padding:24,
+            }}>
+              <p style={{ color: C.text, fontSize:15, lineHeight:1.7, margin:"0 0 20px", fontStyle:"italic" }}>"{text}"</p>
+              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                <div style={{
+                  width:38, height:38, borderRadius:"50%",
+                  background: C.yellowDim, display:"flex", alignItems:"center",
+                  justifyContent:"center", color: C.yellow, fontWeight:800, fontSize:13,
+                }}>{name[0]}</div>
+                <div>
+                  <div style={{ color:"#fff", fontSize:14, fontWeight:700 }}>{name}</div>
+                  <div style={{ color: C.muted, fontSize:12 }}>{role}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
+/* ─── FAQ ─────────────────────────────────────────── */
+function FAQ() {
+  const [open, setOpen] = useState(null);
+  const items = [
+    { q:"How does the AI assistant join my meetings?", a:"It connects via your calendar or shared meeting link and joins as a silent participant to capture everything." },
+    { q:"Is it compatible with Zoom, Google Meet, and Teams?", a:"Yes, it supports Zoom, Google Meet, Microsoft Teams, and other major platforms used by professionals." },
+    { q:"Do I need to inform others the meeting is recorded?", a:"Yes, we recommend transparency. The AI will be labeled clearly as a note-taking assistant." },
+    { q:"What kind of notes does it take?", a:"You'll get clear summaries with key points, decisions, action items, and follow-ups in one place." },
+    { q:"Is my data safe and private?", a:"Absolutely. All data is encrypted and stored securely. Only authorized users can access it." },
+  ];
+  return (
+    <section style={{ padding:"60px 24px", background: C.bg }}>
+      <div style={{ maxWidth:680, margin:"0 auto" }}>
+        <div style={{ textAlign:"center", marginBottom:40 }}>
+          <SectionBadge label="FAQ" />
+          <h2 style={{ color:"#fff", fontSize:36, fontWeight:800, letterSpacing:"-1px", margin:0 }}>We've Got the Answers</h2>
+        </div>
+        {items.map(({ q, a }, i) => (
+          <div key={i} style={{
+            background: C.card, border:`1px solid ${C.border}`,
+            borderRadius:14, marginBottom:8, overflow:"hidden",
+          }}>
+            <button onClick={() => setOpen(open === i ? null : i)} style={{
+              width:"100%", display:"flex", alignItems:"center",
+              justifyContent:"space-between", padding:"18px 20px",
+              background:"transparent", border:"none", cursor:"pointer",
+              color:"#fff", fontSize:15, fontWeight:600,
+              fontFamily:"Manrope,sans-serif", textAlign:"left", gap:12,
+            }}>
+              <span>{q}</span>
+              <span style={{
+                color: C.yellow, fontSize:20, lineHeight:1,
+                transform: open === i ? "rotate(45deg)" : "none",
+                transition:"transform .2s", flexShrink:0,
+              }}>+</span>
+            </button>
+            {open === i && (
+              <div style={{ padding:"0 20px 18px", color: C.muted, fontSize:14, lineHeight:1.7 }}>{a}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ─── CTA ─────────────────────────────────────────── */
+function CTA({ onOpenSolver }) {
+  return (
+    <section style={{ padding:"60px 24px", background: C.bg }}>
+      <div style={{ maxWidth:680, margin:"0 auto" }}>
+        <div style={{
+          background: C.card, border:`1px solid ${C.border}`,
+          borderRadius:24, padding:"48px 40px", textAlign:"center",
+        }}>
+          <h2 style={{ color:"#fff", fontSize:32, fontWeight:800, letterSpacing:"-1px", margin:"0 0 12px" }}>
+            Let AI Take Over Your Meetings and Keep You Moving Forward
+          </h2>
+          <p style={{ color: C.muted, fontSize:15, lineHeight:1.7, margin:"0 0 32px" }}>
+            Our AI assistant joins your calls, takes detailed notes, and instantly turns discussions into clear action items.
+          </p>
+          <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
+            <button style={{
+              background: C.yellow, border:"none", borderRadius:100,
+              color: C.bg, fontWeight:700, fontSize:15,
+              padding:"14px 28px", cursor:"pointer", fontFamily:"Manrope,sans-serif",
+            }}>Start 14-Day Trial</button>
+            <button onClick={onOpenSolver} style={{
+              background:"transparent", border:`1px solid ${C.border2}`,
+              borderRadius:100, color: C.muted2, fontSize:15,
+              padding:"14px 28px", cursor:"pointer", fontFamily:"Manrope,sans-serif",
+            }}>Try Integral Solver</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── FOOTER ──────────────────────────────────────── */
+function Footer() {
+  const cols = [
+    { title:"Company", links:["Home","About","Features","Integration","Pricing"] },
+    { title:"Support",  links:["Changelog","Contact","Blog","Coming Soon"] },
+    { title:"Legal",    links:["Terms of Use","Privacy Policy","Cookie Policy","Security Policy"] },
+    { title:"Social",   links:["Twitter","Instagram","TikTok","Facebook"] },
+  ];
+  return (
+    <footer style={{ background: C.bg, borderTop:`1px solid ${C.border}`, padding:"48px 24px 32px" }}>
+      <div style={{ maxWidth:960, margin:"0 auto" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"2fr repeat(4,1fr)", gap:32, marginBottom:40 }}>
+          <div>
+            <div style={{ marginBottom:16 }}>
+              <span style={{ fontWeight:800, fontSize:18, color:"#fff", letterSpacing:"-.5px" }}>Callox</span>
+            </div>
+            <p style={{ color:"#555", fontSize:13, lineHeight:1.7, margin:"0 0 16px" }}>
+              Callox transforms your meetings with AI-powered note-taking, automatic action item creation, and seamless follow-up management.
+            </p>
+          </div>
+          {cols.map(({ title, links }) => (
+            <div key={title}>
+              <div style={{ color:"#fff", fontSize:13, fontWeight:700, marginBottom:12 }}>{title}</div>
+              {links.map(l => (
+                <div key={l} style={{ marginBottom:8 }}>
+                  <a href="#" style={{ color:"#555", fontSize:13, textDecoration:"none", transition:"color .2s" }}
+                    onMouseEnter={e => e.target.style.color=C.muted2}
+                    onMouseLeave={e => e.target.style.color="#555"}
+                  >{l}</a>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div style={{ borderTop:`1px solid ${C.border}`, paddingTop:24, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          <span style={{ color:"#555", fontSize:13 }}>©Callox 2026. All Rights Reserved.</span>
+          <span style={{ color:"#444", fontSize:12 }}>Template by Ammar Hassan</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ─── SCROLL-TO-SOLVER MODAL BUTTON ──────────────── */
+function SolverFloatBtn({ onClick }) {
+  return (
+    <button onClick={onClick} style={{
+      position:"fixed", bottom:28, right:28, zIndex:200,
+      background: C.yellow, border:"none", borderRadius:100,
+      color: C.bg, fontWeight:800, fontSize:13,
+      padding:"12px 20px", cursor:"pointer",
+      boxShadow:"0 4px 24px rgba(255,228,31,.25)",
+      display:"flex", alignItems:"center", gap:8,
+      fontFamily:"Manrope,sans-serif", transition:"opacity .2s",
+    }}
+    onMouseEnter={e => e.currentTarget.style.opacity=".88"}
+    onMouseLeave={e => e.currentTarget.style.opacity="1"}
+    >
+      <span style={{ fontSize:16 }}>∫</span> Giải tích phân
+    </button>
+  );
+}
+
+/* ─── APP ─────────────────────────────────────────── */
+export default function App() {
+  function scrollToSolver() {
+    document.getElementById("integral-solver")?.scrollIntoView({ behavior:"smooth" });
+  }
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: #030303; font-family: 'Manrope', system-ui, sans-serif; }
+        input::placeholder { color: #333; }
+        @keyframes bounce {
+          0%,80%,100% { transform: translateY(0); opacity: .25; }
+          40% { transform: translateY(-7px); opacity: 1; }
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
+
+      <Navbar onOpenSolver={scrollToSolver} />
+      <Integral3D/>
+      <Hero onOpenSolver={scrollToSolver} />
+      <Stats />
+      <Features />
+      <Process />
+      <IntegralSolverSection />
+      <Testimonials />
+      <FAQ />
+      <CTA onOpenSolver={scrollToSolver} />
+      <Footer />
+      <SolverFloatBtn onClick={scrollToSolver} />
+    </>
+  );
+}

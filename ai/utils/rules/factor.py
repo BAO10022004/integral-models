@@ -1,13 +1,13 @@
 import math
-from utils.expr.operation.expr_frac import FracExprNode
-from utils.expr.trig.expr_sin import SinExprNode
-from utils.expr.operation.expr_add import AddExprNode
-from utils.expr.expr_mono import MonoExprNode
-from utils.expr.operation.expr_mul import MulExprNode
-from utils.expr.expr_node import ExprNode
-from utils.expr.value.expr_var import VarExprNode
-from utils.expr.value.expr_const import ConstExprNode
-from utils.expr.operation.expr_sub import SubExprNode
+from ai.utils.expr.operation.expr_frac import FracExprNode
+from ai.utils.expr.trig.expr_sin import SinExprNode
+from ai.utils.expr.operation.expr_add import AddExprNode
+from ai.utils.expr.Power.expr_mono import MonoExprNode
+from ai.utils.expr.operation.expr_mul import MulExprNode
+from ai.utils.expr.expr_node import ExprNode
+from ai.utils.expr.value.expr_var import VarExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.operation.expr_sub import SubExprNode
 
 class Factor:
     @staticmethod

@@ -1,5 +1,5 @@
-from utils.expr.value.expr_const import ConstExprNode
-from utils.expr.value.expr_var import VarExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.value.expr_var import VarExprNode
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -30,16 +30,16 @@ class Printer:
         if expr is None:
             return "?"
 
-        from utils.expr.value.expr_const import ConstExprNode
-        from utils.expr.value.expr_var import VarExprNode
-        from utils.expr.operation.expr_add import AddExprNode
-        from utils.expr.operation.expr_sub import SubExprNode
-        from utils.expr.operation.expr_mul import MulExprNode
-        from utils.expr.operation.expr_frac import FracExprNode
-        from utils.expr.expr_mono import MonoExprNode
-        from utils.expr.trig.expr_sin import SinExprNode
-        from utils.expr.trig.expr_cos import CosExprNode
-        from utils.expr.trig.expr_tan import TanExprNode
+        from ai.utils.expr.value.expr_const import ConstExprNode
+        from ai.utils.expr.value.expr_var import VarExprNode
+        from ai.utils.expr.operation.expr_add import AddExprNode
+        from ai.utils.expr.operation.expr_sub import SubExprNode
+        from ai.utils.expr.operation.expr_mul import MulExprNode
+        from ai.utils.expr.operation.expr_frac import FracExprNode
+        from ai.utils.expr.Power.expr_mono import MonoExprNode
+        from ai.utils.expr.trig.expr_sin import SinExprNode
+        from ai.utils.expr.trig.expr_cos import CosExprNode
+        from ai.utils.expr.trig.expr_tan import TanExprNode
 
         if isinstance(expr, ConstExprNode):
             v = expr.left
@@ -118,7 +118,7 @@ class Printer:
             print(f"{indent}{GRAY}{connector}{RESET}{GREEN}{expr.left}{RESET}")
             return
 
-        from utils.integral import Integral
+        from ai.utils.integral import Integral
         if isinstance(expr, Integral):
             print(f"{indent}{GRAY}{connector}{RESET}{BOLD}{CYAN}[Integral]{RESET}")
             
@@ -180,7 +180,7 @@ class Printer:
 
     @staticmethod
     def print(expr):
-        from utils.integral import Integral
+        from ai.utils.integral import Integral
         if expr is None:
             print("Biểu thức: ?")
             return

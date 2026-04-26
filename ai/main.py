@@ -1,7 +1,6 @@
 from solver.rules.const_rule import const_rule
 from solver.rules.mono_rule import mono_rule
 from utils.action_data import ActionData
-from utils.cutter_function.cutter_add import CutterAdd
 from utils.expr.operation.expr_add import AddExprNode
 from utils.expr.operation.expr_mul import MulExprNode
 from utils.expr.operation.expr_sub import SubExprNode
@@ -13,7 +12,7 @@ from utils.rules.exponential import Exponential
 from utils.rules.factor import Factor
 from solver.rules.linearity_rule import IntegralRuleBase
 if __name__ == "__main__":
-    latex = r"\int_{0}^{1}{x}^{2}+1dx"
+    latex = r"\int_{0}^{1}{x+1}^{2}dx"
     
     message = []
     Integrand = []
@@ -28,9 +27,9 @@ if __name__ == "__main__":
 
     # I.integrand = EqualityRule.apply(I.integrand)
     Step = MulExprNode(left=ConstExprNode(left=1), right=I)
-    Step.right = IntegralRuleBase.apply(Step.right)
+    # Step.right = IntegralRuleBase.apply(Step.right)
     Printer.print(Step)
-    print(Step.calculate())
+    # print(Step.calculate())
 
     action = ActionData(integral=latex)
     action.save()

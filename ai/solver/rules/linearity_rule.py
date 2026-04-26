@@ -1,9 +1,9 @@
 import copy
-from utils.expr.operation.expr_add import AddExprNode
-from utils.expr.operation.expr_mul import MulExprNode
-from utils.expr.operation.expr_sub import SubExprNode
-from utils.expr.value.expr_const import ConstExprNode
-from utils.integral import Integral
+from ai.utils.expr.operation.expr_add import AddExprNode
+from ai.utils.expr.operation.expr_mul import MulExprNode
+from ai.utils.expr.operation.expr_sub import SubExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
+from ai.utils.integral import Integral
 
 
 class IntegralRuleBase:

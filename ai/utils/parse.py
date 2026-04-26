@@ -1,16 +1,18 @@
 import math
 import re
 from turtle import left
-from utils.expr.trig.expr_cos import CosExprNode
-from utils.expr.trig.expr_sin import SinExprNode
-from utils.expr.operation.expr_add import AddExprNode
-from utils.expr.trig.expr_tan import TanExprNode
-from utils.expr.value.expr_const import ConstExprNode
-from utils.expr.expr_mono import MonoExprNode
-from utils.expr.operation.expr_mul import MulExprNode
-from utils.expr.operation.expr_sub import SubExprNode
-from utils.expr.value.expr_var import VarExprNode
-from utils.expr.operation.expr_frac import FracExprNode
+from ai.utils.expr.Power.expr_sqrt import SqrtExprNode
+from ai.utils.expr.Power.expr_power import PowerExprNode
+from ai.utils.expr.trig.expr_cos import CosExprNode
+from ai.utils.expr.trig.expr_sin import SinExprNode
+from ai.utils.expr.operation.expr_add import AddExprNode
+from ai.utils.expr.trig.expr_tan import TanExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.Power.expr_mono import MonoExprNode
+from ai.utils.expr.operation.expr_mul import MulExprNode
+from ai.utils.expr.operation.expr_sub import SubExprNode
+from ai.utils.expr.value.expr_var import VarExprNode
+from ai.utils.expr.operation.expr_frac import FracExprNode
 
 class Parse :
     @staticmethod
@@ -73,7 +75,7 @@ class Parse :
             if node is not None:
                 return node
 
-        raise ValueError(f"Cannot parse: {latex}")
+        return None
     
     @staticmethod
     def parse_atom(latex, dee, var):
@@ -179,9 +181,9 @@ class Parse :
             n = sqrt_n.group(1)
             inside = Parse.parse_latex(sqrt_n.group(2), dee)
 
-            return MonoExprNode(
+            return SqrtExprNode(
                 left=inside,
-                right=ConstExprNode(left=float((1/int(n)))),
+                right=ConstExprNode(left=n),
                 var=var
                 )
 
@@ -190,9 +192,9 @@ class Parse :
         if sqrt:
             inside = Parse.parse_latex(sqrt.group(1).replace('\\', ''), dee)
 
-            return MonoExprNode(
+            return SqrtExprNode(
                 left=inside,
-                right=ConstExprNode(left=float((1/2))),
+                right=ConstExprNode(left=2),
                 var=var
                 )
 
@@ -202,22 +204,29 @@ class Parse :
         power = re.fullmatch(r'\{(.+)\}\^\{?(.+?)\}?', latex)
         if not power:
             return None
+        base = Parse.parse_latex(power.group(1), dee)
+        exp  = Parse.parse_latex(power.group(2), dee),
+        if isinstance(exp[0], VarExprNode) and isinstance(base, ConstExprNode) :
+            return PowerExprNode(    
+                left=base,
+                right=exp,
+                var=var
+            )
+    @staticmethod
+    def parse_mono(latex, dee, var):
+        power = re.fullmatch(r'\{(.+)\}\^\{?(.+?)\}?', latex)
+        if not power:
+            return None
 
         base = Parse.parse_latex(power.group(1), dee)
         exp  = power.group(2)
-
-        # if exp.isdigit():
-        #     return MonoExprNode(
-        #         left=base,
-        #         right=ConstExprNode(left=float(exp)),
-        #         var=var
-        #     )
 
         return MonoExprNode(    
             left=base,
             right=Parse.parse_latex(exp, dee),
             var=var
         )
+
 
 
 

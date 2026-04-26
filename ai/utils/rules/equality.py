@@ -1,12 +1,12 @@
 from ast import expr
 
-from utils.expr.expr_mono import MonoExprNode
-from utils.expr.expr_node import ExprNode
-from utils.expr.operation.expr_add import AddExprNode
-from utils.expr.operation.expr_frac import FracExprNode
-from utils.expr.operation.expr_mul import MulExprNode
-from utils.expr.operation.expr_sub import SubExprNode
-from utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.Power.expr_mono import MonoExprNode
+from ai.utils.expr.expr_node import ExprNode
+from ai.utils.expr.operation.expr_add import AddExprNode
+from ai.utils.expr.operation.expr_frac import FracExprNode
+from ai.utils.expr.operation.expr_mul import MulExprNode
+from ai.utils.expr.operation.expr_sub import SubExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
 
 class EqualityRule:
     @staticmethod

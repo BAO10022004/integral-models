@@ -1,11 +1,11 @@
 
 from sympy import Integral
 
-from utils.expr.operation.expr_frac import FracExprNode
-from utils.expr.expr_node import ExprNode
-from utils.expr.value.expr_const import ConstExprNode
-from utils.expr.expr_mono import MonoExprNode
-from utils.expr.value.expr_var import VarExprNode
+from ai.utils.expr.operation.expr_frac import FracExprNode
+from ai.utils.expr.expr_node import ExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.Power.expr_mono import MonoExprNode
+from ai.utils.expr.value.expr_var import VarExprNode
 
 class MulExprNode(ExprNode):
     def __init__(self, left=None, right=None, var=None):
@@ -23,6 +23,18 @@ class MulExprNode(ExprNode):
         return False
     def is_only_contain_leaf(self, var):
         return self.left.is_leaf() and self.right.is_leaf() 
+    def has_function(self, func_name):
+        l = False
+        r = False
+
+        if self.left is not None:
+            l = self.left.has_function(func_name)
+
+        if self.right is not None:
+            r = self.right.has_function(func_name)
+        if isinstance(self, func_name) :
+            return  True
+        return l or r
     def calculate(self, var_values = None):
         if self.left is None or self.right is None:
             return None
@@ -32,6 +44,16 @@ class MulExprNode(ExprNode):
         if left_value is None or right_value is None:
             return None
         return float(left_value) * float(right_value) 
+    def cont_function(self, func_name):
+        l =0
+        r =0
+        if self.left is not None:
+            l = self.left.cont_function(func_name) 
+        if self.right is not None:
+            r = self.right.cont_function(func_name) 
+        if isinstance(self, func_name) :
+            return l+r+1
+        return l + r
     def simplify(self,message = [], integral = [] ):          
         if self.left is None or self.right is None:
             return message, integral, self

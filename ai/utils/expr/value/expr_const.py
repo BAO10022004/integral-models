@@ -1,5 +1,5 @@
 
-from utils.expr.expr_node import ExprNode
+from ai.utils.expr.expr_node import ExprNode
 
 
 
@@ -16,3 +16,9 @@ class ConstExprNode(ExprNode):
         return True
     def calculate(self, var_values):
         return self.left
+    def has_function(self, func_name):
+        return False
+    def cont_function(self, func_name):
+        if isinstance(self, func_name) :
+            return 1
+        return 0

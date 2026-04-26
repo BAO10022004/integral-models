@@ -1,10 +1,10 @@
 import re
-from utils.printer import Printer
-from utils.expr.value.expr_var import VarExprNode
-from solver.rules.mono_rule import mono_rule
-from utils.expr.expr_mono import MonoExprNode
-from solver.rules.const_rule import const_rule
-from utils.expr.value.expr_const import ConstExprNode
+from ai.utils.printer import Printer
+from ai.utils.expr.value.expr_var import VarExprNode
+from ai.solver.rules.mono_rule import mono_rule
+from ai.utils.expr.Power.expr_mono import MonoExprNode
+from ai.solver.rules.const_rule import const_rule
+from ai.utils.expr.value.expr_const import ConstExprNode
 
 
 class Integral:
@@ -27,7 +27,7 @@ class Integral:
             }
     
     def _parse_latex(self):
-            from utils.parse import Parse
+            from ai.utils.parse import Parse
             limits = re.search(r'\\int_{(.*?)}\^{(.*?)}', self.latex)
             if limits:
                 self.left = limits.group(1)

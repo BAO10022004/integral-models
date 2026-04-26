@@ -1,5 +1,5 @@
-from utils.expr.expr_node import ExprNode
-from utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.expr_node import ExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
 
 class VarExprNode(ExprNode):
     def __init__(self, left=None, var =None):
@@ -14,3 +14,9 @@ class VarExprNode(ExprNode):
         return True
     def calculate(self, var_values = None):     
         return var_values
+    def has_function(self, func_name):
+        return False
+    def cont_function(self, func_name):
+        if isinstance(self, func_name) :
+            return 1
+        return 0

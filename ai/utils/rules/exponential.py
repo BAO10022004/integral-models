@@ -1,7 +1,7 @@
-from utils.expr.expr_mono import MonoExprNode
-from utils.expr.operation.expr_frac import FracExprNode
-from utils.expr.operation.expr_mul import MulExprNode
-from utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.Power.expr_mono import MonoExprNode
+from ai.utils.expr.operation.expr_frac import FracExprNode
+from ai.utils.expr.operation.expr_mul import MulExprNode
+from ai.utils.expr.value.expr_const import ConstExprNode
 
 
 class Exponential :
