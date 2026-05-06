@@ -28,14 +28,51 @@ class Integral:
     
     def _parse_latex(self):
             from ai.utils.parse import Parse
-            limits = re.search(r'\\int_{(.*?)}\^{(.*?)}', self.latex)
-            if limits:
-                self.left = limits.group(1)
-                self.right = limits.group(2)
-            body, dee = re.split(r'(d[a-zA-Z])$', self.latex)[0:2]
-            integrand = re.sub(r'\\int_{.*?}\^{.*?}', '', body)
-            self.integrand = Parse.parse_latex(integrand, dee)
+            
+            # Tìm cận bằng balanced brace matching thay vì regex non-greedy
+            # để xử lý đúng \int_{0}^{\frac{\pi}{2}} etc.
+            latex = self.latex
+            
+            # Tìm \int_ và parse lower bound
+            int_pos = latex.find('\\int_')
+            if int_pos == -1:
+                return
+            
+            idx = int_pos + len('\\int_')
+            
+            # Parse lower bound: {....}
+            lower, idx = self._extract_brace_content(latex, idx)
+            self.left = lower
+            
+            # Skip ^
+            if idx < len(latex) and latex[idx] == '^':
+                idx += 1
+            
+            # Parse upper bound: {....}
+            upper, idx = self._extract_brace_content(latex, idx)
+            self.right = upper
+            
+            # Phần còn lại là body + dx
+            rest = latex[idx:]
+            body, dee = re.split(r'(d[a-zA-Z])$', rest)[0:2]
+            self.integrand = Parse.parse_latex(body, dee)
             self.dee = dee[1:]
+    
+    @staticmethod
+    def _extract_brace_content(s, idx):
+        """Trích nội dung trong ngoặc nhọn {} với balanced matching."""
+        if idx >= len(s) or s[idx] != '{':
+            return '', idx
+        depth = 0
+        start = idx + 1
+        for i in range(idx, len(s)):
+            if s[i] == '{':
+                depth += 1
+            elif s[i] == '}':
+                depth -= 1
+                if depth == 0:
+                    return s[start:i], i + 1
+        return s[start:], len(s)
 
     def __repr__(self):
             return (

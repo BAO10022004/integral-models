@@ -12,7 +12,7 @@ from utils.rules.exponential import Exponential
 from utils.rules.factor import Factor
 from solver.rules.linearity_rule import IntegralRuleBase
 if __name__ == "__main__":
-    latex = r"\int_{0}^{1}{x+1}^{2}dx"
+    latex = r"\int_{0}^{1}{x}^{2}*\ln{x}dx"
     
     message = []
     Integrand = []
@@ -25,11 +25,11 @@ if __name__ == "__main__":
         print(m)
         Printer.print(I.integrand)
 
-    # I.integrand = EqualityRule.apply(I.integrand)
-    Step = MulExprNode(left=ConstExprNode(left=1), right=I)
-    # Step.right = IntegralRuleBase.apply(Step.right)
-    Printer.print(Step)
-    # print(Step.calculate())
+    # # I.integrand = EqualityRule.apply(I.integrand)
+    # Step = MulExprNode(left=ConstExprNode(left=1), right=I)
+    # # Step.right = IntegralRuleBase.apply(Step.right)
+    # Printer.print(Step)
+    # # print(Step.calculate())
 
-    action = ActionData(integral=latex)
-    action.save()
+    # action = ActionData(integral=latex)
+    # action.save()

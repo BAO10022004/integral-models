@@ -1,7 +1,7 @@
 [
   {
     "integrand": "\\int_{0}^{1}\\frac{2*x}{2*x}+{x}^{4}dx",
-    "action": "0"
+    "action": 0
   },
   {
     "integrand": "\\int_{0}^{1}(x+1)*(x+2)+xdx",
@@ -13,7 +13,7 @@
   },
   {
     "integrand": "\\int_{0}^{1}2*xdx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}8dx",
@@ -25,7 +25,7 @@
   },
   {
     "integrand": "\\int_{0}^{1}\\frac{1}{x}-x+\\sin{x}dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}\\frac{x}{\\tan{x}}dx",
@@ -53,11 +53,11 @@
   },
   {
     "integrand": "\\int_{0}^{1}x*1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}x*2dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}x*xdx",
@@ -65,23 +65,23 @@
   },
   {
     "integrand": "\\int_{0}^{1}x+1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}x+x-1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}x-2-1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}x-x+1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}x-x-1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}{\\frac{1}{x}}^{2}dx",
@@ -89,7 +89,7 @@
   },
   {
     "integrand": "\\int_{0}^{1}{x*2}^{3}dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}{x*\\sin{x}}^{3}dx",
@@ -113,19 +113,19 @@
   },
   {
     "integrand": "\\int_{0}^{1}{x}^{2}+1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}{x}^{2}-{3}^{2}dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}{x}^{2}-{4}^{2}dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}{x}^{3}+{x}^{3}dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}{x}^{3}dx",
@@ -133,7 +133,7 @@
   },
   {
     "integrand": "\\int_{0}^{2}x*x-x+1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{1}^{2}2*\\frac{1}{x}dx",
@@ -177,7 +177,7 @@
   },
   {
     "integrand": "\\int_{4}^{2}2*\\frac{1}{x} + 3dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}2*\\frac{1}{x}+x*\\frac{1}{x}dx",
@@ -189,23 +189,23 @@
   },
   {
     "integrand": "\\int_{4}^{2}2*x + 3*xdx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}2*x+2*xdx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}2*x+3*xdx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}2*x+xdx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}3*x+4*xdx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}\\frac{1}{\\sin(x+1)}dx",
@@ -245,19 +245,19 @@
   },
   {
     "integrand": "\\int_{4}^{2}x+1*x-1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}x+1dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}x+2*x+3*xdx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}x+2dx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{4}^{2}x+\\sqrt[2]{x*x}dx",
@@ -273,7 +273,7 @@
   },
   {
     "integrand": "\\int_{4}^{2}x+x+xdx",
-    "action": 1
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}\\cos{x}dx",
@@ -281,67 +281,63 @@
   },
   {
     "integrand": "\\int_{0}^{1}\\cos{2*x}dx",
-    "action": "0"
+    "action": 3
   },
   {
     "integrand": "\\int_{0}^{1}{x^2}^{2}*{2*x}^{2}dx",
-    "action": "0"
+    "action": 7
   },
   {
     "integrand": "\\int_{0}^{1}{x+1}^{2}*{x+1}^{2}dx",
-    "action": "0"
+    "action": 7
   },
   {
     "integrand": "\\int_{0}^{1}\\frac{2*x}{x+1}dx",
-    "action": "0"
+    "action": 4
   },
   {
     "integrand": "\\int_{0}^{1}{2*x}^{4}*\\sqrt[2]{x^2}+\\tan{x+1}*\\sqrt[3]{2*x}dx",
-    "action": "0"
-  },
-  {
-    "integrand": "\\int_{0}^{1}\\frac{x^2}{x^2}*\\frac{x^2}{x^2}dx",
-    "action": "0"
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}\\cos{x+1}dx",
-    "action": "0"
+    "action": 3
   },
   {
     "integrand": "\\int_{0}^{1}\\sqrt[3]{x+1}dx",
-    "action": "0"
+    "action": 9
   },
   {
     "integrand": "\\int_{0}^{1}\\tan{2*x}*\\sqrt[2]{x^2}dx",
-    "action": "0"
+    "action": 10
   },
   {
     "integrand": "\\int_{0}^{1}\\frac{x}{2*x}+2*x*x+1*\\sqrt[2]{2*x}dx",
-    "action": "0"
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}\\frac{2*x}{x+1}dx",
-    "action": "0"
+    "action": 4
   },
   {
     "integrand": "\\int_{0}^{1}\\sqrt[2]{x+1}dx",
-    "action": "0"
+    "action": 9
   },
   {
     "integrand": "\\int_{0}^{1}\\frac{x}{2*x}*\\sqrt[2]{2*x}dx",
-    "action": "0"
+    "action": 10
   },
   {
     "integrand": "\\int_{0}^{1}\\sqrt[3]{x^2}+\\sqrt[3]{x+1}*\\frac{x+1}{2*x}dx",
-    "action": "0"
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}x+1+x+x+1*x+1+\\tan{x^2}dx",
-    "action": "0"
+    "action": 8
   },
   {
     "integrand": "\\int_{0}^{1}\\sqrt[2]{x}dx",
-    "action": "0"
+    "action": 9
   },
   {
     "integrand": "\\int_{0}^{1}{x}^{4}dx",

@@ -1,16 +1,17 @@
 # config.py
 
 ACTION_MAP = {
-    -1: 0,  # apply integral
-    0: 1,   # unknown
-    1: 2,   # equality
-    2: 3,   # expand
-    3: 4,   # factor
-    4: 5,   # power
-    5: 6,   # split
-    6: 7,   # substitution
-    7: 8,   # by parts
-    8: 9    # apply bounds
+
+    0: 0,  # apply integral
+    1: 1,   # liner basic
+    2: 2,   # khai triển 
+    3: 3,   # tích thành tổng 
+    4: 4,   # tổng thành tích 
+    5: 5,   # frac rule
+    6: 6,   # công thức đặc trưng
+    7: 7,   # đổi biến u = ax + b
+    8: 8,   # tích từng phần 
+
 }
 
 NUM_ACTIONS = len(ACTION_MAP)
