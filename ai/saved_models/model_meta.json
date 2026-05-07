@@ -1,18 +1,18 @@
 {
-  "best_model": "Random Forest",
-  "f1_macro_test": 0.5267501786139557,
+  "best_model": "SVM + SMOTE",
+  "f1_macro_test": 0.9582183644638832,
   "all_results": {
-    "SVM (balanced)": 0.4915,
-    "Random Forest": 0.5268,
-    "Gradient Boosting": 0.4147,
-    "SVM + SMOTE": 0.4457
+    "SVM (balanced)": 0.9469,
+    "Gradient Boosting": 0.9461,
+    "SVM + SMOTE": 0.9582
   },
-  "n_classes": 5,
+  "n_classes": 6,
   "classes": [
     0,
     1,
+    2,
     3,
-    7,
-    8
+    4,
+    5
   ]
 }

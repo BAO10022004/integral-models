@@ -230,7 +230,7 @@ def detect_const_times_func(body):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# NHÓM 3: Phát hiện nguyên hàm cơ bản 1 bước (action -1)
+# NHÓM 3: Phát hiện nguyên hàm cơ bản 1 bước (action 0)
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _trig_simple_inner(node):
@@ -240,7 +240,7 @@ def _trig_simple_inner(node):
 
 def detect_basic_antiderivative(body):
     """
-    Phát hiện biểu thức có thể tích phân trong đúng 1 bước (action = -1).
+    Phát hiện biểu thức có thể tích phân trong đúng 1 bước (action = 0).
 
     Các dạng cơ bản:
       - x^n  (n ≠ -1)   → dùng power rule
@@ -597,6 +597,132 @@ def detect_integration_by_parts(body):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# NHÓM 6: Phát hiện đổi biến u = ax+b  (action 7)
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Dấu hiệu đặc trưng: biểu thức đơn (root không phải ADD/SUB) mà hàm bọc
+# ngoài có inner là LINEAR (ax+b hoặc ax),  KHÔNG phải inner = x đơn.
+#
+# Phân biệt:
+#   - sin(2x)  → u-sub (inner = 2x, tuyến tính, ≠ x)
+#   - sin(x)   → basic antiderivative
+#   - sin(x²)  → u-sub phức tạp hơn (inner phi tuyến)
+#
+
+def _is_ax_plus_b(node):
+    """
+    Trả về True nếu node là biểu thức tuyến tính dạng ax+b / ax-b / ax / x+b
+    với a là hằng số ≠ 1 HOẶC b ≠ 0  (tức là inner KHÔNG thuần túy là x).
+    """
+    # ax  (a != 1) →  MUL(const, x)
+    if isinstance(node, MulExprNode):
+        if (isinstance(node.left, ConstExprNode) and isinstance(node.right, VarExprNode)) or \
+           (isinstance(node.right, ConstExprNode) and isinstance(node.left, VarExprNode)):
+            return True
+    # x + b  hoặc  x - b
+    if isinstance(node, (AddExprNode, SubExprNode)):
+        if isinstance(node.left, VarExprNode) and isinstance(node.right, ConstExprNode):
+            return True
+        if isinstance(node.right, VarExprNode) and isinstance(node.left, ConstExprNode):
+            return True
+        # ax + b
+        if isinstance(node.left, MulExprNode) and isinstance(node.right, ConstExprNode):
+            L = node.left
+            if (isinstance(L.left, ConstExprNode) and isinstance(L.right, VarExprNode)) or \
+               (isinstance(L.right, ConstExprNode) and isinstance(L.left, VarExprNode)):
+                return True
+    return False
+
+
+def _is_nonlinear_inner(node):
+    """
+    True nếu inner là phi tuyến (x^n, x^2, ...) – KHÔNG phải ax+b.
+    """
+    if isinstance(node, (MonoExprNode, PowerExprNode)):
+        return True
+    return False
+
+
+def detect_u_sub_linear(body):
+    """
+    Phát hiện dạng  f(ax+b)  –  đổi biến u = ax+b  (action 7).
+
+    Features:
+      ── tại root (biểu thức đơn) ──
+      - usub_root_trig_linear     : sin/cos/tan(ax+b)
+      - usub_root_sqrt_linear     : sqrt[n](ax+b)
+      - usub_root_power_linear    : (ax+b)^n
+      - usub_root_log_linear      : log(ax+b)
+      ── phân biệt inner ──
+      - usub_inner_is_linear      : inner tuyến tính (ax+b) tại bất kỳ node trig/sqrt
+      - usub_inner_is_nonlinear   : inner phi tuyến (x^n) tại bất kỳ node trig/sqrt
+      ── tổng hợp ──
+      - usub_linear_candidate     : 1 nếu là biểu thức đơn và inner là linear
+      - usub_is_pure_linear_form  : 1 nếu root KHÔNG phải ADD/SUB VÀ inner là ax+b
+    """
+    feats = {}
+
+    # ── Kiểm tra tại root ──
+    feats['usub_root_trig_linear'] = 0
+    if isinstance(body, (SinExprNode, CosExprNode, TanExprNode)):
+        inner = getattr(body, 'left', None)
+        if inner is not None and _is_ax_plus_b(inner):
+            feats['usub_root_trig_linear'] = 1
+
+    feats['usub_root_sqrt_linear'] = 0
+    if isinstance(body, SqrtExprNode):
+        inner = getattr(body, 'left', None)
+        if inner is not None and _is_ax_plus_b(inner):
+            feats['usub_root_sqrt_linear'] = 1
+
+    feats['usub_root_power_linear'] = 0
+    if isinstance(body, (MonoExprNode, PowerExprNode)):
+        inner = getattr(body, 'left', None)
+        if inner is not None and _is_ax_plus_b(inner):
+            feats['usub_root_power_linear'] = 1
+
+    feats['usub_root_log_linear'] = 0
+    if isinstance(body, LogExprNode):
+        inner = getattr(body, 'left', None)
+        if inner is not None and _is_ax_plus_b(inner):
+            feats['usub_root_log_linear'] = 1
+
+    # ── Phân biệt inner linear vs nonlinear trên toàn cây ──
+    def _scan(node, lin_found, nonlin_found):
+        if node is None:
+            return lin_found, nonlin_found
+        if isinstance(node, (SinExprNode, CosExprNode, TanExprNode, SqrtExprNode, LogExprNode)):
+            inner = getattr(node, 'left', None)
+            if inner is not None:
+                if _is_ax_plus_b(inner):
+                    lin_found = True
+                elif _is_nonlinear_inner(inner):
+                    nonlin_found = True
+        if hasattr(node, 'left') and node.left is not None:
+            lin_found, nonlin_found = _scan(node.left, lin_found, nonlin_found)
+        if hasattr(node, 'right') and node.right is not None:
+            lin_found, nonlin_found = _scan(node.right, lin_found, nonlin_found)
+        return lin_found, nonlin_found
+
+    lin, nonlin = _scan(body, False, False)
+    feats['usub_inner_is_linear']    = 1 if lin else 0
+    feats['usub_inner_is_nonlinear'] = 1 if nonlin else 0
+
+    # ── Tổng hợp: đây có phải candidate đổi biến u=ax+b không ──
+    root_is_add_sub = isinstance(body, (AddExprNode, SubExprNode))
+    any_linear_root = any([
+        feats['usub_root_trig_linear'],
+        feats['usub_root_sqrt_linear'],
+        feats['usub_root_power_linear'],
+        feats['usub_root_log_linear'],
+    ])
+    feats['usub_linear_candidate']   = 1 if (lin and not nonlin) else 0
+    feats['usub_is_pure_linear_form'] = 1 if (not root_is_add_sub and any_linear_root) else 0
+
+    return feats
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # HÀM CHÍNH
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -625,7 +751,7 @@ def extract_features(latex_str):
     feats["root_is_var"]   = 1 if isinstance(body, VarExprNode) else 0
     feats["root_is_const"] = 1 if isinstance(body, ConstExprNode) else 0
 
-    # ══ B. Has – sự hiện diện ══
+    # # ══ B. Has – sự hiện diện ══
     feats["has_trig"]  = 1 if (body.has_function(SinExprNode) or
                                 body.has_function(CosExprNode) or
                                 body.has_function(TanExprNode)) else 0
@@ -639,22 +765,22 @@ def extract_features(latex_str):
     feats["has_exp"]   = 1 if body.has_function(ExpExprNode) else 0
     feats["has_log"]   = 1 if body.has_function(LogExprNode) else 0
 
-    # ══ C. Count ══
-    feats["count_sin"]   = body.cont_function(SinExprNode)
-    feats["count_cos"]   = body.cont_function(CosExprNode)
-    feats["count_tan"]   = body.cont_function(TanExprNode)
-    feats["count_frac"]  = body.cont_function(FracExprNode)
-    feats["count_sqrt"]  = body.cont_function(SqrtExprNode)
-    feats["count_pow"]   = body.cont_function(PowerExprNode)
-    feats["count_mono"]  = body.cont_function(MonoExprNode)
-    feats["count_log"]   = body.cont_function(LogExprNode)
-    feats["count_exp"]   = body.cont_function(ExpExprNode)
-    feats["count_x"]     = body.cont_function(VarExprNode)
-    feats["count_const"] = body.cont_function(ConstExprNode)
+    # # ══ C. Count ══
+    # feats["count_sin"]   = body.cont_function(SinExprNode)
+    # feats["count_cos"]   = body.cont_function(CosExprNode)
+    # feats["count_tan"]   = body.cont_function(TanExprNode)
+    # feats["count_frac"]  = body.cont_function(FracExprNode)
+    # feats["count_sqrt"]  = body.cont_function(SqrtExprNode)
+    # feats["count_pow"]   = body.cont_function(PowerExprNode)
+    # feats["count_mono"]  = body.cont_function(MonoExprNode)
+    # feats["count_log"]   = body.cont_function(LogExprNode)
+    # feats["count_exp"]   = body.cont_function(ExpExprNode)
+    # feats["count_x"]     = body.cont_function(VarExprNode)
+    # feats["count_const"] = body.cont_function(ConstExprNode)
 
-    # ══ D. Tree structure ══
-    feats["tree_depth"] = get_depth(body)
-    feats["tree_nodes"] = count_nodes(body)
+    # # ══ D. Tree structure ══
+    # feats["tree_depth"] = get_depth(body)
+    # feats["tree_nodes"] = count_nodes(body)
 
     # ══ NHÓM 1: Root ADD / SUB ══
     feats.update(detect_root_add_sub(body))
@@ -678,9 +804,12 @@ def extract_features(latex_str):
             feats["root_mono_with_add_inner"] = 1
     feats["mono_with_add_inner"] = 1 if _has_mono_add_inner(body) else 0
 
-    # ══ G. U-substitution (action 3) ══
+    # ══ G. U-substitution (action 3 / 7) ══
     feats["trig_nontrivial_inner"] = 1 if _check_trig_nontrivial(body) else 0
     feats["sqrt_nontrivial_inner"] = 1 if _check_sqrt_nontrivial(body) else 0
+
+    # ══ NHÓM 6: U-sub u=ax+b (action 7) ══
+    feats.update(detect_u_sub_linear(body))
 
     # ══ H. Frac rule (action 4) ══
     feats["frac_linear_over_linear"] = 0
@@ -712,11 +841,11 @@ def extract_features(latex_str):
     feats["add_and_sqrt"]   = 1 if (feats["has_add"] and feats["has_sqrt"]) else 0
     feats["trig_and_sqrt"]  = 1 if (feats["has_trig"] and feats["has_sqrt"]) else 0
 
-    # ══ M. Complexity ══
-    feats["total_ops"] = (feats["count_add"] + feats["count_sub"] +
-                          feats["count_mul"] + feats["count_frac"] +
-                          feats["count_pow"] + feats["count_mono"] +
-                          feats["count_sqrt"])
-    feats["is_simple"] = 1 if feats["total_ops"] <= 1 and feats["tree_depth"] <= 2 else 0
+    # # ══ M. Complexity ══
+    # feats["total_ops"] = (feats["count_add"] + feats["count_sub"] +
+    #                       feats["count_mul"] + feats["count_frac"] +
+    #                       feats["count_pow"] + feats["count_mono"] +
+    #                       feats["count_sqrt"])
+    # feats["is_simple"] = 1 if feats["total_ops"] <= 1 and feats["tree_depth"] <= 2 else 0
 
     return feats

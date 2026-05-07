@@ -34,17 +34,14 @@ _MODEL_PATH = os.path.join(_MODEL_DIR, 'best_model.pkl')
 _META_PATH = os.path.join(_MODEL_DIR, 'model_meta.json')
 _DATASET_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'processed', 'integral_dataset.csv')
 
-# Ánh xạ ngược từ action id sang tên hành động
+# Ánh xạ ngược từ action id sang tên hành động — khớp với ACTION_MAP mới (0-5)
 ACTION_NAMES = {
-    0: "apply integral",
-    1: "unknown / gộp",
-    2: "equality",
-    3: "expand / u-sub",
-    4: "frac rule",
-    5: "power rule (unused)",
-    6: "trig rule",
-    7: "simplify",
-    8: "basic",
+    0: "apply integral",      # Áp dụng trực tiếp công thức tích phân
+    1: "linear basic",        # Tính tích phân tuyến tính cơ bản
+    2: "tích thành tổng",     # Biến tích thành tổng (old action 3)
+    3: "công thức đặc trưng", # Áp dụng công thức đặc trưng (old action 6)
+    4: "đổi biến u = ax + b", # Đổi biến đơn giản (old action 7)
+    5: "tích từng phần",      # Tích phân từng phần (old action 8)
 }
 
 
@@ -232,7 +229,13 @@ def evaluate_on_dataset(model, dataset_path=None, verbose=True):
     # Tính metrics
     acc = accuracy_score(y_true, y_pred)
     f1 = f1_score(y_true, y_pred, average='macro', zero_division=0)
-    report = classification_report(y_true, y_pred, zero_division=0)
+    # Dùng tên action từ ACTION_NAMES cho classification report
+    target_names = [ACTION_NAMES.get(i, f"action_{i}") for i in sorted(ACTION_NAMES.keys())]
+    report = classification_report(
+        y_true, y_pred,
+        target_names=target_names,
+        zero_division=0,
+    )
     cm = confusion_matrix(y_true, y_pred)
     
     if verbose:
@@ -297,7 +300,7 @@ def interactive_test(model):
                 for action, prob in sorted(result['probabilities'].items(), key=lambda x: -x[1]):
                     name = ACTION_NAMES.get(action, f"?{action}")
                     bar = '█' * int(prob * 30)
-                    print(f"      action={action:2d} ({name:15s}): {prob:.4f} {bar}")
+                    print(f"      action={action:2d} ({name:20s}): {prob:.4f} {bar}")
         else:
             print(f"  ❌ Không thể parse biểu thức!")
         print()
@@ -312,45 +315,52 @@ def interactive_test(model):
 def run_predefined_tests(model):
     """
     Chạy test với một số biểu thức mẫu cố định để kiểm tra nhanh.
+    Mỗi mẫu được gắn nhãn action kỳ vọng theo ACTION_MAP mới.
     """
     test_cases = [
-        # (biểu thức LaTeX, mô tả)
-        (r"\int_{0}^{1}{x}^{2}dx", "Đơn thức x^2 → power rule / basic"),
-        (r"\int_{0}^{1}\sin{x}dx", "sin(x) → trig / apply integral"),
-        (r"\int_{0}^{1}\cos{x}dx", "cos(x) → trig / apply integral"),
-        (r"\int_{0}^{1}{x}^{2}+\cos{x}dx", "x^2 + cos(x) → basic sum (linearity)"),
-        (r"\int_{0}^{1}3*{x}^{2}dx", "3*x^2 → const * mono"),
-        (r"\int_{0}^{1}\frac{1}{x}dx", "1/x → frac rule / apply integral"),
-        (r"\int_{0}^{1}xdx", "x → basic / apply integral"),
-        (r"\int_{0}^{1}5dx", "Hằng số 5 → basic / apply integral"),
-        (r"\int_{0}^{1}\sqrt[2]{x}dx", "sqrt(x) → sqrt rule"),
-        (r"\int_{0}^{1}{x}^{3}*\sin{x}dx", "x^3 * sin(x) → phức tạp"),
+        # (biểu thức LaTeX, mô tả, action kỳ vọng theo nhãn mới 0-5)
+        (r"\int_{0}^{1}{x}^{2}dx",              "x^2            → apply integral (0)",      0),
+        (r"\int_{0}^{1}3*{x}^{2}dx",            "3*x^2          → linear basic (1)",        1),
+        (r"\int_{0}^{1}\sin{x}*\cos{x}dx",      "sin*cos        → tích thành tổng (2)",    2),
+        (r"\int_{0}^{1}\sin{x}dx",              "sin(x)         → công thức đặc trưng (3)", 3),
+        (r"\int_{0}^{1}(2*{x}+1)^{3}dx",       "(2x+1)^3       → đổi biến u=ax+b (4)",    4),
+        (r"\int_{0}^{1}{x}*\sin{x}dx",         "x*sin(x)       → tích từng phần (5)",      5),
     ]
     
     print("\n" + "=" * 70)
     print("🧪 TEST VỚI CÁC MẪU CỐ ĐỊNH")
     print("=" * 70)
     
-    for i, (latex, description) in enumerate(test_cases, 1):
+    correct = 0
+    for i, (latex, description, expected) in enumerate(test_cases, 1):
         result = predict_action(model, latex)
+        pred = result['predicted_action']
+        
+        if pred is not None:
+            status = "✅" if pred == expected else "❌"
+            if pred == expected:
+                correct += 1
+        else:
+            status = "⚠️ "
         
         print(f"\n  [{i:2d}] {description}")
         print(f"       LaTeX: {latex}")
         
-        if result['predicted_action'] is not None:
-            print(f"       → Action: {result['predicted_action']} ({result['action_name']})")
+        if pred is not None:
+            print(f"       → Dự đoán : {pred} ({ACTION_NAMES.get(pred, '?')})  {status}")
+            print(f"       → Kỳ vọng : {expected} ({ACTION_NAMES.get(expected, '?')})")
             if result['probabilities']:
-                # Chỉ hiển thị top-3 xác suất
                 top3 = sorted(result['probabilities'].items(), key=lambda x: -x[1])[:3]
                 proba_str = ", ".join(
                     f"a{a}={p:.2f}" for a, p in top3
                 )
-                print(f"       → Top-3: {proba_str}")
+                print(f"       → Top-3   : {proba_str}")
         else:
             print(f"       → ❌ PARSE ERROR")
     
     print("\n" + "=" * 70)
-    print(f"✅ Đã test {len(test_cases)} mẫu.")
+    print(f"✅ Đúng: {correct}/{len(test_cases)} mẫu "
+          f"({correct/len(test_cases)*100:.1f}%)")
     print("=" * 70)
 
 

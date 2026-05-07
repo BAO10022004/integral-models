@@ -35,7 +35,6 @@ integrand,action
 \int_{4}^{2}2*\sin(x) + 3dx,1
 \int_{4}^{2}\frac{1}{x}dx,0
 \int_{4}^{2}\frac{x+1}{x}dx,3
-\int_{4}^{2}\frac{x+1}{x}dx,0
 \int_{4}^{2}\sin(x+1)dx,7
 \int_{4}^{2}\sin{x}dx,0
 \int_{4}^{2}\sqrt{x}dx,0
@@ -63,7 +62,6 @@ integrand,action
 \int_{0}^{1}\sqrt[2]{x+1}+{x+1}^{3}dx,1
 \int_{0}^{1}\frac{x+1}{x^2}dx,3
 \int_{0}^{1}\frac{x^2}{x^2}+\tan{x^2}*\cos{x^2}dx,1
-\int_{0}^{1}{x}^{4}dx,0
 \int_{0}^{1}\cos{2*x}dx,7
 \int_{0}^{1}\tan{x}dx,0
 \int_{0}^{1}\sin{2*x}dx,7
@@ -81,8 +79,6 @@ integrand,action
 \int_{0}^{1}{2*x}^{2}dx,6
 \int_{0}^{1}\cos{x}dx,0
 \int_{0}^{1}\sqrt[2]{2*x}dx,7
-\int_{0}^{1}{x}^{4}dx,0
-\int_{0}^{1}{x}^{3}dx,0
 \int_{0}^{1}\tan{x}dx,0
 \int_{0}^{1}\sqrt[2]{x+1}dx,7
 \int_{0}^{1}\sqrt[2]{x^2}dx,0
@@ -99,7 +95,6 @@ integrand,action
 \int_{0}^{1}\sqrt[3]{2*x}+\sqrt[2]{x}dx,1
 \int_{0}^{1}\frac{x+1}{x^2}+\sqrt[3]{x^2}dx,1
 \int_{0}^{1}\sin{x}dx,0
-\int_{0}^{1}{x}^{3}dx,0
 \int_{0}^{1}{x+1}^{3}dx,7
 \int_{0}^{1}\frac{x}{x+1}+\frac{x+1}{x}dx,1
 \int_{0}^{1}\frac{x+1}{x}dx,3
@@ -135,7 +130,6 @@ integrand,action
 \int_{0}^{1}\frac{2*x}{x+1}dx,3
 \int_{0}^{1}\sqrt[3]{x^2}dx,0
 \int_{0}^{1}{x^2}^{4}*\cos{x}dx,7
-\int_{0}^{1}{x}^{4}dx,0
 \int_{0}^{1}{2*x}^{2}dx,6
 \int_{0}^{1}{x+1}^{3}dx,7
 \int_{0}^{1}\sqrt[2]{x}dx,0
@@ -166,14 +160,12 @@ integrand,action
 \int_{0}^{1}{x+1}^{3}dx,7
 \int_{0}^{1}\frac{x+1}{x}dx,3
 \int_{0}^{1}{x+1}^{2}dx,6
-\int_{0}^{1}{x}^{3}dx,0
 \int_{0}^{1}P{\sin{x}}^{2}dx,6
 \int_{0}^{1}2*\sin{x}*\cos{2}dx,6
 \int_{0}^{1}\sqrt[2]{x+1}dx,7
 \int_{0}^{1}\cos{x}dx,0
 \int_{0}^{1}\sqrt[2]{x}dx,0
 \int_{0}^{1}\sin{2*x}dx,7
-\int_{0}^{1}{x}^{4}dx,0
 \int_{0}^{1}\sqrt[3]{x+1}dx,7
 \int_{0}^{1}{2*x}^{3}dx,6
 \int_{0}^{1}\frac{x+1}{x^2}dx,3
@@ -651,7 +643,6 @@ integrand,action
 \int_{2}^{3}\cos{x}dx,0
 \int_{2}^{4}1dx,0
 \int_{0}^{3}\frac{1}{{x}^{2}}dx,0
-\int_{0}^{1}{x}^{4}dx,0
 \int_{0}^{2}\sqrt[2]{x}dx,0
 \int_{1}^{3}\sin{x}dx,0
 \int_{2}^{3}{x}^{4}dx,0
@@ -948,3 +939,11 @@ integrand,action
 \int_{0}^{1}\sin{x}*\sin{2*x}dx,6
 \int_{0}^{1}\cos{x}*\cos{2*x}dx,6
 \int_{0}^{1}{x+7}^{2}dx,6
+\int_{0}^{1}\sin{3*x}dx,7
+\int_{0}^{1}\sin{2*x+1}dx,7
+\int_{0}^{1}\cos{3*x}dx,7
+\int_{0}^{1}\cos{2*x+1}dx,7
+\int_{0}^{1}\tan{3*x}dx,7
+\int_{0}^{1}\tan{2*x+1}dx,7
+\int_{0}^{1}\sqrt[2]{2*x+1}dx,7
+\int_{0}^{1}{2*x+1}^{3}dx,7

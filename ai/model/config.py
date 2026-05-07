@@ -1,18 +1,27 @@
 # config.py
 
+# Nhãn mới (sequential 0-5)
 ACTION_MAP = {
-
     0: 0,  # apply integral
-    1: 1,   # liner basic
-    2: 2,   # khai triển 
-    3: 3,   # tích thành tổng 
-    4: 4,   # tổng thành tích 
-    5: 5,   # frac rule
-    6: 6,   # công thức đặc trưng
-    7: 7,   # đổi biến u = ax + b
-    8: 8,   # tích từng phần 
-
+    1: 1,  # liner basic
+    2: 2,  # tích thành tổng
+    3: 3,  # công thức đặc trưng
+    4: 4,  # đổi biến u = ax + b
+    5: 5,  # tích từng phần
 }
+
+# Ánh xạ nhãn cũ → nhãn mới (dùng khi build dataset)
+LABEL_REMAP = {
+    0: 0,  # apply integral
+    1: 1,  # liner basic
+    3: 2,  # tích thành tổng   (old 3 → new 2)
+    6: 3,  # công thức đặc trưng (old 6 → new 3)
+    7: 4,  # đổi biến u=ax+b  (old 7 → new 4)
+    8: 5,  # tích từng phần   (old 8 → new 5)
+}
+
+# Các nhãn cũ được giữ lại (loại bỏ nhãn ngoài danh sách này)
+VALID_OLD_LABELS = set(LABEL_REMAP.keys())
 
 NUM_ACTIONS = len(ACTION_MAP)
 

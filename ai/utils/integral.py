@@ -1,10 +1,21 @@
 import re
 from ai.utils.printer import Printer
-from ai.utils.expr.value.expr_var import VarExprNode
-from ai.solver.rules.mono_rule import mono_rule
-from ai.utils.expr.Power.expr_mono import MonoExprNode
-from ai.solver.rules.const_rule import const_rule
-from ai.utils.expr.value.expr_const import ConstExprNode
+from ai.utils.expr.value.expr_var     import VarExprNode
+from ai.utils.expr.value.expr_const   import ConstExprNode
+from ai.utils.expr.Power.expr_mono    import MonoExprNode
+from ai.utils.expr.Power.expr_sqrt    import SqrtExprNode
+from ai.utils.expr.operation.expr_frac import FracExprNode
+from ai.utils.expr.operation.expr_add  import AddExprNode
+from ai.utils.expr.operation.expr_sub  import SubExprNode
+from ai.utils.expr.operation.expr_mul  import MulExprNode
+from ai.utils.expr.trig.expr_sin       import SinExprNode
+from ai.utils.expr.trig.expr_cos       import CosExprNode
+from ai.utils.expr.trig.expr_tan       import TanExprNode
+from ai.utils.expr.expr_log            import LogExprNode
+from ai.utils.expr.expr_exp            import ExpExprNode
+
+# Rules nguyên hàm cơ bản
+from ai.utils.antiderivative_rule.rule_linear import apply_basic_rule
 
 
 class Integral:
@@ -15,8 +26,9 @@ class Integral:
             self.right = None
             self.dee = None
             self.integrand = None
-            self.antiderivative =False
+            self.antiderivative = False
             self._parse_latex()
+
     def to_dict(self):
             return {
                 "lower": self.left,
@@ -25,10 +37,10 @@ class Integral:
                 "dee": self.dee,
                 "Antiderivative": self.antiderivative
             }
-    
+
     def _parse_latex(self):
             from ai.utils.parse import Parse
-            
+
             # Tìm cận bằng balanced brace matching thay vì regex non-greedy
             # để xử lý đúng \int_{0}^{\frac{\pi}{2}} etc.
             latex = self.latex
@@ -96,26 +108,29 @@ class Integral:
                 print(float(r) - float(l))
                 return float(r) - float(l)
     def antiderivative_action(self):
-        expr = self.integrand
-        value = self.can_antiderivative()
-        if value == 0:
-            return 
+        """
+        Chọn rule nguyên hàm phù hợp và áp dụng.
+        Dùng apply_basic_rule để xử lý toàn bộ các dạng cơ bản và tuyến tính.
+        """
+        expr   = self.integrand
+        result = apply_basic_rule(expr, self.dee)
+
+        # Nếu rule trả nguyên (fallback) → không tính được
+        if result is expr:
+            print(f"⚠️  Chưa có rule cho biểu thức: {type(expr).__name__}")
+            return
+
         self.antiderivative = True
-        if value == 1:
-            self.integrand = const_rule(expr, self.dee)
-        if value == 2:
-            self.integrand = var_rule(expr, self.dee)
-        if value == 3:
-            self.integrand = mono_rule(expr, self.dee)
-    
-    def can_antiderivative(self):
+        self.integrand = result
+
+    def can_antiderivative(self) -> bool:
+        """
+        Kiểm tra nhanh xem biểu thức có thể tính nguyên hàm bằng rule cơ bản.
+        """
         expr = self.integrand
-        if isinstance(expr, ConstExprNode):
-            return 1
-        if isinstance(expr , VarExprNode):
-            return 2
-        if isinstance(expr, MonoExprNode):
-            if isinstance(expr.left, VarExprNode) and isinstance(expr.right, ConstExprNode):
-                 return 3
-        
-        return 0
+        return isinstance(expr, (
+            ConstExprNode, VarExprNode, MonoExprNode, SqrtExprNode,
+            FracExprNode, AddExprNode, SubExprNode, MulExprNode,
+            SinExprNode, CosExprNode, TanExprNode,
+            LogExprNode, ExpExprNode,
+        ))
