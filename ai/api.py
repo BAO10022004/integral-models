@@ -20,17 +20,20 @@ CORS(app)  # Cho phép React gọi từ localhost:5173
 
 # ── Paths ──────────────────────────────────────────────────────────────────
 _DIR        = os.path.dirname(__file__)
-_MODEL_PATH = os.path.join(_DIR, "saved_models", "best_model.pkl")
-_META_PATH  = os.path.join(_DIR, "saved_models", "model_meta.json")
+_ROOT_DIR   = os.path.abspath(os.path.join(_DIR, ".."))  # integral_models/
+_MODEL_PATH = os.path.join(_ROOT_DIR, "saved_models", "best_model.pkl")
+_META_PATH  = os.path.join(_ROOT_DIR, "saved_models", "model_meta.json")
 
 # ── Load model một lần khi khởi động ──────────────────────────────────────
-print("🔄 Loading model...")
+print("🔄 Loading GNN model...")
 try:
-    MODEL = joblib.load(_MODEL_PATH)
-    print(f"✅ Model loaded: {_MODEL_PATH}")
+    from ai.model.predict_gnn import IntegralGNNPredictor
+    _GNN_MODEL_PATH = os.path.join(_ROOT_DIR, "saved_models", "best_gnn_model.pth")
+    MODEL = IntegralGNNPredictor(model_path=_GNN_MODEL_PATH)
+    print(f"✅ GNN Model loaded: {_GNN_MODEL_PATH}")
 except Exception as e:
     MODEL = None
-    print(f"❌ Không thể load model: {e}")
+    print(f"❌ Không thể load GNN model: {e}")
 
 # Load meta
 META = {}
@@ -213,30 +216,19 @@ def predict():
     if not latex:
         return jsonify({"error": "Biểu thức LaTeX không được rỗng"}), 400
 
-    # Extract features
-    import pandas as pd
-    feats = extract_features(latex)
-    if feats is None:
+    # Predict (Hỗ trợ tự động qua cả GNN hoặc Sklearn)
+    from ai.solver_engine.helpers import predict_action
+    pred, probs_dict = predict_action(MODEL, latex)
+
+    if pred == -1:
         return jsonify({
             "error": "Không thể parse biểu thức LaTeX",
             "latex": latex,
             "hint": "Hãy kiểm tra cú pháp: \\int_{a}^{b}f(x)dx"
         }), 422
 
-    # Predict
-    X = pd.DataFrame([feats])
-    pred = int(MODEL.predict(X)[0])
-
-    probabilities = {}
-    if hasattr(MODEL, "predict_proba"):
-        try:
-            proba = MODEL.predict_proba(X)[0]
-            classes = MODEL.classes_ if hasattr(MODEL, "classes_") else range(len(proba))
-            probabilities = {int(c): float(p) for c, p in zip(classes, proba)}
-        except Exception:
-            probabilities = {pred: 1.0}
-    else:
-        probabilities = {pred: 1.0}
+    # Chuyển đổi lại probs (từ % 0-100 về 0-1 để tương thích build_response)
+    probabilities = {int(k): float(v)/100.0 for k, v in probs_dict.items()}
 
     response = build_response(latex, pred, probabilities)
     return jsonify(response)

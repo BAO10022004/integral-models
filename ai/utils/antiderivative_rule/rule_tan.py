@@ -9,6 +9,7 @@ from ai.utils.expr.trig.expr_cos       import CosExprNode
 from ai.utils.expr.expr_log            import LogExprNode
 from ai.utils.expr.value.expr_const    import ConstExprNode
 from ai.utils.expr.operation.expr_mul  import MulExprNode
+from ai.utils.expr.value.expr_var      import VarExprNode
 
 
 def rule_tan(expr: TanExprNode, dee: str):
@@ -26,6 +27,8 @@ def rule_tan(expr: TanExprNode, dee: str):
     MulExprNode — (-1)·ln(cos(inner))
     """
     if not isinstance(expr, TanExprNode):
+        return expr
+    if not (isinstance(expr.left, VarExprNode) and expr.left.left == dee):
         return expr
 
     cos_node = CosExprNode(left=expr.left, var=dee)

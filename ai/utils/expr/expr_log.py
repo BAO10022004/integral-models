@@ -1,3 +1,4 @@
+import math
 from ai.utils.expr.expr_node import ExprNode
 
 
@@ -33,6 +34,14 @@ class LogExprNode(ExprNode):
         if isinstance(self, func_name) :
             return l+r+1
         return l + r
+    def calculate(self, var_values=None):
+        if self.left is None:
+            return None
+        left_value = self.left.calculate(var_values)
+        if left_value is None:
+            return None
+        return math.log(float(left_value))
+
     def simplify(self):
         if self.left is None:
             return self

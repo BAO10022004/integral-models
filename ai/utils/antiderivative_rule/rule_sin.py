@@ -8,6 +8,7 @@ from ai.utils.expr.trig.expr_sin       import SinExprNode
 from ai.utils.expr.trig.expr_cos       import CosExprNode
 from ai.utils.expr.value.expr_const    import ConstExprNode
 from ai.utils.expr.operation.expr_mul  import MulExprNode
+from ai.utils.expr.value.expr_var      import VarExprNode
 
 
 def rule_sin(expr: SinExprNode, dee: str):
@@ -25,6 +26,8 @@ def rule_sin(expr: SinExprNode, dee: str):
     MulExprNode — (-1)·cos(inner)
     """
     if not isinstance(expr, SinExprNode):
+        return expr
+    if not (isinstance(expr.left, VarExprNode) and expr.left.left == dee):
         return expr
 
     cos_node = CosExprNode(left=expr.left, var=dee)

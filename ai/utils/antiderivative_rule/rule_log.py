@@ -31,6 +31,8 @@ def rule_log(expr: LogExprNode, dee: str):
     """
     if not isinstance(expr, LogExprNode):
         return expr
+    if not (isinstance(expr.left, VarExprNode) and expr.left.left == dee):
+        return expr
 
     var_node = VarExprNode(left=dee, var=dee)
     log_node = LogExprNode(left=expr.left, var=dee)

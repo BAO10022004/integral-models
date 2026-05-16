@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import ModelTester from "./pages/ModelTester.jsx";
 import Navbar from "./components/layout/Navbar.jsx";
 import Integral3D from "./components/ui/Integral3D.jsx";
+import SolutionPage from "./pages/SolutionPage.jsx";
 const C = {
   bg: "#030303",
   card: "#0f0f0f",
@@ -763,10 +764,17 @@ function SolverFloatBtn({ onClick }) {
 
 /* ─── APP ─────────────────────────────────────────── */
 export default function App() {
-  const [page, setPage] = useState("home"); // "home" | "tester"
+  const [page, setPage] = useState("home"); // "home" | "tester" | "solution"
+  const [solutionData, setSolutionData] = useState(null);
 
   function scrollToSolver() {
     document.getElementById("integral-solver")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function openSolution(data) {
+    setSolutionData(data);
+    setPage("solution");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
@@ -809,7 +817,9 @@ export default function App() {
         }}>🔍 Model Tester</button>
       </div>
 
-      {page === "home" ? (
+      {page === "solution" ? (
+        <SolutionPage data={solutionData} onBack={() => setPage("home")} />
+      ) : page === "home" ? (
         <>
           <Navbar onOpenSolver={scrollToSolver} />
           <Integral3D />
@@ -817,7 +827,7 @@ export default function App() {
           <Stats />
           <Features />
           <Process />
-          <IntegralSolverSection />
+          <IntegralSolverSection onViewSolution={openSolution} />
           <Testimonials />
           <FAQ />
           <CTA onOpenSolver={() => setPage("tester")} />

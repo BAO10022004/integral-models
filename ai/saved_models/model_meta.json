@@ -1,10 +1,10 @@
 {
-  "best_model": "SVM + SMOTE",
-  "f1_macro_test": 0.9582183644638832,
+  "best_model": "Gradient Boosting",
+  "f1_macro_test": 0.8414621939012182,
   "all_results": {
-    "SVM (balanced)": 0.9469,
-    "Gradient Boosting": 0.9461,
-    "SVM + SMOTE": 0.9582
+    "SVM (balanced)": 0.8373,
+    "Gradient Boosting": 0.8415,
+    "SVM + SMOTE": 0.8209
   },
   "n_classes": 6,
   "classes": [

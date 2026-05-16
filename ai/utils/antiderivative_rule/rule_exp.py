@@ -28,6 +28,8 @@ def rule_exp(expr: ExpExprNode, dee: str):
     """
     if not isinstance(expr, ExpExprNode):
         return expr
+    if not (isinstance(expr.left, VarExprNode) and expr.left.left == dee):
+        return expr
 
     # Nguyên hàm của e^x là chính nó
     return ExpExprNode(left=expr.left, var=dee)

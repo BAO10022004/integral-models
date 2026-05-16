@@ -37,6 +37,8 @@ def rule_sqrt(expr: SqrtExprNode, dee: str):
     """
     if not isinstance(expr, SqrtExprNode):
         return expr
+    if not (isinstance(expr.left, VarExprNode) and expr.left.left == dee):
+        return expr
     if expr.right is None or not isinstance(expr.right, ConstExprNode):
         return expr
 

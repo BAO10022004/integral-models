@@ -21,6 +21,7 @@ from ai.utils.expr.trig.expr_cos        import CosExprNode
 from ai.utils.expr.trig.expr_tan        import TanExprNode
 from ai.utils.expr.expr_log             import LogExprNode
 from ai.utils.expr.expr_exp             import ExpExprNode
+from ai.utils.expr.value.expr_pi        import PiExprNode
 
 
 def expr_to_latex(expr: ExprNode, dee: str = "x") -> str:
@@ -48,6 +49,9 @@ def expr_to_latex(expr: ExprNode, dee: str = "x") -> str:
             return str(int(v))
         # Làm tròn hợp lý để tránh float noise
         return str(round(float(v), 8)).rstrip("0").rstrip(".")
+
+    if isinstance(e, PiExprNode):
+        return r"\pi"
 
     if isinstance(e, VarExprNode):
         return dee

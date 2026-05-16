@@ -26,6 +26,8 @@ def rule_const(expr: ConstExprNode, dee: str):
     -------
     ExprNode — node biểu diễn c·x
     """
+    if not isinstance(expr, ConstExprNode):
+        return expr
     c = expr.left
     var_node = VarExprNode(left=dee, var=dee)
 

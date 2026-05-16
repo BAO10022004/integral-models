@@ -1,5 +1,6 @@
 from ai.utils.expr.value.expr_const import ConstExprNode
 from ai.utils.expr.value.expr_var import VarExprNode
+from ai.utils.expr.value.expr_pi import PiExprNode
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -44,6 +45,9 @@ class Printer:
         if isinstance(expr, ConstExprNode):
             v = expr.left
             return str(int(v)) if isinstance(v, float) and v == int(v) else str(v)
+
+        if isinstance(expr, PiExprNode):
+            return "\u03c0"
 
         if isinstance(expr, VarExprNode):
             return str(expr.left)
@@ -116,6 +120,10 @@ class Printer:
 
         if isinstance(expr, VarExprNode):
             print(f"{indent}{GRAY}{connector}{RESET}{GREEN}{expr.left}{RESET}")
+            return
+
+        if isinstance(expr, PiExprNode):
+            print(f"{indent}{GRAY}{connector}{RESET}{YELLOW}π{RESET}")
             return
 
         from ai.utils.integral import Integral

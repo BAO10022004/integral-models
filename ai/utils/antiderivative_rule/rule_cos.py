@@ -6,6 +6,7 @@ rule_cos.py
 
 from ai.utils.expr.trig.expr_cos   import CosExprNode
 from ai.utils.expr.trig.expr_sin   import SinExprNode
+from ai.utils.expr.value.expr_var  import VarExprNode
 
 
 def rule_cos(expr: CosExprNode, dee: str):
@@ -23,6 +24,8 @@ def rule_cos(expr: CosExprNode, dee: str):
     SinExprNode — sin(inner)
     """
     if not isinstance(expr, CosExprNode):
+        return expr
+    if not (isinstance(expr.left, VarExprNode) and expr.left.left == dee):
         return expr
 
     return SinExprNode(left=expr.left, var=dee)

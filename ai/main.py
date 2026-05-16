@@ -1,6 +1,5 @@
 from solver.rules.const_rule import const_rule
 from solver.rules.mono_rule import mono_rule
-from utils.action_data import ActionData
 from utils.expr.operation.expr_add import AddExprNode
 from utils.expr.operation.expr_mul import MulExprNode
 from utils.expr.operation.expr_sub import SubExprNode
@@ -24,12 +23,3 @@ if __name__ == "__main__":
     for m in message:
         print(m)
         Printer.print(I.integrand)
-
-    # # I.integrand = EqualityRule.apply(I.integrand)
-    # Step = MulExprNode(left=ConstExprNode(left=1), right=I)
-    # # Step.right = IntegralRuleBase.apply(Step.right)
-    # Printer.print(Step)
-    # # print(Step.calculate())
-
-    # action = ActionData(integral=latex)
-    # action.save()

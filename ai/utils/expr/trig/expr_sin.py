@@ -1,3 +1,4 @@
+import math
 from ai.utils.expr.expr_node import ExprNode
 
 
@@ -12,6 +13,13 @@ class SinExprNode(ExprNode):
         return self.left._equals(e.left)
     def is_leaf(self):
         return False
+    def calculate(self, var_values=None):
+        if self.left is None:
+            return None
+        left_value = self.left.calculate(var_values)
+        if left_value is None:
+            return None
+        return math.sin(float(left_value))
     def simplify(self):
         return self
     def has_function(self, func_name):

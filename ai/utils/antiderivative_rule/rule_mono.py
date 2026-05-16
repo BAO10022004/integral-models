@@ -36,6 +36,8 @@ def rule_mono(expr: MonoExprNode, dee: str):
     """
     if not isinstance(expr, MonoExprNode):
         return expr
+    if not (isinstance(expr.left, VarExprNode) and expr.left.left == dee):
+        return expr
     if expr.right is None or not isinstance(expr.right, ConstExprNode):
         return expr  # mũ không phải hằng số → không xử lý
 

@@ -24,6 +24,8 @@ def rule_var(expr: VarExprNode, dee: str):
     -------
     MulExprNode — (1/2)·x²
     """
+    if not isinstance(expr, VarExprNode) or expr.left != dee:
+        return expr
     var_node  = VarExprNode(left=dee, var=dee)
     mono_node = MonoExprNode(
         left  = var_node,

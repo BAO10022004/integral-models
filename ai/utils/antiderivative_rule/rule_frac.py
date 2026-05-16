@@ -41,7 +41,7 @@ def rule_frac(expr: FracExprNode, dee: str):
     numer = expr.left
 
     # Chỉ xử lý mẫu là biến đơn
-    if not isinstance(denom, VarExprNode):
+    if not isinstance(denom, VarExprNode) or denom.left != dee:
         return expr
 
     log_node = LogExprNode(

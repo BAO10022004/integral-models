@@ -14,8 +14,11 @@ from ai.utils.expr.value.expr_var import VarExprNode
 from ai.utils.expr.operation.expr_frac import FracExprNode
 from ai.utils.expr.expr_log import LogExprNode
 from ai.utils.expr.expr_exp import ExpExprNode
+from ai.utils.expr.value.expr_pi import PiExprNode
 
 class Parse :
+
+    
     @staticmethod
     def split_top(expr, op):
         depth = 0
@@ -29,7 +32,6 @@ class Parse :
         return None
     @staticmethod
     def strip_outer_brackets(latex: str) -> str:
-        """Bóc cặp ngoặc ngoài cùng nếu chúng bọc toàn bộ biểu thức."""
         while True:
             if (latex.startswith('(') and latex.endswith(')')) or \
             (latex.startswith('{') and latex.endswith('}')):
@@ -87,8 +89,8 @@ class Parse :
             return ConstExprNode(left=math.e)
         
         # Hằng số pi
-        if latex in ('\\pi', 'pi'):
-            return ConstExprNode(left=math.pi)
+        if latex in ('\\pi', 'pi', 'π'):
+            return PiExprNode()
         
         # Số
         try:
@@ -241,7 +243,6 @@ class Parse :
             right=exp,
             var=var
         )
-
     @staticmethod
     def parse_exp(latex, dee, var):
         """Parse e^{...} → ExpExprNode."""
@@ -252,7 +253,6 @@ class Parse :
             left=Parse.parse_latex(exp_match.group(1), dee),
             var=var
         )
-
     @staticmethod
     def parse_ln(latex, dee, var):
         """Parse \ln{...} → LogExprNode."""

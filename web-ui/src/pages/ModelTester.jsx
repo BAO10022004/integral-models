@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import SolutionPage from "./SolutionPage";
 
 const API = "http://localhost:5000";
 
@@ -100,6 +101,7 @@ export default function ModelTester() {
   const [latex, setLatex] = useState("");
   const [result, setResult] = useState(null);
   const [solveResult, setSolveResult] = useState(null);
+  const [showSolution, setShowSolution] = useState(false);
   const [mode, setMode] = useState("predict"); // "predict" | "solve"
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -140,6 +142,7 @@ export default function ModelTester() {
       } else {
         setSolveResult(data);
         setHistory(h => [{ latex, action: data.success ? "✓" : "✗", name: `= ${data.answer ?? "?"}`, id: Date.now() }, ...h].slice(0, 8));
+        if (data.success) setShowSolution(true);
       }
     } catch (e) {
       setError(e.message.includes("fetch") ? "Không kết nối được API. Hãy chạy: python -m ai.api" : e.message);
@@ -149,6 +152,29 @@ export default function ModelTester() {
 
   const predict = () => { setMode("predict"); callApi("predict"); };
   const solveIntegral = () => { setMode("solve"); callApi("solve"); };
+
+  /* ── Map solveResult → SolutionPage data prop ── */
+  const solutionData = solveResult ? {
+    expr:           solveResult.expr         ?? latex,
+    lo:             solveResult.lo            ?? "",
+    hi:             solveResult.hi            ?? "",
+    dv:             solveResult.dv            ?? "x",
+    result:         solveResult.result        ?? solveResult.answer ?? "?",
+    definite_value: solveResult.definite_value ?? solveResult.answer ?? null,
+    steps:          (solveResult.steps ?? []).map(s =>
+      typeof s === "string" ? s : `${s.description ?? ""}${ s.formula ? ": " + s.formula : "" }`
+    ),
+  } : null;
+
+  /* ── Khi đang xem lời giải, chiếm toàn màn hình ── */
+  if (showSolution && solutionData) {
+    return (
+      <SolutionPage
+        data={solutionData}
+        onBack={() => setShowSolution(false)}
+      />
+    );
+  }
 
   return (
     <div style={{
@@ -469,31 +495,50 @@ export default function ModelTester() {
               </div>
             )}
 
-            {/* ── Solve result panel ── */}
-            {solveResult && !loading && (
+            {/* ── Solve result summary (khi giải thất bại hoặc trước khi mở SolutionPage) ── */}
+            {solveResult && !loading && !solveResult.success && (
               <div style={{ display:"flex", flexDirection:"column", gap:14, animation:"fadeSlide .4s ease-out" }}>
-                {/* Answer card */}
                 <div style={{
-                  background: solveResult.success ? "rgba(0,255,136,0.06)" : "rgba(255,77,77,0.06)",
-                  border: `1px solid ${solveResult.success ? "#00ff8844" : "#ff4d4d44"}`,
+                  background:"rgba(255,77,77,0.06)",
+                  border:"1px solid #ff4d4d44",
                   borderRadius:24, padding:24,
                 }}>
                   <div style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"#888", textTransform:"uppercase", marginBottom:12 }}>Kết Quả Giải</div>
-                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:"#666", marginBottom:12, wordBreak:"break-all" }}>{solveResult.latex}</div>
-                  {solveResult.success
-                    ? <div style={{ fontSize:32, fontWeight:800, color:"#00ff88", fontFamily:"'JetBrains Mono',monospace" }}>= {solveResult.answer}</div>
-                    : <div style={{ fontSize:14, color:"#ff6b6b" }}>❌ {solveResult.error || "Không tính được"}</div>
-                  }
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:"#666", marginBottom:12, wordBreak:"break-all" }}>{solveResult.latex ?? latex}</div>
+                  <div style={{ fontSize:14, color:"#ff6b6b" }}>❌ {solveResult.error || "Không tính được"}</div>
                 </div>
-                {/* Step-by-step */}
-                {solveResult.steps?.length > 0 && (
-                  <div style={{ background:"rgba(255,255,255,0.02)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:20, padding:20 }}>
-                    <div style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"#888", textTransform:"uppercase", marginBottom:14 }}>Các Bước Giải ({solveResult.steps.length})</div>
-                    <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                      {solveResult.steps.map((s, i) => <SolveStepCard key={i} step={s} index={i} />)}
-                    </div>
-                  </div>
-                )}
+              </div>
+            )}
+
+            {/* ── Nút xem lời giải chi tiết (khi solve thành công) ── */}
+            {solveResult && !loading && solveResult.success && (
+              <div style={{ animation:"fadeSlide .4s ease-out" }}>
+                <div style={{
+                  background:"rgba(0,255,136,0.06)",
+                  border:"1px solid #00ff8844",
+                  borderRadius:24, padding:24, marginBottom:14,
+                }}>
+                  <div style={{ fontSize:11, fontWeight:800, letterSpacing:".12em", color:"#888", textTransform:"uppercase", marginBottom:12 }}>Kết Quả Giải</div>
+                  <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:"#666", marginBottom:12, wordBreak:"break-all" }}>{solveResult.latex ?? latex}</div>
+                  <div style={{ fontSize:32, fontWeight:800, color:"#00ff88", fontFamily:"'JetBrains Mono',monospace" }}>= {solveResult.answer ?? solveResult.result}</div>
+                </div>
+                <button
+                  onClick={() => setShowSolution(true)}
+                  style={{
+                    width:"100%", padding:"14px 0",
+                    background:"linear-gradient(135deg,#FFE41F,#ff9f00)",
+                    border:"none", borderRadius:16,
+                    color:"#000", fontSize:14, fontWeight:800,
+                    cursor:"pointer", fontFamily:"'Outfit',sans-serif",
+                    display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+                    boxShadow:"0 0 24px #FFE41F44",
+                    transition:"all .3s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 0 36px #FFE41F88"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 0 24px #FFE41F44"; }}
+                >
+                  📖 Xem Lời Giải Chi Tiết
+                </button>
               </div>
             )}
           </div>

@@ -1,24 +1,3 @@
-"""
-rule_usub.py
-------------
-Đổi biến u = ax + b  (U-Substitution với inner tuyến tính).
-
-Công thức tổng quát:
-    ∫ f(ax+b) dx  =  (1/a) · F(ax+b) + C
-
-Trong đó F là nguyên hàm của f tính với u.
-
-Các dạng được hỗ trợ:
-    ∫ sin(ax+b) dx  =  (-1/a) · cos(ax+b)
-    ∫ cos(ax+b) dx  =  (1/a)  · sin(ax+b)
-    ∫ tan(ax+b) dx  =  (-1/a) · ln|cos(ax+b)|
-    ∫ (ax+b)^n dx   =  (1/a)  · (ax+b)^(n+1)/(n+1)
-    ∫ e^(ax+b) dx   =  (1/a)  · e^(ax+b)
-    ∫ sqrt[n](ax+b) dx = (1/a) · (n/(n+1)) · (ax+b)^((n+1)/n)
-    ∫ ln(ax+b) dx   =  (1/a)  · [(ax+b)·ln(ax+b) − (ax+b)]
-    ∫ 1/(ax+b) dx   =  (1/a)  · ln|ax+b|
-"""
-
 import math
 
 from ai.utils.expr.expr_node            import ExprNode
