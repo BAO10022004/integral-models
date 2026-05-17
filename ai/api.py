@@ -16,7 +16,7 @@ from ai.model.feature_extractor import extract_features
 import pandas as pd
 
 app = Flask(__name__)
-CORS(app)  # Cho phép React gọi từ localhost:5173
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # ── Paths ──────────────────────────────────────────────────────────────────
 _DIR        = os.path.dirname(__file__)

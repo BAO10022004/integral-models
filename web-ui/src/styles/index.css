@@ -1,3 +1,4 @@
+@import './fonts.css';
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
 @import 'katex/dist/katex.min.css';
 
@@ -40,16 +41,24 @@ body {
   height: 100%;
   z-index: -1;
   background: radial-gradient(circle at 20% 30%, var(--secondary-glow) 0%, transparent 40%),
-              radial-gradient(circle at 80% 70%, var(--primary-glow) 0%, transparent 40%),
-              black;
+    radial-gradient(circle at 80% 70%, var(--primary-glow) 0%, transparent 40%),
+    black;
   filter: blur(60px);
   animation: bg-move 20s infinite alternate ease-in-out;
 }
 
 @keyframes bg-move {
-  0% { transform: scale(1) translate(0, 0); }
-  50% { transform: scale(1.2) translate(5%, 5%); }
-  100% { transform: scale(1) translate(-5%, -2%); }
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+
+  50% {
+    transform: scale(1.2) translate(5%, 5%);
+  }
+
+  100% {
+    transform: scale(1) translate(-5%, -2%);
+  }
 }
 
 /* Glassmorphism Classes */
@@ -70,12 +79,10 @@ body {
   left: -100%;
   width: 200%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--glass-shine),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      var(--glass-shine),
+      transparent);
   transition: 0.5s;
   pointer-events: none;
 }
@@ -194,8 +201,15 @@ p {
 }
 
 @keyframes floating {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* Scrollbar */
@@ -244,8 +258,13 @@ p {
 }
 
 @keyframes orb-float {
-  from { transform: translate(0, 0); }
-  to { transform: translate(10%, 15%); }
+  from {
+    transform: translate(0, 0);
+  }
+
+  to {
+    transform: translate(10%, 15%);
+  }
 }
 
 .header-section {
@@ -308,7 +327,8 @@ p {
   transition: 0.3s;
 }
 
-.bound-field:hover, .bound-field:focus {
+.bound-field:hover,
+.bound-field:focus {
   background: rgba(0, 242, 255, 0.1);
   border-color: var(--primary);
   box-shadow: 0 0 15px var(--primary-glow);
@@ -510,7 +530,7 @@ p {
 }
 
 .math-display {
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   padding: 2rem;
   border-radius: 16px;
   margin-bottom: 2rem;
@@ -528,7 +548,7 @@ p {
   gap: 1.5rem;
   margin-bottom: 1rem;
   padding: 1rem;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
 }
 
@@ -572,7 +592,7 @@ p {
 
 .history-item {
   padding: 12px;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
@@ -582,7 +602,7 @@ p {
 }
 
 .history-item:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   transform: translateX(5px);
 }
 
@@ -630,14 +650,16 @@ p {
 .spinner {
   width: 20px;
   height: 20px;
-  border: 3px solid rgba(255,255,255,0.3);
+  border: 3px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 footer {
@@ -650,7 +672,10 @@ footer {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-  h1 { font-size: 2.5rem; }
+
+  h1 {
+    font-size: 2.5rem;
+  }
 }
 
 /* Auth Styles */

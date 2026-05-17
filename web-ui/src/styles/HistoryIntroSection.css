@@ -1,0 +1,160 @@
+/* ================= SECTION 2: INTRODUCTION SPLIT ================= */
+.history-intro-section {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  scroll-snap-align: start;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #D1CAB1;
+  color: #1c1a17;
+}
+
+.intro-split-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  height: 80%;
+  margin: 0 auto;
+  padding: 0 40px;
+  gap: 60px;
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 6;
+}
+
+.intro-left-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.intro-label {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #8c7f68; /* Elegant bronze-beige tone */
+  margin-bottom: 16px;
+  display: inline-block;
+  position: relative;
+}
+
+.intro-label::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: #8c7f68;
+  margin-top: 8px;
+}
+
+.intro-headline {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #1c1a17;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
+}
+
+.intro-text {
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  color: rgba(28, 26, 23, 0.75);
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+
+.intro-right-col {
+  flex: 1.1;
+  height: 100%;
+  max-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intro-img-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 6px solid #fff; /* Elegant gallery frame look */
+  background: #fff;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+}
+
+.intro-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 968px) {
+  .history-intro-section {
+    aspect-ratio: unset;
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .intro-split-container {
+    flex-direction: column;
+    gap: 24px;
+    height: auto;
+    padding: 80px 24px 40px; /* added extra padding at top for the torn paper */
+    align-items: stretch;
+  }
+
+  .intro-left-col {
+    flex: none;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .intro-label::after {
+    margin: 8px auto 0;
+  }
+
+  .intro-headline {
+    font-size: 24px;
+    letter-spacing: -0.5px;
+  }
+
+  .intro-text {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .intro-right-col {
+    flex: none;
+    width: 100%;
+    max-height: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .intro-img-frame {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    height: auto;
+    border-radius: 16px;
+  }
+
+  .intro-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}

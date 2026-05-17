@@ -95,13 +95,6 @@ class SolverEngine(ActionsMixin):
         int_s  = integral_str(integral)
         action, probs = predict_action(self.model, integral.latex)
 
-        if action == -1:
-            steps.append(make_step("fallback", depth,
-                action=action,
-                description="Không predict được — thử áp dụng công thức trực tiếp",
-                integral_str=int_s, probabilities=probs))
-            return self._apply_direct(integral, steps, depth)
-
         steps.append(make_step("predict", depth,
             action=action,
             description=action_desc(action),

@@ -1,0 +1,410 @@
+/* ================= SECTION 3: DRAGGABLE TIMELINE CAROUSEL ================= */
+.history-timeline-section {
+  background-image: linear-gradient(rgba(10, 11, 22, 0.95), rgba(10, 11, 22, 0.95)), url('../assets/history.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Parallax ảnh chìm background effect */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  scroll-snap-align: start;
+}
+
+.timeline-scroll-hint {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px 24px;
+  border-radius: 100px;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+  animation: hintBreathe 2.5s infinite ease-in-out;
+}
+
+@keyframes hintBreathe {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateX(-50%) scale(0.98);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateX(-50%) scale(1.02);
+  }
+}
+
+.timeline-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory; /* Snaps perfectly to each slide */
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  z-index: 2;
+  cursor: grab;
+  user-select: none;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Hide default scrollbar */
+}
+
+.timeline-scroll-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in Safari/Chrome */
+}
+
+.timeline-scroll-container:active {
+  cursor: grabbing;
+}
+
+.timeline-card-item {
+  flex: 0 0 100%; /* Each milestone card takes exactly 100% of the viewport width */
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0 8%;
+  position: relative;
+}
+
+.timeline-slide-layout {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr; /* Right column is expanded to 55% to prevent title wrapping */
+  gap: 6vw; /* Reduced gap slightly to maximize horizontal space */
+  width: 100%;
+  max-width: 1200px;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Left Column: Image (layered on top of line) */
+.timeline-image-col {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  z-index: 2; /* Sits above the absolute line */
+}
+
+.timeline-image-frame {
+  width: 100%;
+  max-width: 580px;
+  aspect-ratio: 16 / 10;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0a0b16; /* Opaque solid dark background to fully cover the line behind it */
+  box-shadow: 
+    0 30px 70px rgba(0, 0, 0, 0.5), 
+    0 0 40px rgba(0, 242, 255, 0.03), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s ease;
+}
+
+.timeline-image-el {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timeline-card-item:hover .timeline-image-frame {
+  transform: scale(1.02) translateX(-5px);
+  box-shadow: 
+    0 40px 90px rgba(0, 0, 0, 0.6), 
+    0 0 50px rgba(0, 242, 255, 0.06), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.timeline-card-item:hover .timeline-image-el {
+  transform: scale(1.04);
+}
+
+/* Right Column: Year / Line / Title & Desc */
+.timeline-content-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 380px; /* Space out elements above & below the center line */
+}
+
+/* Above the line: Year styling */
+.timeline-year-above {
+  margin-bottom: 10px;
+  margin-top: 30px;
+  /* Moved year closer and tighter to the dividing line */
+}
+
+.timeline-glowing-year {
+  font-size: clamp(3.5rem, 5.5vw, 5.5rem);
+  font-weight: 900;
+  color: #00f2ff;
+  text-shadow: 0 0 25px rgba(0, 242, 255, 0.3);
+  letter-spacing: -2px;
+  line-height: 1;
+  display: inline-block;
+}
+
+/* Horizontal dividing line absolute positioned exactly at vertical center of card */
+.timeline-divide-line {
+  position: absolute;
+  left: 45%; /* Starts at the dot if there's no previous event */
+  right: 55%; /* Ends at the dot if there's no next event */
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2px;
+  background: linear-gradient(90deg, #00f2ff 0%, rgba(255, 255, 255, 0.06) 100%);
+  z-index: 1; /* Sits underneath the image column */
+}
+
+/* If there is a previous event, stretch the line to the left edge of the slide */
+.timeline-divide-line.extend-left {
+  left: 0;
+}
+
+/* If there is a next event, stretch the line to the right edge of the slide */
+.timeline-divide-line.extend-right {
+  right: 0;
+}
+
+/* Extend line infinitely off-screen to the left if there's a past event */
+.timeline-divide-line.extend-left::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 0;
+  height: 100%;
+  width: 100vw; /* cover entire viewport width */
+  background: linear-gradient(90deg, rgba(0, 242, 255, 0) 0%, rgba(0, 242, 255, 0.4) 30%, #00f2ff 100%);
+  border-bottom: 2px dashed rgba(0, 242, 255, 0.25);
+}
+
+/* Extend line infinitely off-screen to the right if there's a future event */
+.timeline-divide-line.extend-right::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 0;
+  height: 100%;
+  width: 100vw; /* cover entire viewport width */
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 70%, rgba(255, 255, 255, 0) 100%);
+  border-bottom: 2px dashed rgba(255, 255, 255, 0.15);
+}
+
+/* Position the node dot mathematically centered in the column gap */
+.timeline-divide-dot {
+  position: absolute;
+  left: 45%; /* Shifted left to match the new 45% gap center coordinate */
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 12px #00f2ff, 0 0 25px #00f2ff;
+  border: 2.5px solid #00f2ff;
+  transition: transform 0.4s ease;
+  z-index: 3; /* Sits on top of the dividing line */
+}
+
+.timeline-card-item:hover .timeline-divide-dot {
+  transform: translate(-50%, -50%) scale(1.3);
+  background: #00f2ff;
+  box-shadow: 0 0 20px #00f2ff, 0 0 40px #00f2ff;
+}
+
+/* Below the line: Title & description */
+.timeline-details-below {
+  width: 100%;
+  margin-top: 100px; /* Space below center line */
+}
+
+.timeline-details-title {
+  font-size: clamp(2.2rem, 3.5vw, 3.2rem); /* Significantly enlarged for a bold editorial layout */
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 18px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.timeline-details-desc {
+  font-size: clamp(1rem, 1.3vw, 1.15rem); /* Slightly enlarged for matching readability */
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.75;
+  max-width: 650px; /* Expanded space boundary for details text */
+}
+
+/* Responsive adjustments */
+@media (max-width: 968px) {
+  .history-timeline-section {
+    aspect-ratio: unset;
+    height: auto;
+    min-height: 100svh;
+    padding: 60px 20px;
+  }
+
+  .timeline-scroll-container {
+    overflow-x: visible;
+    scroll-snap-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    height: auto;
+    cursor: default;
+  }
+
+  .timeline-card-item {
+    flex: none;
+    width: 100%;
+    height: auto;
+    padding: 0;
+  }
+
+  .timeline-slide-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .timeline-image-col {
+    justify-content: center;
+  }
+
+  .timeline-image-frame {
+    max-width: 450px;
+    aspect-ratio: 4 / 3;
+  }
+
+  .timeline-content-col {
+    align-items: center;
+    text-align: center;
+    min-height: unset;
+  }
+
+  .timeline-year-above {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+  .timeline-glowing-year {
+    font-size: 3rem;
+  }
+
+  /* Hide custom absolute lines on mobile, use simple margins instead */
+  .timeline-divide-line {
+    display: none !important;
+  }
+  
+  .timeline-divide-line::before,
+  .timeline-divide-line::after {
+    display: none !important;
+  }
+
+  .timeline-divide-dot {
+    display: none !important;
+  }
+
+  .timeline-details-below {
+    margin-top: 20px;
+  }
+
+  .timeline-details-title {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+  }
+
+  .timeline-details-desc {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .timeline-scroll-hint {
+    display: none !important;
+  }
+}
+
+/* Sleek cyber View Details Button */
+.timeline-detail-btn {
+  margin-top: 24px;
+  background: rgba(0, 242, 255, 0.03);
+  border: 1px solid rgba(0, 242, 255, 0.25);
+  color: #00f2ff;
+  font-family: 'MathFont', sans-serif;
+  font-size: clamp(0.85rem, 1.1vw, 0.95rem);
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.02);
+}
+
+.timeline-detail-btn:hover {
+  background: #00f2ff;
+  color: #020205;
+  box-shadow: 0 0 25px rgba(0, 242, 255, 0.35);
+  transform: translateY(-2px);
+  border-color: #00f2ff;
+}
+
+.timeline-detail-btn:active {
+  transform: translateY(0);
+}
+
+/* Cyber Neon active milestone highlights */
+.timeline-card-item.active .timeline-image-frame {
+  transform: scale(1.03) translateX(-5px);
+  border-color: #00f2ff;
+  box-shadow: 
+    0 40px 95px rgba(0, 0, 0, 0.6), 
+    0 0 55px rgba(0, 242, 255, 0.15), 
+    inset 0 1px 0 rgba(0, 242, 255, 0.2);
+}
+
+.timeline-card-item.active .timeline-image-el {
+  transform: scale(1.05);
+}
+
+.timeline-card-item.active .timeline-glowing-year {
+  color: #00f2ff;
+  text-shadow: 0 0 25px rgba(0, 242, 255, 0.6);
+}
+
+.timeline-card-item.active .timeline-divide-dot {
+  background: #00f2ff;
+  box-shadow: 0 0 15px #00f2ff;
+  transform: translate(-50%, -50%) scale(1.3);
+}

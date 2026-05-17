@@ -1,0 +1,44 @@
+/* Hero.css - Styling for the Hero section component */
+
+.koa-hero-logo-container {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.koa-hero-logo-glow {
+  position: absolute;
+  width: 300px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 75%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.koa-hero-logo {
+  height: 220px;
+  cursor: pointer;
+}
+
+.koa-hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+
+
+.koa-hero-btn-wrapper {
+  margin-top: 15rem;
+}

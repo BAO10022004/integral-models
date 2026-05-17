@@ -1,0 +1,43 @@
+# User-specific / Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Secrets and Keys
+*service-account*.json
+*.p12
+*.pem
+*.key
+credentials.json
+
+# .NET (ASP.NET Core) specific
+bin/
+obj/
+appsettings.Development.json
+*.user
+*.userosscache
+*.sln.docstates
+
+# Node / Frontend specific
+node_modules/
+dist/
+build/
+.eslintcache
+
+# Python / AI specific
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+saved_models/
+
+# OS files
+.DS_Store
+Thumbs.db

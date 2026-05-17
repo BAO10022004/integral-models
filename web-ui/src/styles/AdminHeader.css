@@ -1,0 +1,109 @@
+/* AdminHeader.css */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-header-title-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-header-logo-text {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #00f2ff, #7000ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-header-badge {
+  background: rgba(0, 242, 255, 0.1);
+  color: #00f2ff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.admin-header-subtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 4px;
+}
+
+.admin-header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.admin-header-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-header-btn-home {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.admin-header-btn-home:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.admin-header-btn-tester {
+  background: rgba(0, 242, 255, 0.08);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  color: #00f2ff;
+}
+
+.admin-header-btn-tester:hover {
+  background: rgba(0, 242, 255, 0.15);
+  border-color: #00f2ff;
+  box-shadow: 0 4px 15px rgba(0, 242, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+  }
+  
+  .admin-header-logo-text {
+    font-size: 20px;
+  }
+  
+  .admin-header-subtitle {
+    font-size: 12px;
+  }
+
+  .admin-header-actions {
+    width: 100%;
+    gap: 10px;
+  }
+  
+  .admin-header-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}

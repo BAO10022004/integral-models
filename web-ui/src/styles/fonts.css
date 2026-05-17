@@ -1,0 +1,31 @@
+@font-face {
+  font-family: 'MathFont';
+  src: url('../assets/font/Math.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: 'MathFont', sans-serif !important;
+}
+
+/* Enforce the Math.ttf font globally for all html/react elements */
+body, 
+html, 
+button, 
+input, 
+select, 
+textarea, 
+div, 
+span, 
+p, 
+a, 
+h1, 
+h2, 
+h3, 
+h4, 
+h5, 
+h6 {
+  font-family: 'MathFont', sans-serif !important;
+}

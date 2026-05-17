@@ -1,0 +1,171 @@
+/* ================= SECTION 1: HERO IMAGE BANNER ================= */
+.history-hero-section {
+  background: #000;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  scroll-snap-align: start;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.history-hero-img-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.history-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Elegant radial vignette over the image */
+.history-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(circle at center, rgba(3, 3, 7, 0.2) 0%, #030307 85%);
+  pointer-events: none;
+}
+
+.history-hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 850px;
+  padding: 0 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.history-badge-top {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00f2ff;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  background: rgba(0, 242, 255, 0.08);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  padding: 6px 16px;
+  border-radius: 99px;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.05);
+}
+
+.history-hero-title {
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: 1.05;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.6) 80%, rgba(0, 242, 255, 0.6));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.history-hero-desc {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+/* Floating Scroll Down Indicator */
+.history-scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.history-scroll-indicator:hover {
+  opacity: 1;
+  transform: translateY(4px);
+}
+
+.history-scroll-text {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.history-scroll-mouse {
+  width: 24px;
+  height: 38px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 99px;
+  position: relative;
+}
+
+.history-scroll-wheel {
+  width: 4px;
+  height: 8px;
+  background: #00f2ff;
+  border-radius: 99px;
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: scrollWheelAnim 1.6s infinite;
+}
+
+@keyframes scrollWheelAnim {
+  0% {
+    opacity: 0;
+    top: 6px;
+  }
+  20% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0;
+    top: 20px;
+  }
+  100% {
+    opacity: 0;
+    top: 20px;
+  }
+}
+
+/* Utility Animations */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 968px) {
+  .history-hero-section {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    min-height: unset;
+  }
+}

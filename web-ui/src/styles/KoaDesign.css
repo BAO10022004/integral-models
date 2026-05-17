@@ -1,0 +1,383 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Inter:wght@200;300;400;600&family=Antonio:wght@200;400;700&display=swap');
+
+:root {
+  --koa-bg: #ffffff;
+  --koa-text: #101010;
+  --koa-accent: #d2a425;
+  --koa-gray: #f2f2f2;
+  --koa-border: rgba(0, 0, 0, 0.06);
+  --koa-serif: 'Bodoni Moda', serif;
+  --koa-sans: 'MBFSpaceHabitat', 'Inter', sans-serif;
+}
+
+.koa-container {
+  background: var(--koa-bg);
+  color: var(--koa-text);
+  font-family: var(--koa-sans);
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* Full Screen Section Snap */
+.snap-container {
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+.snap-section {
+  height: 100vh;
+  scroll-snap-align: start;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Hero Section */
+.koa-hero {
+  background: black;
+  color: white;
+}
+
+.koa-hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+  transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.koa-hero:hover .koa-hero-bg {
+  transform: scale(1.05);
+}
+
+.koa-hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.koa-title {
+  font-family: var(--koa-serif);
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: koaFadeUp 1.2s forwards 0.5s;
+}
+
+.koa-subtitle {
+  font-family: var(--koa-sans);
+  font-size: 1.1rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  margin-bottom: 3rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: koaFadeUp 1.2s forwards 0.8s;
+}
+
+@keyframes koaFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reveal Animation on Scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Grids & Cards */
+.koa-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.koa-grid-item {
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid var(--koa-border);
+  border-bottom: 1px solid var(--koa-border);
+}
+
+.koa-grid-item.dark {
+  background: #0a0a0a;
+  color: white;
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.koa-number {
+  font-family: var(--koa-serif);
+  font-size: 0.8rem;
+  color: var(--koa-accent);
+  margin-bottom: 2rem;
+  display: block;
+  letter-spacing: 0.2em;
+}
+
+/* Vertical Text */
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  opacity: 0.3;
+  position: absolute;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Nav */
+.koa-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 40px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  mix-blend-mode: difference;
+  color: white;
+  font-family: var(--koa-nav-font, var(--koa-sans));
+}
+
+.koa-logo {
+  font-family: var(--koa-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+}
+
+.koa-menu-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  z-index: 1100;
+}
+
+.koa-menu-line {
+  width: 32px;
+  height: 1px;
+  background: currentColor;
+  transition: all 0.3s;
+}
+
+/* Menu Overlay */
+.koa-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.koa-menu-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.koa-menu-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.koa-menu-link {
+  font-family: var(--koa-nav-font, var(--koa-sans));
+  font-size: 2.8rem;
+  color: white;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: color 0.4s, letter-spacing 0.4s;
+  position: relative;
+  padding: 5px 0;
+}
+
+.koa-menu-overlay.open .koa-menu-link {
+  animation: menuSlideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Staggered delay for each link */
+.koa-menu-overlay.open .koa-menu-link:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.koa-menu-overlay.open .koa-menu-link:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.koa-menu-overlay.open .koa-menu-link:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.koa-menu-overlay.open .koa-menu-link:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.koa-menu-overlay.open .koa-menu-link:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+@keyframes menuSlideDown {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.koa-menu-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: var(--koa-accent);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-50%);
+}
+
+.koa-menu-link:hover::after {
+  width: 100%;
+}
+
+.koa-menu-link:hover {
+  color: var(--koa-accent);
+}
+
+.koa-menu-close {
+  position: absolute;
+  top: 40px;
+  right: 60px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.koa-menu-close:hover {
+  opacity: 1;
+}
+
+.koa-menu-footer {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  padding: 0 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  opacity: 0.5;
+}
+
+.koa-social-icons {
+  display: flex;
+  gap: 20px;
+}
+
+.koa-social-icon {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+/* Buttons */
+.koa-btn {
+  display: inline-block;
+  padding: 18px 40px;
+  border: 1px solid currentColor;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.4s;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.koa-btn:hover {
+  background: white;
+  color: black;
+  border-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dark .koa-btn:hover {
+  background: white;
+  color: black;
+}
+
+/* Image Hover Effect */
+.koa-img-wrapper {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.koa-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.koa-grid-item:hover .koa-img-wrapper img {
+  transform: scale(1.1);
+}
