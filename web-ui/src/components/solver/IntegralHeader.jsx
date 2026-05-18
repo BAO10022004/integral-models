@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
 const C = {
-  card: "#0f0f0f",
-  yellow: "#FFE41F",
-  text: "#e6e6e6",
-  muted: "#666",
-  muted2: "#999",
-  green: "#4ade80",
-  greenDim: "#052010",
+  card: "#ffffff",
+  blue: "#2563eb",
+  text: "#0f172a",
+  muted: "#64748b",
+  muted2: "#475569",
+  green: "#10b981",
+  greenDim: "#ecfdf5",
+  border: "#e2e8f0",
 };
 
 const IntegralHeader = ({ data }) => {
@@ -20,35 +21,73 @@ const IntegralHeader = ({ data }) => {
       opacity: show ? 1 : 0,
       transform: show ? "translateY(0)" : "translateY(-20px)",
       transition: "opacity .6s ease, transform .6s cubic-bezier(0.22,1,0.36,1)",
-      marginBottom: 40,
+      marginBottom: 36,
+      fontFamily: "Arial, Helvetica, sans-serif"
     }}>
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "center",
-        gap: 6, flexWrap: "wrap", background: C.card, border: `1px solid #2a2500`,
-        borderRadius: 20, padding: "28px 36px", textAlign: "center", position: "relative", overflow: "hidden",
+        gap: 8, flexWrap: "wrap", background: C.card, border: `1px solid ${C.border}`,
+        borderRadius: 24, padding: "32px 40px", textAlign: "center", position: "relative",
+        boxShadow: "0 10px 30px rgba(37, 99, 235, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 0, flexDirection: "column", marginRight: 2 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 0, flexDirection: "column", marginRight: 6 }}>
           {lo || hi ? (
             <>
-              <span style={{ fontSize: 11, color: C.text, fontFamily: "monospace", marginBottom: -2 }}>{hi || "?"}</span>
-              <span style={{ fontSize: 64, color: C.yellow, fontStyle: "italic", lineHeight: 1, fontFamily: "serif" }}>∫</span>
-              <span style={{ fontSize: 11, color: C.text, fontFamily: "monospace", marginTop: -2 }}>{lo || "?"}</span>
+              <span style={{ fontSize: 13, color: C.muted2, fontWeight: "bold", marginBottom: -4 }}>{hi || "?"}</span>
+              <span style={{ 
+                fontSize: 72, 
+                fontWeight: 300,
+                lineHeight: 1, 
+                background: "linear-gradient(135deg, #2563eb 20%, #7c3aed)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontFamily: "serif",
+                fontStyle: "italic"
+              }}>∫</span>
+              <span style={{ fontSize: 13, color: C.muted2, fontWeight: "bold", marginTop: -4 }}>{lo || "?"}</span>
             </>
           ) : (
-            <span style={{ fontSize: 64, color: C.yellow, fontStyle: "italic", lineHeight: 1, fontFamily: "serif" }}>∫</span>
+            <span style={{ 
+              fontSize: 72, 
+              fontWeight: 300,
+              lineHeight: 1, 
+              background: "linear-gradient(135deg, #2563eb 20%, #7c3aed)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontFamily: "serif",
+              fontStyle: "italic"
+            }}>∫</span>
           )}
         </div>
-        <span style={{ fontSize: 28, color: "#fff", fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>{expr}</span>
-        <span style={{ fontSize: 22, color: C.muted2, fontFamily: "monospace" }}> d{dv}</span>
-        <span style={{ fontSize: 28, color: C.muted, margin: "0 12px" }}>=</span>
-        <span style={{ fontSize: 28, color: C.yellow, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>{result}</span>
+        
+        {/* Math expression wrapper */}
+        <span style={{ fontSize: 32, color: C.text, fontWeight: 800, letterSpacing: "-0.5px" }}>{expr}</span>
+        <span style={{ fontSize: 24, color: C.blue, fontWeight: 800, fontStyle: "italic" }}> d{dv}</span>
+        <span style={{ fontSize: 28, color: C.muted, margin: "0 12px", fontWeight: 300 }}>=</span>
+        <span style={{ 
+          fontSize: 32, 
+          color: C.blue, 
+          fontWeight: 900,
+          background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}>{result}</span>
       </div>
 
       {definite_value != null && lo && hi && (
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 14 }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 10, background: C.greenDim, border: `1px solid #1a4a20`, borderRadius: 100, padding: "8px 20px" }}>
-            <span style={{ color: C.muted, fontSize: 13 }}>Giá trị số</span>
-            <span style={{ color: C.green, fontSize: 20, fontFamily: "monospace", fontWeight: 700 }}>≈ {definite_value}</span>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+          <div style={{ 
+            display: "inline-flex", 
+            alignItems: "center", 
+            gap: 12, 
+            background: C.greenDim, 
+            border: `1px solid #a7f3d0`, 
+            borderRadius: 100, 
+            padding: "8px 24px",
+            boxShadow: "0 4px 12px rgba(16, 185, 129, 0.08)"
+          }}>
+            <span style={{ color: C.muted2, fontSize: 13, fontWeight: 700 }}>Giá trị xấp xỉ số:</span>
+            <span style={{ color: C.green, fontSize: 20, fontWeight: 800 }}>≈ {definite_value}</span>
           </div>
         </div>
       )}

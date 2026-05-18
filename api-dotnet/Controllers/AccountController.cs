@@ -29,16 +29,33 @@ public class AccountController : ControllerBase
             var uid = decodedToken.Uid;
             var userRecord = await FirebaseAuth.DefaultInstance.GetUserAsync(uid);
 
-            var account = new Account
+            // Fetch existing account from Firestore to preserve its Role, CreatedAt, etc.
+            var account = await _firestoreService.GetAccountAsync(uid);
+            if (account == null)
             {
-                Uid = uid,
-                Email = userRecord.Email,
-                DisplayName = userRecord.DisplayName,
-                PhotoUrl = userRecord.PhotoUrl,
-                ProviderId = "google.com",
-                EmailVerified = userRecord.EmailVerified,
-                LastLoginAt = DateTime.UtcNow
-            };
+                account = new Account
+                {
+                    Uid = uid,
+                    Email = userRecord.Email,
+                    DisplayName = userRecord.DisplayName,
+                    PhotoUrl = userRecord.PhotoUrl,
+                    ProviderId = "google.com",
+                    EmailVerified = userRecord.EmailVerified,
+                    Role = "user", // Default role for new users
+                    CreatedAt = DateTime.UtcNow,
+                    LastLoginAt = DateTime.UtcNow
+                };
+            }
+            else
+            {
+                // Update profile info but preserve existing Role and CreatedAt
+                account.Email = userRecord.Email;
+                account.DisplayName = userRecord.DisplayName;
+                account.PhotoUrl = userRecord.PhotoUrl;
+                account.ProviderId = "google.com";
+                account.EmailVerified = userRecord.EmailVerified;
+                account.LastLoginAt = DateTime.UtcNow;
+            }
 
             // Save to Firestore
             await _firestoreService.SaveAccountAsync(account);
@@ -119,6 +136,34 @@ public class AccountController : ControllerBase
         catch (Exception ex)
         {
             return BadRequest(new { Error = "Invalid Token", Message = ex.Message });
+        }
+    }
+
+    [HttpPost("send-otp")]
+    public async Task<IActionResult> SendOtp([FromBody] SendOtpRequest request)
+    {
+        try
+        {
+            await _accountService.SendOtpAsync(request.Email);
+            return Ok(new { Message = "Mã OTP đã được gửi thành công!" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = "Gửi OTP thất bại", Message = ex.Message });
+        }
+    }
+
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+    {
+        try
+        {
+            var account = await _accountService.VerifyOtpAsync(request.Email, request.Code);
+            return Ok(account);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = "Xác thực OTP thất bại", Message = ex.Message });
         }
     }
 }

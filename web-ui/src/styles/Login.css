@@ -473,3 +473,180 @@
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(184, 147, 42, 0.4) 20%, rgba(184, 147, 42, 0.4) 80%, transparent);
 }
+
+/* ===== EMAIL LOGIN / REGISTER FORM STYLES ===== */
+.login-input-group {
+  margin-bottom: 1.25rem;
+  text-align: left;
+  position: relative;
+  z-index: 10;
+}
+
+.login-input-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(184, 147, 42, 0.7);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.login-input-field {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(184, 147, 42, 0.35);
+  border-radius: 2px;
+  color: #fff;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s;
+}
+
+.login-input-field:focus {
+  outline: none;
+  border-color: rgba(184, 147, 42, 0.85);
+  background: rgba(184, 147, 42, 0.05);
+  box-shadow: 0 0 10px rgba(184, 147, 42, 0.15);
+}
+
+.login-mode-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid rgba(184, 147, 42, 0.15);
+  padding-bottom: 4px;
+}
+
+.login-mode-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.login-mode-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.login-mode-btn.active {
+  color: #e8c96a;
+}
+
+.login-mode-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: #b8932a;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  margin: 1.5rem 0;
+  position: relative;
+  z-index: 10;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(184, 147, 42, 0.2);
+}
+
+.login-divider:not(:empty)::before {
+  margin-right: .75em;
+}
+
+.login-divider:not(:empty)::after {
+  margin-left: .75em;
+}
+
+.login-email-submit-btn {
+  width: 100%;
+  background: rgba(184, 147, 42, 0.8);
+  border: 1px solid #b8932a;
+  color: #020205;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  z-index: 10;
+}
+
+.login-email-submit-btn:hover {
+  background: #e8c96a;
+  box-shadow: 0 0 15px rgba(184, 147, 42, 0.3);
+}
+
+.login-email-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.premium-login-success {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.05);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-top: 1.5rem;
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* ===== OTP MOCK / LINK STYLES ===== */
+.login-otp-link {
+  background: none;
+  border: none;
+  color: #e8c96a;
+  text-decoration: underline;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.3s;
+}
+
+.login-otp-link:hover {
+  color: #fff;
+}
+
+.login-otp-link:disabled {
+  color: rgba(255, 255, 255, 0.35);
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
+.login-otp-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}

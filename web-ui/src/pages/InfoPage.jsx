@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Footer from "../components/common/Footer";
 
 export default function InfoPage({ onNavigate }) {
   const [checklist, setChecklist] = useState([
@@ -214,6 +215,7 @@ export default function InfoPage({ onNavigate }) {
 
         </div>
       </div>
+      <Footer onNavigate={onNavigate} />
     </div>
   );
 }

@@ -1,0 +1,1046 @@
+/* ================= SECTION 4: INTEGRAL APPLICATIONS SHOWCASE ================= */
+.history-apps-section {
+  background: #000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  scroll-snap-align: start;
+}
+
+.apps-wrapper {
+  width: 100%;
+  max-width: 1300px;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 4%;
+  box-sizing: border-box;
+}
+
+/* Header Section */
+.apps-header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.apps-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  color: #00f2ff;
+  background: rgba(0, 242, 255, 0.05);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  padding: 4px 14px;
+  border-radius: 100px;
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.05);
+}
+
+.apps-title {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 30%, rgba(255, 255, 255, 0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.apps-subtitle {
+  font-size: clamp(0.85rem, 1.1vw, 0.95rem);
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.55;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Navigation Tabs Bar */
+.apps-tabs-bar {
+  display: flex;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.apps-tab-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 0;
+}
+
+.apps-tab-btn .tab-year {
+  font-size: clamp(0.9rem, 1.3vw, 1.15rem);
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: -0.5px;
+  transition: color 0.3s;
+}
+
+.apps-tab-btn .tab-label {
+  font-size: clamp(9px, 0.8vw, 10px);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+  transition: color 0.3s;
+}
+
+.apps-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.apps-tab-btn:hover .tab-year {
+  color: #fff;
+}
+
+.apps-tab-btn.active {
+  border-color: #00f2ff;
+  background: rgba(0, 242, 255, 0.03);
+  box-shadow:
+    0 0 20px rgba(0, 242, 255, 0.1),
+    inset 0 1px 0 rgba(0, 242, 255, 0.1);
+}
+
+.apps-tab-btn.active .tab-year {
+  color: #00f2ff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+}
+
+.apps-tab-btn.active .tab-label {
+  color: rgba(0, 242, 255, 0.7);
+}
+
+/* Core Dashboard Panels */
+.apps-panel-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 24px;
+  min-height: 0;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/* Left Column: Glassmorphic Info Card */
+.apps-info-panel {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.info-glass-card {
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 12, 24, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 22px;
+  box-sizing: border-box;
+  backdrop-filter: blur(15px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.info-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 10px;
+}
+
+.era-tag-badge {
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.08em;
+}
+
+.era-tag-badge.badge-1687 {
+  background: rgba(255, 157, 0, 0.08);
+  border: 1px solid rgba(255, 157, 0, 0.25);
+  color: #ffaa33;
+}
+
+.era-tag-badge.badge-1865 {
+  background: rgba(0, 170, 255, 0.08);
+  border: 1px solid rgba(0, 170, 255, 0.25);
+  color: #33b5ff;
+}
+
+.era-tag-badge.badge-1969 {
+  background: rgba(51, 255, 51, 0.08);
+  border: 1px solid rgba(51, 255, 51, 0.25);
+  color: #33ff33;
+}
+
+.era-tag-badge.badge-2026 {
+  background: rgba(0, 242, 255, 0.08);
+  border: 1px solid rgba(0, 242, 255, 0.25);
+  color: #00f2ff;
+  box-shadow: 0 0 10px rgba(0, 242, 255, 0.08);
+}
+
+.era-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.era-title-text {
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem);
+  font-weight: 800;
+  color: #fff;
+  margin: 10px 0 15px 0;
+  letter-spacing: -0.5px;
+  line-height: 1.35;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: clamp(0.8rem, 1vw, 0.9rem);
+  line-height: 1.45;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.row-label {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.row-val {
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+  padding-left: 15px;
+}
+
+.row-val.highlight-pioneer {
+  color: #ffc83b;
+  text-shadow: 0 0 8px rgba(255, 200, 59, 0.15);
+}
+
+/* Formula Showcase Board */
+.formula-glass-board {
+  background: rgba(5, 6, 14, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 12px 18px;
+  box-sizing: border-box;
+  margin: 10px 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.formula-board-header {
+  font-size: 8px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.formula-latex {
+  margin: 6px 0;
+  width: 100%;
+}
+
+.latex-expression {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+  font-weight: 700;
+  color: #00f2ff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.formula-desc {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 4px;
+}
+
+.era-paragraph-desc {
+  font-size: clamp(0.8rem, 1vw, 0.9rem);
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.55;
+  margin: 10px 0;
+}
+
+/* Simulation Play Buttons */
+.info-controls-row {
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.sim-play-btn {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.sim-play-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.sim-play-btn.playing {
+  background: rgba(255, 183, 0, 0.04);
+  border-color: rgba(255, 183, 0, 0.25);
+  color: #ffb700;
+}
+
+.sim-play-btn.playing:hover {
+  background: rgba(255, 183, 0, 0.08);
+}
+
+.sim-action-btn {
+  flex: 1.2;
+  background: #00f2ff;
+  border: 1px solid #00f2ff;
+  color: #020205;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
+}
+
+.sim-action-btn:hover {
+  background: #33f5ff;
+  border-color: #33f5ff;
+  box-shadow: 0 0 25px rgba(0, 242, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.sim-action-btn:active {
+  transform: translateY(0);
+}
+
+/* Right Column: Visual Simulator Screen */
+.apps-visual-panel {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.simulator-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: #050508;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Screen Themes based on Era */
+.screen-theme-1687 {
+  background-color: #f7eecf;
+  background-image: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(139, 90, 43, 0.12) 100%);
+  border-color: rgba(139, 90, 43, 0.2);
+}
+
+.screen-theme-1865 {
+  background-color: #0b1526;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.screen-theme-1969 {
+  background-color: #030803;
+  border-color: #1a1a24;
+}
+
+.screen-theme-2026 {
+  background-color: rgba(6, 7, 18, 0.95);
+  border-color: rgba(0, 242, 255, 0.2);
+  box-shadow:
+    0 25px 65px rgba(0, 0, 0, 0.65),
+    0 0 25px rgba(0, 242, 255, 0.05);
+}
+
+/* Telemetry Screen scanlines and grids */
+.sim-crt-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+  background-size: 100% 4px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.sim-neural-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(0, 242, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 255, 0.02) 1px, transparent 1px);
+  background-size: 25px 25px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* SVG Rendering and layout */
+.svg-container {
+  width: 90%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.sim-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sim-meta-text {
+  font-family: monospace;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.screen-theme-1687 .sim-meta-text {
+  fill: #5c4327;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.screen-theme-1865 .sim-meta-text {
+  fill: #7fa1cc;
+}
+
+.screen-theme-1969 .sim-meta-text {
+  fill: #33ff33;
+}
+
+.screen-theme-2026 .sim-meta-text {
+  fill: #aaeefc;
+}
+
+.osc-text,
+.orbit-text {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ================= 1. KEPLER ORBIT SIMULATOR ================= */
+.orbit-path-line {
+  fill: none;
+  stroke: rgba(139, 90, 43, 0.15);
+  stroke-width: 1.5;
+  stroke-dasharray: 4;
+}
+
+.orbit-swept-area {
+  fill: rgba(255, 183, 0, 0.12);
+  stroke: rgba(255, 183, 0, 0.3);
+  stroke-width: 1.5;
+}
+
+.orbit-sun-glow {
+  fill: rgba(255, 115, 0, 0.15);
+  animation: sunBreathe 2s infinite ease-in-out;
+}
+
+.orbit-sun-core {
+  fill: #ffaa33;
+}
+
+@keyframes sunBreathe {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+.orbit-planet-glow {
+  fill: rgba(0, 170, 255, 0.25);
+}
+
+.orbit-planet-core {
+  fill: #0088ff;
+}
+
+.orbit-radius-line {
+  stroke: rgba(139, 90, 43, 0.25);
+  stroke-width: 1;
+}
+
+.screen-theme-1687 .sun-label {
+  fill: #8b5a2b;
+}
+
+.screen-theme-1687 .planet-label {
+  fill: #0055aa;
+}
+
+/* ================= 2. ELECTROMAGNETIC AC OSCILLOSCOPE ================= */
+.osc-grid-axis {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1.5;
+  stroke-dasharray: 4;
+}
+
+.osc-sine-wave {
+  fill: none;
+  stroke: #ff9d00;
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 4px rgba(255, 157, 0, 0.3));
+}
+
+.osc-cosine-wave {
+  fill: none;
+  stroke: #00d2ff;
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 4px rgba(0, 210, 255, 0.3));
+}
+
+.coil-iron-core {
+  fill: #2c3e50;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1;
+}
+
+.coil-copper-turns {
+  fill: none;
+  stroke: #d35400;
+  stroke-width: 2.5;
+}
+
+.screen-theme-1865 .coil-label {
+  fill: #617b9c;
+}
+
+.legend-bg {
+  fill: rgba(6, 9, 20, 0.85);
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+}
+
+.osc-legend-sine {
+  stroke: #ff9d00;
+  stroke-width: 2;
+}
+
+.osc-legend-cosine {
+  stroke: #00d2ff;
+  stroke-width: 2;
+}
+
+/* ================= 3. SPACE TELEMETRY APOLLO LANDER ================= */
+.moon-ground {
+  fill: #14141c;
+  stroke: #2a2a35;
+  stroke-width: 2;
+}
+
+.landing-pad {
+  fill: #f1c40f;
+  filter: drop-shadow(0 0 6px #f1c40f);
+}
+
+.lander-pad-text {
+  fill: #33ff33;
+}
+
+.rocket-projection-line {
+  stroke: rgba(51, 255, 51, 0.08);
+  stroke-dasharray: 3;
+}
+
+.rocket-altitude-indicator {
+  stroke: rgba(51, 255, 51, 0.3);
+  stroke-width: 1.5;
+  stroke-dasharray: 2;
+}
+
+.rocket-fire-thrust {
+  fill: #ffaa33;
+  filter: drop-shadow(0 0 10px #ffaa33);
+  animation: fireFlicker 0.08s infinite;
+}
+
+@keyframes fireFlicker {
+  0% {
+    transform: scaleX(1) scaleY(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scaleX(1.15) scaleY(1.08);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scaleX(0.9) scaleY(0.95);
+    opacity: 0.9;
+  }
+}
+
+.apollo-body-outer {
+  fill: #2c3e50;
+  stroke: #bdc3c7;
+  stroke-width: 1.5;
+}
+
+.apollo-cabin {
+  fill: #f1c40f;
+  stroke: #f39c12;
+  stroke-width: 1;
+}
+
+.apollo-lander-leg {
+  stroke: #7f8c8d;
+  stroke-width: 2;
+}
+
+.apollo-footpad {
+  fill: #bdc3c7;
+}
+
+.sim-telemetry-text {
+  font-family: monospace;
+  font-size: 8px;
+  fill: #33ff33;
+  text-shadow: 0 0 3px rgba(51, 255, 51, 0.5);
+  line-height: 12px;
+}
+
+.sim-telemetry-text .telemetry-status {
+  font-weight: bold;
+  animation: txtBlink 1s infinite alternate;
+}
+
+@keyframes txtBlink {
+  from {
+    opacity: 0.3;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ================= 4. NEURAL GRAPH & QUANTUM WAVE ================= */
+.quantum-prob-wave {
+  fill: none;
+  stroke: #c888ff;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 6px rgba(200, 136, 255, 0.4));
+}
+
+.quantum-boundary-line {
+  stroke: rgba(0, 242, 255, 0.2);
+  stroke-width: 1.5;
+  stroke-dasharray: 4;
+}
+
+.quantum-boundary-text {
+  fill: rgba(0, 242, 255, 0.6);
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.quantum-shaded-integral {
+  fill: rgba(0, 242, 255, 0.08);
+  stroke: rgba(0, 242, 255, 0.15);
+  stroke-width: 1;
+}
+
+.neural-node {
+  fill: rgba(6, 7, 18, 0.95);
+  stroke: rgba(0, 242, 255, 0.2);
+  stroke-width: 1.5;
+  transition: all 0.3s;
+}
+
+.neural-node.active {
+  fill: #00f2ff;
+  stroke: #fff;
+  filter: drop-shadow(0 0 6px #00f2ff);
+  animation: nodePulse 1.5s infinite ease-in-out;
+}
+
+@keyframes nodePulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.neural-connection-lines {
+  fill: none;
+  stroke: rgba(0, 242, 255, 0.12);
+  stroke-width: 1;
+}
+
+.quantum-text-title {
+  fill: #00f2ff;
+  font-weight: 800;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+}
+
+.neural-compute-tag {
+  fill: #ff007f;
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.4);
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 968px) {
+  .history-apps-section {
+    aspect-ratio: unset;
+    height: auto;
+    min-height: 100svh;
+    padding: 60px 20px;
+  }
+
+  .apps-wrapper {
+    height: auto;
+    padding: 0;
+  }
+
+  .apps-header {
+    margin-bottom: 25px;
+  }
+
+  .apps-tabs-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .apps-tab-btn {
+    flex: none;
+    width: calc(50% - 4px);
+    padding: 10px;
+  }
+
+  .apps-panel-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    min-height: unset;
+    height: auto;
+  }
+
+  .info-glass-card {
+    height: auto;
+    padding: 24px;
+  }
+
+  .info-controls-row {
+    margin-top: 20px;
+    flex-direction: column;
+  }
+
+  .simulator-screen {
+    height: 380px;
+  }
+}
+
+/* ================= NEOCLASSICAL LIGHT PARCHMENT OVERRIDES ================= */
+.history-apps-section {
+  background: #D1CAB1 !important; /* Perfect transition from Intro! */
+}
+
+/* Section Header */
+.history-apps-section .apps-badge {
+  color: #8c7f68 !important;
+  background: rgba(140, 127, 104, 0.08) !important;
+  border: 1px solid rgba(140, 127, 104, 0.25) !important;
+}
+
+.history-apps-section .apps-title {
+  color: #1c1a17 !important;
+  background: none !important;
+  -webkit-text-fill-color: #1c1a17 !important;
+}
+
+.history-apps-section .apps-subtitle {
+  color: #5a4732 !important;
+}
+
+/* Tabs Bar */
+.history-apps-section .apps-tabs-bar {
+  background: rgba(28, 26, 23, 0.04) !important;
+  border: 1px solid rgba(140, 127, 104, 0.2) !important;
+}
+
+.history-apps-section .apps-tab-btn {
+  background: rgba(28, 26, 23, 0.02) !important;
+  border: 1px solid rgba(140, 127, 104, 0.15) !important;
+}
+
+.history-apps-section .apps-tab-btn .tab-year {
+  color: rgba(28, 26, 23, 0.6) !important;
+}
+
+.history-apps-section .apps-tab-btn .tab-label {
+  color: rgba(28, 26, 23, 0.4) !important;
+}
+
+.history-apps-section .apps-tab-btn:hover {
+  background: rgba(140, 127, 104, 0.08) !important;
+  border-color: rgba(140, 127, 104, 0.4) !important;
+}
+
+.history-apps-section .apps-tab-btn:hover .tab-year {
+  color: #1c1a17 !important;
+}
+
+.history-apps-section .apps-tab-btn.active {
+  background: #1c1a17 !important;
+  border-color: #1c1a17 !important;
+}
+
+.history-apps-section .apps-tab-btn.active .tab-year {
+  color: #D1CAB1 !important;
+  text-shadow: none !important;
+}
+
+.history-apps-section .apps-tab-btn.active .tab-label {
+  color: rgba(209, 202, 177, 0.8) !important;
+}
+
+/* Info Glass Cards */
+.history-apps-section .info-glass-card {
+  background: #fdfaf2 !important; /* Ivory board */
+  border: 1px solid #c5a880 !important;
+  color: #1c1a17 !important;
+  box-shadow: 
+    0 15px 40px rgba(42, 33, 21, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+.history-apps-section .info-card-header {
+  border-bottom: 1px solid rgba(140, 127, 104, 0.2) !important;
+}
+
+.history-apps-section .era-subtitle {
+  color: #8c7f68 !important;
+}
+
+.history-apps-section .era-title-text {
+  color: #1c1a17 !important;
+}
+
+.history-apps-section .info-row {
+  border-bottom: 1px solid rgba(140, 127, 104, 0.12) !important;
+}
+
+.history-apps-section .row-label {
+  color: #7c6244 !important;
+}
+
+.history-apps-section .row-val {
+  color: #1c1a17 !important;
+}
+
+.history-apps-section .pioneer-bio-section {
+  background: rgba(140, 127, 104, 0.04) !important;
+  border: 1px solid rgba(140, 127, 104, 0.15) !important;
+}
+
+.history-apps-section .pioneer-name {
+  color: #1c1a17 !important;
+}
+
+.history-apps-section .pioneer-era {
+  color: #8c7f68 !important;
+}
+
+.history-apps-section .pioneer-bio {
+  color: #5a4732 !important;
+}
+
+/* Simulator Screen Overrides (Sepia Ink Style) */
+.history-apps-section .sim-visuals-card {
+  background: #fdfaf2 !important;
+  border: 1px solid #c5a880 !important;
+  box-shadow: 
+    0 15px 40px rgba(42, 33, 21, 0.12) !important;
+}
+
+.history-apps-section .visual-title {
+  color: #7c6244 !important;
+  border-bottom: 1px solid rgba(124, 98, 68, 0.15) !important;
+}
+
+.history-apps-section .visual-title::before {
+  background: #b89053 !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+.history-apps-section .simulator-screen {
+  background: #fdfaf2 !important;
+  box-shadow: inset 0 2px 10px rgba(42, 33, 21, 0.1) !important;
+  border: 1px solid rgba(140, 127, 104, 0.2) !important;
+}
+
+/* DSKY monitor texts */
+.history-apps-section .dsky-monitor {
+  background: rgba(140, 127, 104, 0.03) !important;
+  border: 1px solid rgba(140, 127, 104, 0.2) !important;
+}
+
+.history-apps-section .dsky-lbl {
+  color: #8c7f68 !important;
+}
+
+.history-apps-section .dsky-val {
+  color: #1c1a17 !important;
+}
+
+.history-apps-section .log-line {
+  color: #5a4732 !important;
+}
+
+.history-apps-section .log-header {
+  color: #7c6244 !important;
+  border-bottom: 1px solid rgba(140, 127, 104, 0.2) !important;
+}
+
+/* Simulated objects colors in SVG */
+.history-apps-section .svg-orbit-path {
+  stroke: rgba(124, 98, 68, 0.2) !important;
+}
+
+.history-apps-section .svg-sun {
+  fill: #b89053 !important;
+}
+
+.history-apps-section .svg-planet {
+  fill: #7c6244 !important;
+}
+
+.history-apps-section .svg-gravity-vector {
+  stroke: #b33939 !important;
+}
+
+.history-apps-section .svg-wave-ac,
+.history-apps-section .svg-field-line {
+  stroke: #218c74 !important;
+}
+
+.history-apps-section .svg-wave-quantum {
+  stroke: #7c6244 !important;
+  fill: rgba(184, 144, 83, 0.1) !important;
+}
+
+/* Play/Pause controls */
+.history-apps-section .action-btn {
+  background: #1c1a17 !important;
+  color: #D1CAB1 !important;
+  border: 1px solid #1c1a17 !important;
+}
+
+.history-apps-section .action-btn:hover {
+  background: #5a4732 !important;
+  border-color: #5a4732 !important;
+}

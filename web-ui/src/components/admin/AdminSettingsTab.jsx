@@ -5,13 +5,20 @@ import "../../styles/AdminTabs.css";
 export default function AdminSettingsTab() {
   const [selectedFont, setSelectedFont] = useState("");
   const [saveStatus, setSaveStatus] = useState("");
+  const [websiteTitle, setWebsiteTitle] = useState("");
+  const [faviconUrl, setFaviconUrl] = useState("");
 
-  // Load custom font on mount
+  // Load custom font and identity settings on mount
   useEffect(() => {
-    const stored = localStorage.getItem("navbar_font");
-    if (stored) {
-      setSelectedFont(stored);
+    const storedFont = localStorage.getItem("navbar_font");
+    if (storedFont) {
+      setSelectedFont(storedFont);
     }
+    const storedTitle = localStorage.getItem("website_title") || "Integral.AI — High-Performance AI Calculus Solver";
+    setWebsiteTitle(storedTitle);
+
+    const storedFavicon = localStorage.getItem("website_favicon") || "";
+    setFaviconUrl(storedFavicon);
   }, []);
 
   const handleFontChange = (fontValue) => {
@@ -37,18 +44,56 @@ export default function AdminSettingsTab() {
     setTimeout(() => setSaveStatus(""), 2000);
   };
 
+  const handleTitleChange = (val) => {
+    setWebsiteTitle(val);
+  };
+
+  const handleFaviconUrlChange = (val) => {
+    setFaviconUrl(val);
+  };
+
+  const handleFaviconUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFaviconUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const saveIdentitySettings = () => {
+    localStorage.setItem("website_title", websiteTitle);
+    localStorage.setItem("website_favicon", faviconUrl);
+
+    // Apply immediately to the current window
+    document.title = websiteTitle;
+
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    link.href = faviconUrl;
+
+    setSaveStatus("Website title and favicon updated successfully!");
+    setTimeout(() => setSaveStatus(""), 2000);
+  };
+
   return (
     <div className="admin-tab-container">
       <h3 className="admin-tab-title">🔧 System Configuration & Settings</h3>
       <p className="admin-tab-desc">Manage API connections, custom navigation typography, and cloud credentials.</p>
 
       <div className="admin-form-group-list">
-        
+
         {/* CONNECTION SETTINGS */}
         <div className="admin-card-inner" style={{ marginTop: 0 }}>
           <h4 className="admin-card-inner-title">API Connection Settings</h4>
           <p className="admin-card-inner-desc">Endpoints configured dynamically inside the environment environment variables.</p>
-          
+
           <div className="admin-form-row">
             <div className="admin-form-group">
               <label className="admin-form-label">AI API ENDPOINT ADDRESS</label>
@@ -86,17 +131,114 @@ export default function AdminSettingsTab() {
           </div>
         </div>
 
+        {/* WEBSITE IDENTITY (TITLE & FAVICON) */}
+        <div className="admin-card-inner">
+          <h4 className="admin-card-inner-title">Website Identity Settings</h4>
+          <p className="admin-card-inner-desc">Customize the browser tab title and the favicon icon shown in your web browser.</p>
+
+          <div className="admin-form-row">
+            <div className="admin-form-group">
+              <label className="admin-form-label">WEBSITE TITLE</label>
+              <input
+                type="text"
+                className="control-input"
+                placeholder="e.g. Calculus Solver"
+                value={websiteTitle}
+                onChange={(e) => handleTitleChange(e.target.value)}
+              />
+            </div>
+
+            <div className="admin-form-group">
+              <label className="admin-form-label">WEBSITE FAVICON (URL OR UPLOAD)</label>
+              <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                <input
+                  type="text"
+                  className="control-input"
+                  placeholder="Paste favicon image URL..."
+                  value={faviconUrl}
+                  onChange={(e) => handleFaviconUrlChange(e.target.value)}
+                  style={{ flex: 1 }}
+                />
+                <span style={{ color: "rgba(255, 255, 255, 0.3)", fontSize: "11px", fontWeight: "700" }}>OR</span>
+                <label className="btn-glass" style={{
+                  padding: "10px 16px",
+                  fontSize: "12px",
+                  borderRadius: "12px",
+                  margin: 0,
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  color: "#fff",
+                  fontWeight: "600"
+                }}>
+                  Upload Icon
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFaviconUpload}
+                    style={{ display: "none" }}
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "20px", borderTop: "1px solid rgba(255, 255, 255, 0.05)", paddingTop: "16px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {faviconUrl && (
+                <>
+                  <span style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)", fontWeight: "600" }}>Live Favicon Preview:</span>
+                  <img
+                    src={faviconUrl}
+                    alt="Favicon Preview"
+                    style={{
+                      width: "28px",
+                      height: "28px",
+                      borderRadius: "6px",
+                      objectFit: "contain",
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.15)",
+                      padding: "2px"
+                    }}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </>
+              )}
+            </div>
+
+            <button
+              className="btn-glass"
+              onClick={saveIdentitySettings}
+              style={{
+                padding: "10px 24px",
+                borderRadius: "12px",
+                fontSize: "13px",
+                fontWeight: "700",
+                background: "linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)",
+                border: "none",
+                boxShadow: "0 0 15px var(--primary-glow)",
+                cursor: "pointer",
+                color: "#000"
+              }}
+            >
+              Apply Identity Settings
+            </button>
+          </div>
+        </div>
+
         {/* FONT CUSTOMIZATION CARD */}
         <div className="admin-card-inner">
           <h4 className="admin-card-inner-title">UI & Global Font Configuration</h4>
           <p className="admin-card-inner-desc">Customize the typography and fonts used across the entire website, including all pages, mathematical solvers, inputs, forms, and headers.</p>
-          
+
           <div className="admin-form-row">
             <div className="admin-form-group">
               <label className="admin-form-label">GLOBAL WEBSITE FONT FAMILY</label>
-              <select 
-                className="control-input" 
-                value={selectedFont} 
+              <select
+                className="control-input"
+                value={selectedFont}
                 onChange={(e) => handleFontChange(e.target.value)}
               >
                 <option value="">Default System Font (Manrope / Inter)</option>
@@ -109,18 +251,18 @@ export default function AdminSettingsTab() {
                 <option value="'Bodoni Moda', serif">Bodoni Moda (Artistic Serif)</option>
               </select>
             </div>
-            
+
             <div className="admin-form-group">
               <label className="admin-form-label">LIVE PREVIEW FONT TEXT</label>
-              <div style={{ 
-                fontFamily: selectedFont || "inherit", 
-                fontSize: "16px", 
-                letterSpacing: "0.15em", 
-                color: "#00f2ff", 
-                textTransform: "uppercase", 
-                display: "flex", 
-                alignItems: "center", 
-                height: "100%", 
+              <div style={{
+                fontFamily: selectedFont || "inherit",
+                fontSize: "16px",
+                letterSpacing: "0.15em",
+                color: "#00f2ff",
+                textTransform: "uppercase",
+                display: "flex",
+                alignItems: "center",
+                height: "100%",
                 paddingLeft: "4px",
                 fontWeight: "700",
                 transition: "all 0.3s"

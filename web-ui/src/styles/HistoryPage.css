@@ -2,6 +2,9 @@
 @import './HistoryHeroSection.css';
 @import './HistoryIntroSection.css';
 @import './HistoryTimelineSection.css';
+@import './HistoryApplicationsSection.css';
+@import './HistoryHallOfFameSection.css';
+
 
 /* Main landing snap container */
 .history-snap-container {
@@ -56,6 +59,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -67,8 +71,8 @@
   background: rgba(10, 11, 24, 0.85);
   border: 1px solid rgba(0, 242, 255, 0.15);
   border-radius: 24px;
-  box-shadow: 
-    0 30px 80px rgba(0, 0, 0, 0.8), 
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.8),
     0 0 50px rgba(0, 242, 255, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
   display: flex;
@@ -84,6 +88,7 @@
     opacity: 0;
     transform: scale(0.95) translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -295,17 +300,265 @@
     width: 95%;
     max-height: 90vh;
   }
+
   .article-modal-header {
     padding: 24px 24px 16px;
   }
+
   .article-modal-close-btn {
     top: 24px;
     right: 24px;
   }
+
   .article-modal-body {
     padding: 24px;
   }
+
   .article-modal-footer {
     padding: 16px 24px 24px;
   }
 }
+
+/* ================= HISTORY FOOTER ================= */
+.history-footer {
+  width: 100%;
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 60px 0 30px 0;
+  scroll-snap-align: end;
+  /* Snaps beautifully to the bottom when scrolled past the applications section! */
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.footer-container {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 4%;
+  box-sizing: border-box;
+}
+
+.footer-main-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 40px;
+}
+
+.footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.footer-brand-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.footer-logo-img {
+  height: 85px;
+  width: auto;
+  filter: drop-shadow(0 0 16px rgba(0, 242, 255, 0.5));
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.footer-logo-img:hover {
+  transform: rotate(6deg) scale(1.06);
+  filter: drop-shadow(0 0 25px rgba(0, 242, 255, 0.7));
+}
+
+
+
+
+.footer-brand-logo span {
+  color: #00f2ff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+}
+
+.footer-brand-tagline {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin-bottom: 15px;
+  max-width: 320px;
+}
+
+.footer-dedication {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.footer-col-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.footer-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links-list a {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.footer-links-list a:hover {
+  color: #00f2ff;
+  padding-left: 4px;
+}
+
+.footer-equations-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.footer-eq-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eq-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.eq-code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  color: #ff9d00;
+  font-weight: bold;
+}
+
+.footer-bottom-bar {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-copyright {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footer-socials {
+  display: flex;
+  gap: 15px;
+}
+
+.social-icon-btn {
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon-btn:hover {
+  color: #00f2ff;
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 6px rgba(0, 242, 255, 0.4));
+}
+
+@media (max-width: 968px) {
+  .footer-main-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .footer-brand-tagline {
+    max-width: none;
+  }
+}
+
+/* ================= IN-VIEW GLIDING EFFECT FOR HISTORIC JOURNEY ================= */
+/* Base initial states (invisible and shifted down) */
+.history-hero-content,
+.intro-left-col,
+.intro-right-col,
+.timeline-scroll-hint,
+.timeline-carousel-wrap,
+.apps-header,
+.apps-panel-container,
+.hof-header,
+.hof-split-container {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1), transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+/* Active in-view states (smoothly glides up and fades in) */
+.history-snap-section.in-view .history-hero-content,
+.history-snap-section.in-view .intro-left-col,
+.history-snap-section.in-view .intro-right-col,
+.history-snap-section.in-view .timeline-scroll-hint,
+.history-snap-section.in-view .timeline-carousel-wrap,
+.history-snap-section.in-view .apps-header,
+.history-snap-section.in-view .apps-panel-container,
+.history-snap-section.in-view .hof-header,
+.history-snap-section.in-view .hof-split-container {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered delay for secondary panels to create premium sliding motion */
+.history-snap-section.in-view .intro-right-col,
+.history-snap-section.in-view .timeline-carousel-wrap,
+.history-snap-section.in-view .apps-panel-container,
+.history-snap-section.in-view .hof-split-container {
+  transition-delay: 0.12s;
+}
+
+/* Specific timeline elements slide in beautifully */
+.timeline-card-col {
+  opacity: 0;
+  transform: scale(0.96) translateY(20px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.history-snap-section.in-view .timeline-card-col {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Staggered load for timeline cards */
+.history-snap-section.in-view .timeline-card-col:nth-child(1) { transition-delay: 0.2s; }
+.history-snap-section.in-view .timeline-card-col:nth-child(2) { transition-delay: 0.3s; }
+.history-snap-section.in-view .timeline-card-col:nth-child(3) { transition-delay: 0.4s; }
+.history-snap-section.in-view .timeline-card-col:nth-child(4) { transition-delay: 0.5s; }
+.history-snap-section.in-view .timeline-card-col:nth-child(5) { transition-delay: 0.6s; }
+.history-snap-section.in-view .timeline-card-col:nth-child(n+6) { transition-delay: 0.7s; }

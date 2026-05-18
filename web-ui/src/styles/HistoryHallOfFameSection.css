@@ -1,0 +1,529 @@
+/* ================= SECTION 5: HALL OF FAME (NEOCLASSICAL LIBRARY THEME) ================= */
+.history-hof-section {
+  background: #D1CAB1; /* Perfect transition from applications! */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  scroll-snap-align: start;
+  border-top: 1px dashed rgba(140, 127, 104, 0.3);
+}
+
+/* Background watermark classic ornament */
+.history-hof-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50,0 C60,25 100,40 100,50 C100,60 60,75 50,100 C40,75 0,60 0,50 C0,40 40,25 50,0 Z' fill='%238c7f68'/%3E%3C/svg%3E");
+  background-size: 300px;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.hof-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  height: 90%;
+  padding: 0 4%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+/* Header styling */
+.hof-header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.hof-badge {
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #8c7f68; /* Elegant deep bronze */
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  background: rgba(140, 127, 104, 0.08);
+  padding: 5px 18px;
+  border-radius: 4px;
+  border: 1px solid rgba(140, 127, 104, 0.3);
+  display: inline-block;
+  box-shadow: 0 0 12px rgba(140, 127, 104, 0.05);
+  margin-bottom: 8px;
+}
+
+.hof-title {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+  font-weight: 700;
+  color: #1c1a17; /* Elegant dark ink */
+  letter-spacing: 0.5px;
+  margin: 0 0 4px 0;
+}
+
+.hof-subtitle {
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+  color: #5a4732; /* Soft sepia text */
+  margin: 0;
+}
+
+
+/* Main split dashboard */
+.hof-split-container {
+  display: grid;
+  grid-template-columns: 1fr 2.4fr;
+  gap: 30px;
+  flex-grow: 1;
+  height: calc(100% - 110px);
+  min-height: 0;
+}
+
+/* Left panel list selector */
+.hof-selector-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.hof-selector-panel::-webkit-scrollbar {
+  width: 3px;
+}
+.hof-selector-panel::-webkit-scrollbar-thumb {
+  background: rgba(184, 144, 83, 0.2);
+  border-radius: 4px;
+}
+
+.selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.selector-item-card {
+  background: rgba(28, 26, 23, 0.03);
+  border: 1px solid rgba(140, 127, 104, 0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.selector-item-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  height: 0;
+  background: #1c1a17;
+  transition: height 0.3s;
+}
+
+.selector-item-card:hover {
+  background: rgba(140, 127, 104, 0.08);
+  border-color: rgba(140, 127, 104, 0.4);
+  transform: translateX(4px);
+}
+
+.selector-item-card.active {
+  background: #1c1a17;
+  border-color: #1c1a17;
+  box-shadow: 0 4px 15px rgba(28, 26, 23, 0.15);
+}
+
+.selector-item-card.active::after {
+  height: 100%;
+}
+
+.item-icon-avatar {
+  font-size: 22px;
+  filter: grayscale(0.2) contrast(1.1);
+}
+
+.item-details {
+  flex-grow: 1;
+}
+
+.item-name {
+  font-family: 'Georgia', serif;
+  font-size: clamp(12px, 1.1vw, 15px);
+  font-weight: 700;
+  color: #1c1a17;
+  margin-bottom: 3px;
+  transition: color 0.3s;
+}
+
+.selector-item-card.active .item-name {
+  color: #D1CAB1;
+}
+
+.item-period {
+  font-family: 'Times New Roman', serif;
+  font-size: 11px;
+  font-style: italic;
+  color: #5a4732;
+  transition: color 0.3s;
+}
+
+.selector-item-card.active .item-period {
+  color: rgba(209, 202, 177, 0.7);
+}
+
+
+.active-arrow-glow {
+  color: #b89053;
+  font-size: 16px;
+  font-weight: 700;
+  animation: pulseArrowGold 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseArrowGold {
+  0%, 100% { transform: translateX(0); opacity: 0.6; }
+  50% { transform: translateX(2px); opacity: 1; }
+}
+
+/* Right display panel */
+.hof-display-panel {
+  height: 100%;
+  min-height: 0;
+}
+
+.display-glass-card {
+  height: 100%;
+  background: rgba(14, 15, 22, 0.6);
+  border: 1px solid rgba(184, 144, 83, 0.25);
+  border-radius: 20px;
+  padding: 30px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 20px;
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(184, 144, 83, 0.1);
+}
+
+/* Profile header details */
+.display-profile-meta {
+  border-bottom: 1px solid rgba(184, 144, 83, 0.2);
+  padding-bottom: 12px;
+}
+
+.profile-era-tag {
+  font-family: 'Times New Roman', serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #b89053;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.profile-name {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: clamp(1.4rem, 2vw, 2.2rem);
+  font-weight: 700;
+  color: #f4ecd8;
+  margin: 0;
+}
+
+.profile-period {
+  font-family: 'Times New Roman', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: rgba(244, 236, 216, 0.5);
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.profile-bio {
+  font-family: 'Georgia', serif;
+  font-size: clamp(0.85rem, 1.05vw, 0.95rem);
+  color: rgba(244, 236, 216, 0.75);
+  line-height: 1.6;
+  margin: 0 0 10px 0;
+}
+
+.profile-achievement {
+  font-family: 'Georgia', serif;
+  font-size: 11px;
+  font-style: italic;
+  color: rgba(244, 236, 216, 0.85);
+  background: rgba(184, 144, 83, 0.04);
+  border: 1px solid rgba(184, 144, 83, 0.2);
+  border-radius: 6px;
+  padding: 6px 12px;
+  display: inline-block;
+}
+
+.profile-achievement strong {
+  color: #b89053;
+  font-style: normal;
+}
+
+/* Graphics and quotes split */
+.display-visual-section {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 25px;
+  min-height: 0;
+}
+
+/* Museum sketch pad display */
+.visual-graphic-screen {
+  background: #fdfaf2; /* Elegant warm museum drawing paper background */
+  border: 1px solid #c5a880;
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    inset 0 2px 10px rgba(42, 33, 21, 0.1),
+    0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.visual-graphic-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  pointer-events: none;
+  background-image: radial-gradient(#000 20%, transparent 20%);
+  background-size: 3px 3px;
+}
+
+.visual-graphic-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #7c6244; /* Sepia ink label */
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid rgba(124, 98, 68, 0.15);
+  padding-bottom: 4px;
+}
+
+.visual-graphic-title::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #b89053;
+  border-radius: 50%;
+  box-shadow: none;
+  animation: none;
+}
+
+.hof-sim-svg {
+  width: 100%;
+  height: calc(100% - 22px);
+  min-height: 0;
+}
+
+/* Classical Hand-Drawn Sepia Ink Style for SVGs */
+.hof-circle-base {
+  fill: none;
+  stroke: rgba(124, 98, 68, 0.25);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 3;
+}
+
+.hof-polygon-approx {
+  fill: rgba(184, 144, 83, 0.08);
+  stroke: #7c6244;
+  stroke-width: 1.5;
+}
+
+.hof-dot {
+  fill: #fff;
+  stroke: #7c6244;
+  stroke-width: 1.5;
+}
+
+.hof-dot-static {
+  fill: #b33939;
+  stroke: #7c6244;
+  stroke-width: 1;
+}
+
+.hof-dot-moving {
+  fill: #218c74;
+  stroke: #7c6244;
+  stroke-width: 1;
+}
+
+.hof-curve-line {
+  fill: none;
+  stroke: #2a2115; /* Dark ink curve */
+  stroke-width: 2.5;
+}
+
+.hof-secant-line {
+  fill: none;
+  stroke: #b89053; /* Golden ink construction line */
+  stroke-width: 1.5;
+}
+
+.hof-axis-line {
+  stroke: rgba(124, 98, 68, 0.3);
+  stroke-width: 1;
+}
+
+.hof-integral-area {
+  fill: rgba(184, 144, 83, 0.2);
+  stroke: none;
+}
+
+.hof-dx-slice {
+  stroke: #7c6244;
+  stroke-width: 2;
+  stroke-dasharray: 2 2;
+}
+
+.hof-leibniz-symbol {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 38px;
+  fill: #2a2115;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.hof-riemann-rect {
+  fill: rgba(184, 144, 83, 0.12);
+  stroke: rgba(124, 98, 68, 0.5);
+  stroke-width: 1;
+}
+
+.hof-lebesgue-horizontal {
+  stroke: rgba(124, 98, 68, 0.3);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.hof-svg-text {
+  font-family: 'Times New Roman', serif;
+  font-size: 9px;
+  fill: #5a4732;
+  font-style: italic;
+}
+
+/* Neoclassical Quotes Card Styling */
+.visual-quote-card {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(184, 144, 83, 0.15);
+  border-radius: 12px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.quote-icon {
+  font-family: 'Georgia', serif;
+  font-size: 80px;
+  color: rgba(184, 144, 83, 0.08);
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  line-height: 1;
+}
+
+.quote-text {
+  font-family: 'Georgia', serif;
+  font-size: clamp(0.9rem, 1.15vw, 1.1rem);
+  color: #f4ecd8;
+  line-height: 1.7;
+  font-style: italic;
+  font-weight: 400;
+  margin: 0 0 15px 0;
+  position: relative;
+  z-index: 2;
+  border-left: 2px solid rgba(184, 144, 83, 0.3);
+  padding-left: 15px;
+}
+
+.quote-author {
+  font-family: 'Times New Roman', serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #b89053;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-style: normal;
+  display: block;
+  text-align: right;
+  margin-right: 5px;
+}
+
+/* Decorative divider at the bottom of the card */
+.visual-quote-card::before {
+  content: "❖";
+  font-size: 10px;
+  color: rgba(184, 144, 83, 0.3);
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Responsive adjustment for laptop/mobile screens */
+@media (max-width: 1024px) {
+  .hof-split-container {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .history-hof-section {
+    aspect-ratio: auto;
+    min-height: 100vh;
+    height: auto;
+    padding: 80px 0;
+  }
+
+  .hof-selector-panel {
+    max-height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .display-visual-section {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-graphic-screen {
+    height: 200px;
+  }
+}

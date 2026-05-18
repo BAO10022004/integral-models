@@ -3,18 +3,21 @@ import ConfidenceBar from './ConfidenceBar';
 
 const ProbabilityDistribution = ({ probabilities }) => (
   <div style={{
-    background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)",
-    borderRadius: 20, padding: 20,
+    background: "#ffffff", 
+    border: "1px solid #e2e8f0",
+    borderRadius: 24, padding: 24,
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01)",
+    fontFamily: "Arial, Helvetica, sans-serif"
   }}>
-    <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".12em", color: "#888", textTransform: "uppercase", marginBottom: 14 }}>
+    <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".12em", color: "#64748b", textTransform: "uppercase", marginBottom: 16 }}>
       Phân Phối Xác Suất
     </div>
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {probabilities.map(p => (
         <div key={p.action}>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 5 }}>
-            <span style={{ color: "#ccc" }}>Action {p.action} — {p.name}</span>
-            <span style={{ color: p.color, fontWeight: 700 }}>{p.probability}%</span>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 6, fontWeight: 700 }}>
+            <span style={{ color: "#334155" }}>Action {p.action} — {p.name}</span>
+            <span style={{ color: p.color }}>{p.probability}%</span>
           </div>
           <ConfidenceBar pct={p.probability} color={p.color} />
         </div>

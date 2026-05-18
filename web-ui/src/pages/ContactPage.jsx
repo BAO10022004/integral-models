@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Footer from "../components/common/Footer";
 
 export default function ContactPage({ onNavigate }) {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
@@ -161,7 +162,7 @@ export default function ContactPage({ onNavigate }) {
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 32, alignItems: "start" }}>
-          
+
           {/* Left Column - Contact Details */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div className="contact-info-item">
@@ -194,44 +195,44 @@ export default function ContactPage({ onNavigate }) {
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>Họ & Tên</label>
-                <input 
-                  type="text" 
-                  className="contact-input" 
-                  value={formData.name} 
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+                <input
+                  type="text"
+                  className="contact-input"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Nhập tên của bạn"
-                  required 
+                  required
                 />
               </div>
 
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>Email Liên Hệ</label>
-                <input 
-                  type="email" 
-                  className="contact-input" 
-                  value={formData.email} 
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                <input
+                  type="email"
+                  className="contact-input"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="name@example.com"
-                  required 
+                  required
                 />
               </div>
 
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>Lời Nhắn</label>
-                <textarea 
-                  className="contact-input" 
-                  value={formData.message} 
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })} 
+                <textarea
+                  className="contact-input"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   placeholder="Bạn cần hỗ trợ điều gì..."
                   rows="4"
                   style={{ resize: "none" }}
-                  required 
+                  required
                 />
               </div>
 
-              <button 
-                type="submit" 
-                className="btn-submit" 
+              <button
+                type="submit"
+                className="btn-submit"
                 disabled={isSubmitting || !formData.name || !formData.email || !formData.message}
               >
                 {isSubmitting ? "Đang Gửi..." : "Gửi Lời Nhắn"}
@@ -241,6 +242,7 @@ export default function ContactPage({ onNavigate }) {
 
         </div>
       </div>
+      <Footer onNavigate={onNavigate} />
     </div>
   );
 }

@@ -224,12 +224,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
 }
 
 .koa-menu-link {
   font-family: var(--koa-nav-font, var(--koa-sans));
-  font-size: 2.8rem;
+  font-size: 1.6rem;
   color: white;
   text-decoration: none;
   text-transform: uppercase;
@@ -247,23 +247,35 @@
 
 /* Staggered delay for each link */
 .koa-menu-overlay.open .koa-menu-link:nth-child(1) {
-  animation-delay: 0.1s;
+  animation-delay: 0.05s;
 }
 
 .koa-menu-overlay.open .koa-menu-link:nth-child(2) {
-  animation-delay: 0.2s;
+  animation-delay: 0.1s;
 }
 
 .koa-menu-overlay.open .koa-menu-link:nth-child(3) {
-  animation-delay: 0.3s;
+  animation-delay: 0.15s;
 }
 
 .koa-menu-overlay.open .koa-menu-link:nth-child(4) {
-  animation-delay: 0.4s;
+  animation-delay: 0.2s;
 }
 
 .koa-menu-overlay.open .koa-menu-link:nth-child(5) {
-  animation-delay: 0.5s;
+  animation-delay: 0.25s;
+}
+
+.koa-menu-overlay.open .koa-menu-link:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+.koa-menu-overlay.open .koa-menu-link:nth-child(7) {
+  animation-delay: 0.35s;
+}
+
+.koa-menu-overlay.open .koa-menu-link:nth-child(8) {
+  animation-delay: 0.4s;
 }
 
 @keyframes menuSlideDown {
@@ -380,4 +392,125 @@
 
 .koa-grid-item:hover .koa-img-wrapper img {
   transform: scale(1.1);
+}
+
+/* Account Profile Card inside Menu Overlay */
+.koa-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 40px;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  width: 320px;
+  animation: profileFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes profileFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.koa-profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--koa-accent, #d2a425);
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  object-fit: cover;
+}
+
+.koa-profile-name {
+  font-family: var(--koa-serif);
+  color: white;
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.koa-profile-email {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  text-align: center;
+  word-break: break-all;
+}
+
+.koa-profile-role-badge {
+  background: rgba(232, 201, 106, 0.1);
+  color: #e8c96a;
+  border: 1px solid rgba(232, 201, 106, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.koa-profile-role-badge.user {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.koa-profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.koa-profile-btn {
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.koa-profile-btn.primary {
+  background: var(--koa-accent, #d2a425);
+  color: black;
+  border: none;
+}
+
+.koa-profile-btn.primary:hover {
+  background: white;
+  transform: translateY(-2px);
+}
+
+.koa-profile-btn.secondary {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.koa-profile-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: white;
 }

@@ -24,7 +24,13 @@ public class HistoryTimelineController : ControllerBase
             return Ok(data);
         }
 
-        return NotFound();
+        return Ok(HistoryConfigDto.GetDefault());
+    }
+
+    [HttpGet("default")]
+    public IActionResult GetDefault()
+    {
+        return Ok(HistoryConfigDto.GetDefault());
     }
 
     [HttpPost]

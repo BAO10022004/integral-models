@@ -28,8 +28,8 @@ const Loader = ({ onComplete }) => {
     <div style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 1000,
-      background: '#0a0a0a',
+      zIndex: 100000,
+      background: '#ffffff',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -38,41 +38,35 @@ const Loader = ({ onComplete }) => {
       opacity: isDone ? 0 : 1,
       pointerEvents: isDone ? 'none' : 'all'
     }}>
-      <img 
-        src={logo} 
-        alt="Loading..." 
+      <style>{`
+        .loader-logo-anim {
+          animation: logoFloat 3.5s ease-in-out infinite;
+          will-change: transform, filter;
+        }
+        @keyframes logoFloat {
+          0% {
+            transform: translateY(0) scale(0.96);
+            filter: drop-shadow(0 8px 15px rgba(0, 242, 255, 0.2));
+          }
+          50% {
+            transform: translateY(-12px) scale(1.02);
+            filter: drop-shadow(0 25px 30px rgba(112, 0, 255, 0.32));
+          }
+          100% {
+            transform: translateY(0) scale(0.96);
+            filter: drop-shadow(0 8px 15px rgba(0, 242, 255, 0.2));
+          }
+        }
+      `}</style>
+      <img
+        src={logo}
+        alt="Loading..."
+        className="loader-logo-anim"
         style={{
           height: '280px',
-          marginBottom: '2rem'
-        }} 
+          margin: 0
+        }}
       />
-      
-      <div style={{
-        width: '200px',
-        height: '1px',
-        background: 'rgba(255,255,255,0.1)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          height: '100%',
-          background: '#d2a425',
-          width: `${progress}%`,
-          transition: 'width 0.4s ease'
-        }} />
-      </div>
-      
-      <div style={{
-        marginTop: '1rem',
-        fontSize: '10px',
-        color: 'rgba(255,255,255,0.3)',
-        letterSpacing: '0.2em'
-      }}>
-        LOADING {Math.floor(progress)}%
-      </div>
     </div>
   );
 };

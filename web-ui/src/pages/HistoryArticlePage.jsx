@@ -34,10 +34,10 @@ export default function HistoryArticlePage({ articleData, onNavigate }) {
 
       {/* Article Content Layout */}
       <div className="article-page-card">
-        
+
         {/* Upper Grid: Image on the Left, Title & Description on the Right */}
         <div className="article-page-upper-grid">
-          
+
           {/* Left Side: Big Premium Image with Tech Scanner styling */}
           <div className="article-page-media-pane">
             <div className="article-page-img-frame">
@@ -64,9 +64,9 @@ export default function HistoryArticlePage({ articleData, onNavigate }) {
               <span className="article-page-divider">|</span>
               <span className="article-page-category">KỶ NGUYÊN SỰ KIỆN</span>
             </div>
-            
+
             <h1 className="article-page-title">{articleData.title}</h1>
-            
+
             {articleData.desc && (
               <div className="article-page-short-desc-wrapper">
                 <p className="article-page-short-desc-text">
@@ -74,7 +74,7 @@ export default function HistoryArticlePage({ articleData, onNavigate }) {
                 </p>
               </div>
             )}
-            
+
             {articleData.url && (
               <a
                 href={articleData.url}

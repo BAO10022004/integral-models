@@ -9,6 +9,7 @@ import HistoryArticlePage from "./pages/HistoryArticlePage.jsx";
 import TheoryPage from "./pages/TheoryPage.jsx";
 import InfoPage from "./pages/InfoPage.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
+import ChatAssistant from "./components/ui/ChatAssistant.jsx";
 
 import { auth } from "./services/firebase";
 
@@ -16,17 +17,28 @@ export default function App() {
   const [user, setUser] = useState(() => {
     try {
       const stored = localStorage.getItem("user");
-      return stored ? JSON.parse(stored) : null;
+      if (!stored) return null;
+      const parsed = JSON.parse(stored);
+      // Check if session has expired (30 minutes)
+      if (parsed && parsed.expiry && Date.now() > parsed.expiry) {
+        localStorage.removeItem("user");
+        return null;
+      }
+      return parsed;
     } catch {
       return null;
     }
   });
 
   const handleSetUser = (userData) => {
-    setUser(userData);
     if (userData) {
-      localStorage.setItem("user", JSON.stringify(userData));
+      // Set session expiration to 30 minutes from now (30 * 60 * 1000 ms)
+      const expiry = Date.now() + 30 * 60 * 1000;
+      const dataWithExpiry = { ...userData, expiry };
+      setUser(dataWithExpiry);
+      localStorage.setItem("user", JSON.stringify(dataWithExpiry));
     } else {
+      setUser(null);
       localStorage.removeItem("user");
     }
   };
@@ -43,16 +55,52 @@ export default function App() {
 
   const getInitialPage = () => {
     const path = window.location.pathname;
-    const storedUser = localStorage.getItem("user");
+    const stored = localStorage.getItem("user");
+    let storedUser = null;
+
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.expiry) {
+          if (Date.now() > parsed.expiry) {
+            localStorage.removeItem("user");
+            storedUser = null;
+          } else {
+            storedUser = parsed;
+          }
+        } else {
+          storedUser = parsed;
+        }
+      } catch {
+        storedUser = null;
+      }
+    }
+
+    const isUserAdmin = storedUser && (storedUser.role === "admin" || storedUser.Role === "admin");
 
     if (path === "/admin" || path === "/admin/") {
-      return storedUser ? "admin" : "login";
+      if (!storedUser) {
+        window.history.replaceState(null, "", "/login");
+        return "login";
+      }
+      if (!isUserAdmin) {
+        window.history.replaceState(null, "", "/");
+        return "intro";
+      }
+      return "admin";
     }
     if (path === "/tester" || path === "/tester/") {
       return "tester";
     }
     if (path === "/login" || path === "/login/") {
-      return storedUser ? "admin" : "login";
+      if (!storedUser) {
+        return "login";
+      }
+      if (!isUserAdmin) {
+        window.history.replaceState(null, "", "/");
+        return "intro";
+      }
+      return "admin";
     }
     if (path === "/history/article" || path === "/history/article/") {
       return "history-article";
@@ -84,7 +132,28 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Load custom global website font from localStorage
+  // Auto logout user after 30 minutes of session duration
+  useEffect(() => {
+    if (!user || !user.expiry) return;
+
+    const checkAndSchedule = () => {
+      const timeLeft = user.expiry - Date.now();
+      if (timeLeft <= 0) {
+        handleLogout();
+        alert("Phiên đăng nhập của bạn đã hết hạn sau 30 phút. Vui lòng đăng nhập lại.");
+      } else {
+        const timeoutId = setTimeout(() => {
+          handleLogout();
+          alert("Phiên đăng nhập của bạn đã hết hạn sau 30 phút. Vui lòng đăng nhập lại.");
+        }, timeLeft);
+        return () => clearTimeout(timeoutId);
+      }
+    };
+
+    return checkAndSchedule();
+  }, [user]);
+
+  // Load custom global website font, title, and favicon from localStorage
   useEffect(() => {
     const storedFont = localStorage.getItem("navbar_font");
     if (storedFont) {
@@ -95,19 +164,47 @@ export default function App() {
       document.documentElement.style.setProperty('--koa-sans', storedFont);
       document.documentElement.style.setProperty('--koa-serif', storedFont);
     }
+
+    const storedTitle = localStorage.getItem("website_title");
+    if (storedTitle) {
+      document.title = storedTitle;
+    }
+
+    const storedFavicon = localStorage.getItem("website_favicon");
+    if (storedFavicon) {
+      let link = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+      link.href = storedFavicon;
+    }
   }, []);
 
   // Redirect to admin page if user is logged in and visits login page
   useEffect(() => {
     if (page === "login" && user) {
-      navigate("admin");
+      const isUserAdmin = user.role === "admin" || user.Role === "admin";
+      if (isUserAdmin) {
+        navigate("admin");
+      } else {
+        navigate("intro");
+      }
     }
   }, [page, user]);
 
   const navigate = (nextPage, data = null) => {
-    // Rule: Accessing admin page requires login
-    if (nextPage === "admin" && !user) {
-      nextPage = "login";
+    // Rule: Accessing admin page requires login and admin role
+    if (nextPage === "admin") {
+      if (!user) {
+        nextPage = "login";
+      } else {
+        const isUserAdmin = user.role === "admin" || user.Role === "admin";
+        if (!isUserAdmin) {
+          nextPage = "intro";
+        }
+      }
     }
 
     if (nextPage === "solution" && data) setSolutionData(data);
@@ -132,13 +229,11 @@ export default function App() {
 
   return (
     <>
-
-
-
+      {page !== "admin" && page !== "login" && <ChatAssistant />}
       {page === "solution" ? (
         <SolutionPage data={solutionData} onBack={() => navigate("intro")} />
       ) : page === "intro" ? (
-        <IntroPage onNavigate={navigate} />
+        <IntroPage user={user} onLogout={handleLogout} onNavigate={navigate} />
       ) : page === "login" ? (
         <Login user={user} onSetUser={handleSetUser} onNavigate={navigate} />
       ) : page === "admin" ? (
@@ -154,7 +249,7 @@ export default function App() {
       ) : page === "contact" ? (
         <ContactPage onNavigate={navigate} />
       ) : (
-        <ModelTester user={user} />
+        <ModelTester user={user} onNavigate={navigate} />
       )}
     </>
   );

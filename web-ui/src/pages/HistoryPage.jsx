@@ -2,14 +2,19 @@ import React, { useRef, useState, useEffect } from "react";
 import "../styles/HistoryPage.css";
 import slideImgDefault from "../assets/history/slide.png";
 import introImgDefault from "../assets/history.webp";
+import logoDefault from "../assets/logo.png";
 import { DOTNET_API_URL } from "../config";
 
 // Import Modularized Sections
 import HistoryHeroSection from "../components/history/HistoryHeroSection";
 import HistoryIntroSection from "../components/history/HistoryIntroSection";
 import HistoryTimelineSection from "../components/history/HistoryTimelineSection";
+import HistoryApplicationsSection from "../components/history/HistoryApplicationsSection";
+import HistoryHallOfFameSection from "../components/history/HistoryHallOfFameSection";
+import Footer from "../components/common/Footer";
 
 export default function HistoryPage({ onNavigate }) {
+
   const containerRef = useRef(null);
   const nextSectionRef = useRef(null);
 
@@ -26,60 +31,7 @@ export default function HistoryPage({ onNavigate }) {
   const [scrollLeftState, setScrollLeftState] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const defaultMilestones = [
-    {
-      id: 1,
-      year: "1687",
-      title: "Newton & Leibniz Era",
-      image: slideImgDefault,
-      desc: "Independent formulation of analytical calculus, introducing integrations as inverse derivative steps.",
-      article: `<h3>Thời kỳ Newton & Leibniz</h3><p>Năm 1687 đánh dấu bước ngoặt vĩ đại khi Isaac Newton xuất bản tác phẩm kiệt tác <i>Philosophiæ Naturalis Principia Mathematica</i>. Cùng thời gian đó, Gottfried Wilhelm Leibniz cũng phát triển độc lập hệ thống vi phân và tích phân của riêng mình với các ký hiệu trực quan mà chúng ta vẫn sử dụng ngày nay.</p><p>Hệ thống của họ đã liên kết hai bài toán tưởng chừng độc lập: tìm tiếp tuyến (đạo hàm) và tìm diện tích dưới đường cong (tích phân).</p>`,
-      articleType: "html",
-      url: "https://en.wikipedia.org/wiki/History_of_calculus"
-    },
-    {
-      id: 2,
-      year: "1854",
-      title: "Riemann Calculus Rigor",
-      image: introImgDefault,
-      desc: "Bernhard Riemann defines analytical integration through partition limits, establishing rigorous mathematics proofs.",
-      article: `Bernhard Riemann introduced a rigorous definition of the integral in his 1854 Habilitation thesis. This definition, now known as the Riemann integral, is based on approximating the area under a curve by summing up the areas of narrow vertical rectangles (Riemann sums).\n\nBy taking the limit as the rectangles approaches zero, Riemann mathematically established the concept of continuous accumulation.`,
-      articleType: "text",
-      url: "https://en.wikipedia.org/wiki/Riemann_integral"
-    },
-    {
-      id: 3,
-      year: "1960",
-      title: "Mainframe Numerics",
-      image: slideImgDefault,
-      desc: "High-performance integration algorithms are deployed on computer processors for complex numerical approximations.",
-      article: `<h3>Kỷ nguyên Số hóa Máy tính</h3><p>Với sự ra đời của các máy tính mainframe vào thập niên 1960, các nhà toán học đã chuyển đổi các lý thuyết vi tích phân thành các thuật toán xấp xỉ số học hiệu năng cao.</p><p>Các phương pháp như Simpson, Runge-Kutta hay Gauss Quadrature được lập trình để giải quyết các hệ phương trình tích phân phức tạp trong hàng không vũ trụ và vật lý hạt nhân.</p>`,
-      articleType: "html",
-      url: "https://en.wikipedia.org/wiki/Numerical_integration"
-    },
-    {
-      id: 4,
-      year: "2020",
-      title: "Symbolic CAS Systems",
-      image: introImgDefault,
-      desc: "Computer Algebra Systems automate analytical formula derivation chains and symbolic step solutions.",
-      article: `In the late 2010s and early 2020s, Computer Algebra Systems (CAS) like Mathematica, Maple, and SymPy revolutionized mathematics education and engineering. These tools automate symbolic formula derivation chains, performing complex indefinite integration steps in fractions of a second without human calculation error.`,
-      articleType: "text",
-      url: "https://en.wikipedia.org/wiki/Computer_algebra_system"
-    },
-    {
-      id: 5,
-      year: "2026",
-      title: "Deep AI GNN Solver",
-      image: slideImgDefault,
-      desc: "Neural networks classify and predict calculus action steps instantly, bridging neural intuition with rigorous math logic.",
-      article: `<h3>Trí Tuệ Nhân Tạo & Mô Hình GNN</h3><p>Năm 2026 đánh dấu đỉnh cao của AI trong Toán học. Bằng việc kết hợp Đồ thị Mạng Thần Kinh (GNN) với các mô hình Phân loại Hành động Học Sâu (Deep Learning Action Classification), hệ thống Solver của chúng tôi có khả năng 'hiểu' trực giác cấu trúc toán học của các bài toán tích phân cực kỳ phức tạp.</p><p>Hệ thống không chỉ đưa ra đáp án cuối cùng mà còn phân tích và giải thích chi tiết từng bước chuyển đổi logic tựa như một nhà toán học thực thụ.</p>`,
-      articleType: "html",
-      url: "https://en.wikipedia.org/wiki/Graph_neural_network"
-    }
-  ];
-
-  const [milestones, setMilestones] = useState(defaultMilestones);
+  const [milestones, setMilestones] = useState([]);
 
   useEffect(() => {
     fetch(`${DOTNET_API_URL}/HistoryTimeline`)
@@ -118,7 +70,33 @@ export default function HistoryPage({ onNavigate }) {
       });
   }, []);
 
+  // Intersection Observer for smooth scrolling slide-up active transitions
+  useEffect(() => {
+    const observerOptions = {
+      root: containerRef.current,
+      threshold: 0.2, // Triggers when 20% of the section is visible
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+        } else {
+          entry.target.classList.remove("in-view");
+        }
+      });
+    }, observerOptions);
+
+    const sections = containerRef.current?.querySelectorAll(".history-snap-section");
+    sections?.forEach((section) => observer.observe(section));
+
+    return () => {
+      sections?.forEach((section) => observer.unobserve(section));
+    };
+  }, []);
+
   const handleScrollToNext = () => {
+
     if (nextSectionRef.current) {
       nextSectionRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -259,6 +237,15 @@ export default function HistoryPage({ onNavigate }) {
         onScroll={handleScroll}
         onCardClick={handleCardClick}
       />
+      {/* ================= SECTION 4: INTEGRAL APPLICATIONS SHOWCASE ================= */}
+      <HistoryApplicationsSection />
+
+      {/* ================= SECTION 5: HALL OF FAME ================= */}
+      <HistoryHallOfFameSection />
+
+      {/* ================= HISTORY FOOTER ================= */}
+      <Footer onNavigate={onNavigate} />
     </div>
   );
 }
+

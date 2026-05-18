@@ -4,10 +4,40 @@ import { DOTNET_API_URL } from '../../config';
 import '../../styles/Login.css';
 import logoImg from '../../assets/logo.png';
 
+const safeParseJson = async (response) => {
+    const text = await response.text();
+    try {
+        return text ? JSON.parse(text) : {};
+    } catch (e) {
+        if (text && (text.includes("<!DOCTYPE html>") || text.includes("<html"))) {
+            return { Error: `Server error (${response.status}): ${response.statusText}` };
+        }
+        return { Error: text || response.statusText };
+    }
+};
+
 const Login = ({ user, onSetUser, onNavigate }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    
+    // OTP States
+    const [loginMethod, setLoginMethod] = useState('password'); // 'password' | 'otp'
+    const [otpSent, setOtpSent] = useState(false);
+    const [otpCode, setOtpCode] = useState('');
+    const [countdown, setCountdown] = useState(0);
+
     const canvasRef = useRef(null);
+
+    // Countdown Timer Effect
+    useEffect(() => {
+        let timer;
+        if (countdown > 0) {
+            timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+        }
+        return () => clearTimeout(timer);
+    }, [countdown]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -103,15 +133,109 @@ const Login = ({ user, onSetUser, onNavigate }) => {
                 }),
             });
 
+            const data = await safeParseJson(response);
             if (!response.ok) {
-                throw new Error('Failed to login with backend API');
+                throw new Error(data.Message || data.Error || 'Failed to login with backend API');
             }
 
-            const userData = await response.json();
-            onSetUser(userData);
-            console.log('Logged in successfully:', userData);
+            onSetUser(data);
+            console.log('Logged in successfully:', data);
 
             // Redirect to admin dashboard immediately
+            onNavigate("admin");
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleEmailLogin = async (e) => {
+        if (e) e.preventDefault();
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${DOTNET_API_URL}/Account/email-login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await safeParseJson(response);
+            if (!response.ok) {
+                throw new Error(data.Message || data.Error || 'Failed to login with Email');
+            }
+
+            onSetUser(data);
+            console.log('Logged in successfully with Email:', data);
+            onNavigate("admin");
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSendOtp = async (e) => {
+        if (e) e.preventDefault();
+        if (!email) {
+            setError("Vui lòng nhập Email để gửi mã OTP.");
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${DOTNET_API_URL}/Account/send-otp`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await safeParseJson(response);
+            if (!response.ok) {
+                throw new Error(data.Message || data.Error || 'Failed to send OTP');
+            }
+
+            setOtpSent(true);
+            setCountdown(60);
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e) => {
+        if (e) e.preventDefault();
+        if (!otpCode || otpCode.length < 6) {
+            setError("Vui lòng nhập mã OTP gồm 6 chữ số.");
+            return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(`${DOTNET_API_URL}/Account/verify-otp`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, code: otpCode }),
+            });
+
+            const data = await safeParseJson(response);
+            if (!response.ok) {
+                throw new Error(data.Message || data.Error || 'Xác thực OTP thất bại');
+            }
+
+            onSetUser(data);
+            console.log('Logged in successfully with OTP:', data);
             onNavigate("admin");
         } catch (err) {
             console.error(err);
@@ -197,7 +321,7 @@ const Login = ({ user, onSetUser, onNavigate }) => {
                     <div className="premium-login-profile">
                         <span className="login-title-badge">Authenticated</span>
                         <div className="premium-avatar-frame">
-                            <img src={user.photoUrl} alt="Profile" className="premium-avatar" />
+                            <img src={user.photoUrl || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"} alt="Profile" className="premium-avatar" />
                         </div>
                         <h3 className="premium-welcome-text">Welcome, {user.displayName}</h3>
                         <p className="premium-email-text">{user.email}</p>
@@ -208,11 +332,131 @@ const Login = ({ user, onSetUser, onNavigate }) => {
                 ) : (
                     <div>
                         <h2 className="login-heading">Welcome Back</h2>
-                        <p className="login-subheading">
+                        <p className="login-subheading" style={{ marginBottom: "1.5rem" }}>
                             Access the high-performance AI math derivation dashboard and admin engine.
                         </p>
 
+                        {/* Inline Mode Switcher for Login Methods */}
+                        <div className="login-mode-switcher">
+                            <button
+                                type="button"
+                                className={`login-mode-btn ${loginMethod === 'password' ? 'active' : ''}`}
+                                onClick={() => { setLoginMethod('password'); setError(null); }}
+                            >
+                                Password
+                            </button>
+                            <button
+                                type="button"
+                                className={`login-mode-btn ${loginMethod === 'otp' ? 'active' : ''}`}
+                                onClick={() => { setLoginMethod('otp'); setError(null); }}
+                            >
+                                OTP Code
+                            </button>
+                        </div>
+
+                        {loginMethod === 'password' ? (
+                            <form onSubmit={handleEmailLogin}>
+                                <div className="login-input-group">
+                                    <span className="login-input-label">Email Address</span>
+                                    <input
+                                        type="email"
+                                        className="login-input-field"
+                                        placeholder="Enter your email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="login-input-group">
+                                    <span className="login-input-label">Password</span>
+                                    <input
+                                        type="password"
+                                        className="login-input-field"
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="login-email-submit-btn"
+                                    disabled={loading}
+                                >
+                                    {loading ? "Processing..." : "Sign In"}
+                                </button>
+                            </form>
+                        ) : (
+                            <form onSubmit={otpSent ? handleVerifyOtp : handleSendOtp}>
+                                <div className="login-input-group">
+                                    <span className="login-input-label">Email Address</span>
+                                    <input
+                                        type="email"
+                                        className="login-input-field"
+                                        placeholder="Enter your email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        disabled={otpSent}
+                                        required
+                                    />
+                                </div>
+
+                                {otpSent && (
+                                    <div className="login-input-group">
+                                        <span className="login-input-label">Verification OTP Code</span>
+                                        <input
+                                            type="text"
+                                            maxLength={6}
+                                            className="login-input-field"
+                                            placeholder="Enter 6-digit OTP code"
+                                            value={otpCode}
+                                            onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                                            required
+                                        />
+                                        
+                                        <div className="login-otp-meta">
+                                            <button
+                                                type="button"
+                                                className="login-otp-link"
+                                                onClick={() => { setOtpSent(false); setOtpCode(''); }}
+                                            >
+                                                Change Email
+                                            </button>
+
+                                            <span>
+                                                {countdown > 0 ? (
+                                                    `Resend in ${countdown}s`
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        className="login-otp-link"
+                                                        onClick={handleSendOtp}
+                                                        disabled={loading}
+                                                    >
+                                                        Resend OTP
+                                                    </button>
+                                                )}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    className="login-email-submit-btn"
+                                    disabled={loading}
+                                >
+                                    {loading ? "Processing..." : otpSent ? "Verify & Sign In" : "Send OTP Code"}
+                                </button>
+                            </form>
+                        )}
+
+                        <div className="login-divider">OR CONTINUE WITH</div>
+
                         <button
+                            type="button"
                             className="google-premium-btn"
                             onClick={(e) => {
                                 e.preventDefault();

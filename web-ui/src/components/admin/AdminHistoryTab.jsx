@@ -92,60 +92,7 @@ export default function AdminHistoryTab() {
     introText: "The intelligent calculus solver system was born from a desire to bridge the gap between complex mathematical theories and real-world digital applications.\n\nThrough numerous cycles of research and algorithmic optimization, we developed a state-of-the-art action classification model powered by Deep Learning. Today, any integral problem—from fundamental concepts to highly complex derivations—is processed in the blink of an eye with absolute precision."
   });
 
-  const defaultMilestones = [
-    {
-      id: 1,
-      year: "1687",
-      title: "Newton & Leibniz Era",
-      image: "",
-      desc: "Independent formulation of analytical calculus, introducing integrations as inverse derivative steps.",
-      article: `<h3>Thời kỳ Newton & Leibniz</h3><p>Năm 1687 đánh dấu bước ngoặt vĩ đại khi Isaac Newton xuất bản tác phẩm kiệt tác <i>Philosophiæ Naturalis Principia Mathematica</i>. Cùng thời gian đó, Gottfried Wilhelm Leibniz cũng phát triển độc lập hệ thống vi phân và tích phân của riêng mình với các ký hiệu trực quan mà chúng ta vẫn sử dụng ngày nay.</p><p>Hệ thống của họ đã liên kết hai bài toán tưởng chừng độc lập: tìm tiếp tuyến (đạo hàm) và tìm diện tích dưới đường cong (tích phân).</p>`,
-      articleType: "html",
-      url: "https://en.wikipedia.org/wiki/History_of_calculus"
-    },
-    {
-      id: 2,
-      year: "1854",
-      title: "Riemann Calculus Rigor",
-      image: "",
-      desc: "Bernhard Riemann defines analytical integration through partition limits, establishing rigorous mathematics proofs.",
-      article: `Bernhard Riemann introduced a rigorous definition of the integral in his 1854 Habilitation thesis. This definition, now known as the Riemann integral, is based on approximating the area under a curve by summing up the areas of narrow vertical rectangles (Riemann sums).\n\nBy taking the limit as the rectangles approaches zero, Riemann mathematically established the concept of continuous accumulation.`,
-      articleType: "text",
-      url: "https://en.wikipedia.org/wiki/Riemann_integral"
-    },
-    {
-      id: 3,
-      year: "1960",
-      title: "Mainframe Numerics",
-      image: "",
-      desc: "High-performance integration algorithms are deployed on computer processors for complex numerical approximations.",
-      article: `<h3>Kỷ nguyên Số hóa Máy tính</h3><p>Với sự ra đời của các máy tính mainframe vào thập niên 1960, các nhà toán học đã chuyển đổi các lý thuyết vi tích phân thành các thuật toán xấp xỉ số học hiệu năng cao.</p><p>Các phương pháp như Simpson, Runge-Kutta hay Gauss Quadrature được lập trình để giải quyết các hệ phương trình tích phân phức tạp trong hàng không vũ trụ và vật lý hạt nhân.</p>`,
-      articleType: "html",
-      url: "https://en.wikipedia.org/wiki/Numerical_integration"
-    },
-    {
-      id: 4,
-      year: "2020",
-      title: "Symbolic CAS Systems",
-      image: "",
-      desc: "Computer Algebra Systems automate analytical formula derivation chains and symbolic step solutions.",
-      article: `In the late 2010s and early 2020s, Computer Algebra Systems (CAS) like Mathematica, Maple, and SymPy revolutionized mathematics education and engineering. These tools automate symbolic formula derivation chains, performing complex indefinite integration steps in fractions of a second without human calculation error.`,
-      articleType: "text",
-      url: "https://en.wikipedia.org/wiki/Computer_algebra_system"
-    },
-    {
-      id: 5,
-      year: "2026",
-      title: "Deep AI GNN Solver",
-      image: "",
-      desc: "Neural networks classify and predict calculus action steps instantly, bridging neural intuition with rigorous math logic.",
-      article: `<h3>Trí Tuệ Nhân Tạo & Mô Hình GNN</h3><p>Năm 2026 đánh dấu đỉnh cao của AI trong Toán học. Bằng việc kết hợp Đồ thị Mạng Thần Kinh (GNN) với các mô hình Phân loại Hành động Học Sâu (Deep Learning Action Classification), hệ thống Solver của chúng tôi có khả năng 'hiểu' trực giác cấu trúc toán học của các bài toán tích phân cực kỳ phức tạp.</p><p>Hệ thống không chỉ đưa ra đáp án cuối cùng mà còn phân tích và giải thích chi tiết từng bước chuyển đổi logic tựa như một nhà toán học thực thụ.</p>`,
-      articleType: "html",
-      url: "https://en.wikipedia.org/wiki/Graph_neural_network"
-    }
-  ];
-
-  const [milestones, setMilestones] = useState(defaultMilestones);
+  const [milestones, setMilestones] = useState([]);
   const [activeCategory, setActiveCategory] = useState("general"); // "general" | "milestones"
   const [selectedMilestoneId, setSelectedMilestoneId] = useState(1);
   const [heroSourceType, setHeroSourceType] = useState("default"); // "default" | "url" | "upload"
@@ -351,35 +298,31 @@ export default function AdminHistoryTab() {
 
   const handleReset = () => {
     if (window.confirm("Are you sure you want to restore the default History Page layout?")) {
-      const defaultPayload = {
-        config: {
-          heroImgUrl: "",
-          showcaseImgUrl: "",
-          headline: "The Journey of AI Innovation",
-          introText: "The intelligent calculus solver system was born from a desire to bridge the gap between complex mathematical theories and real-world digital applications.\n\nThrough numerous cycles of research and algorithmic optimization, we developed a state-of-the-art action classification model powered by Deep Learning. Today, any integral problem—from fundamental concepts to highly complex derivations—is processed in the blink of an eye with absolute precision."
-        },
-        milestones: defaultMilestones
-      };
-
       setSaveStatus("Restoring server defaults...");
 
-      fetch(`${DOTNET_API_URL}/HistoryTimeline`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(defaultPayload)
-      })
+      fetch(`${DOTNET_API_URL}/HistoryTimeline/default`)
         .then(res => {
-          if (!res.ok) throw new Error("Reset POST failed");
+          if (!res.ok) throw new Error("Failed to fetch default settings");
           return res.json();
         })
-        .then(() => {
+        .then(defaultPayload => {
+          return fetch(`${DOTNET_API_URL}/HistoryTimeline`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(defaultPayload)
+          }).then(res => {
+            if (!res.ok) throw new Error("Reset POST failed");
+            return defaultPayload;
+          });
+        })
+        .then(defaultPayload => {
           localStorage.removeItem("history_page_config");
           localStorage.removeItem("history_timeline_milestones");
 
           setConfig(defaultPayload.config);
-          setMilestones(defaultMilestones);
+          setMilestones(defaultPayload.milestones);
           setHeroSourceType("default");
           setShowcaseSourceType("default");
           setCustomHeroUrl("");
@@ -389,18 +332,8 @@ export default function AdminHistoryTab() {
           setTimeout(() => setSaveStatus(""), 3000);
         })
         .catch(err => {
-          console.warn("Server reset failed, performing local reset fallback:", err);
-          localStorage.removeItem("history_page_config");
-          localStorage.removeItem("history_timeline_milestones");
-
-          setConfig(defaultPayload.config);
-          setMilestones(defaultMilestones);
-          setHeroSourceType("default");
-          setShowcaseSourceType("default");
-          setCustomHeroUrl("");
-          setCustomShowcaseUrl("");
-
-          setSaveStatus("Restored local defaults successfully!");
+          console.error("Server reset failed:", err);
+          setSaveStatus("Failed to restore defaults!");
           setTimeout(() => setSaveStatus(""), 3000);
         });
     }

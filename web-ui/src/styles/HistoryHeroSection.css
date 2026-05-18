@@ -2,7 +2,8 @@
 .history-hero-section {
   background: #000;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  min-height: 100vh;
+  height: auto;
   scroll-snap-align: start;
   position: relative;
   display: flex;

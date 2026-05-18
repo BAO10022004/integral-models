@@ -49,3 +49,14 @@ public class UpdateProfileRequest
     public string DisplayName { get; set; } = string.Empty;
     public string PhotoUrl { get; set; } = string.Empty;
 }
+
+public class SendOtpRequest
+{
+    public string Email { get; set; } = string.Empty;
+}
+
+public class VerifyOtpRequest
+{
+    public string Email { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
+}

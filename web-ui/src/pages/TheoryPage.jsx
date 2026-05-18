@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Footer from "../components/common/Footer";
 
 export default function TheoryPage({ onNavigate }) {
   const [activeTab, setActiveTab] = useState("all"); // "all" | "usub" | "ibp" | "trig" | "basic"
@@ -217,8 +218,8 @@ export default function TheoryPage({ onNavigate }) {
           {filteredTopics.map(topic => {
             const isOpen = expandedFormula === topic.id;
             return (
-              <div 
-                key={topic.id} 
+              <div
+                key={topic.id}
                 className={`theory-accordion-item ${isOpen ? "open" : ""}`}
                 onClick={() => setExpandedFormula(isOpen ? null : topic.id)}
               >
@@ -234,13 +235,13 @@ export default function TheoryPage({ onNavigate }) {
                 {isOpen && (
                   <div style={{ marginTop: 16, animation: "fadeSlide .3s ease-out" }} onClick={(e) => e.stopPropagation()}>
                     <p style={{ fontSize: 14, color: "rgba(255,255,255,0.6)", lineHeight: 1.6, marginBottom: 20 }}>{topic.explanation}</p>
-                    
+
                     <div className="example-block">
                       <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,0.4)", marginBottom: 12, letterSpacing: "0.08em" }}>VÍ DỤ CHI TIẾT</div>
                       <div style={{ fontFamily: "monospace", fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16 }}>
                         Giải biểu thức: {topic.example.problem}
                       </div>
-                      
+
                       <div>
                         {topic.example.steps.map((step, idx) => (
                           <div key={idx} className="step-item">
@@ -257,6 +258,7 @@ export default function TheoryPage({ onNavigate }) {
           })}
         </div>
       </div>
+      <Footer onNavigate={onNavigate} />
     </div>
   );
 }

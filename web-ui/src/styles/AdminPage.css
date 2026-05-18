@@ -159,12 +159,11 @@ select.control-input option {
   }
 }
 
-/* Premium Desktop Split Viewport Height Constraints */
+/* Premium Desktop Viewport Settings - Scrollable Page */
 @media (min-width: 993px) {
   .admin-page-wrapper {
-    height: 100vh !important;
     min-height: 100vh !important;
-    overflow: hidden !important;
+    overflow-y: auto !important;
     display: flex !important;
     flex-direction: column !important;
     padding: 24px !important;
@@ -172,57 +171,27 @@ select.control-input option {
   }
 
   .admin-container {
-    height: 100% !important;
+    max-width: 1600px !important;
     display: flex !important;
     flex-direction: column !important;
-    max-width: 1600px !important;
   }
 
   .admin-main-layout {
-    flex: 1 !important;
-    min-height: 0 !important;
-    /* Critical for enabling overflow children */
     display: grid !important;
     grid-template-columns: auto 1fr !important;
     gap: 32px !important;
-    align-items: stretch !important;
+    align-items: start !important;
   }
 
   .admin-sidebar {
-    height: 100% !important;
-    min-height: 0 !important;
-    position: relative !important;
-    top: 0 !important;
+    position: sticky !important;
+    top: 24px !important;
   }
 
   .admin-glass-card {
-    height: 100% !important;
-    overflow-y: auto !important;
+    height: auto !important;
     box-sizing: border-box !important;
-    min-height: 0 !important;
-    /* Critical for inner scrolling */
-
-    /* Premium thin scrollbar styles */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 242, 255, 0.2) rgba(255, 255, 255, 0.02);
-  }
-
-  .admin-glass-card::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .admin-glass-card::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.01);
-    border-radius: 10px;
-  }
-
-  .admin-glass-card::-webkit-scrollbar-thumb {
-    background: rgba(0, 242, 255, 0.15);
-    border-radius: 10px;
-  }
-
-  .admin-glass-card::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 242, 255, 0.3);
+    min-height: 500px !important;
   }
 }
 

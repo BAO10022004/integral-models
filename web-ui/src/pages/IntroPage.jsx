@@ -5,7 +5,7 @@ import Hero from '../components/landing/Hero';
 import CategoryGrid from '../components/landing/CategoryGrid';
 import MenuOverlay from '../components/common/MenuOverlay';
 
-const IntroPage = ({ onNavigate }) => {
+const IntroPage = ({ user, onLogout, onNavigate }) => {
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const revealRefs = useRef([]);
@@ -45,7 +45,7 @@ const IntroPage = ({ onNavigate }) => {
         </nav>
 
         {/* Menu Overlay */}
-        <MenuOverlay menuOpen={menuOpen} setMenuOpen={setMenuOpen} onNavigate={onNavigate} />
+        <MenuOverlay menuOpen={menuOpen} setMenuOpen={setMenuOpen} onNavigate={onNavigate} user={user} onLogout={onLogout} />
 
         <div className="snap-container">
           {/* SECTION 1: HERO */}

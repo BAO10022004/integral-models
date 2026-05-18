@@ -12,7 +12,6 @@
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
-  height: 100%;
   width: 100%;
   aspect-ratio: 16 / 9;
   scroll-snap-align: start;
@@ -93,6 +92,7 @@
   align-items: center;
   position: relative;
   box-sizing: border-box;
+  height: 100%; /* Fill parent card height to allow precise grid placement */
 }
 
 /* Left Column: Image (layered on top of line) */
@@ -141,21 +141,22 @@
 
 /* Right Column: Year / Line / Title & Desc */
 .timeline-content-col {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  align-self: stretch; /* Stretch to the full height of the card */
+  display: grid;
+  grid-template-rows: 50% 50%; /* Mathematically divides the card exactly at the 50% center line */
   text-align: left;
   width: 100%;
   box-sizing: border-box;
-  min-height: 380px; /* Space out elements above & below the center line */
 }
 
 /* Above the line: Year styling */
 .timeline-year-above {
-  margin-bottom: 10px;
-  margin-top: 30px;
-  /* Moved year closer and tighter to the dividing line */
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding-bottom: 25px; /* Perfect space above the dividing line */
+  box-sizing: border-box;
+  margin: 0;
 }
 
 .timeline-glowing-year {
@@ -238,8 +239,14 @@
 
 /* Below the line: Title & description */
 .timeline-details-below {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   width: 100%;
-  margin-top: 100px; /* Space below center line */
+  padding-top: 25px; /* Perfect space below the dividing line */
+  box-sizing: border-box;
+  margin: 0;
 }
 
 .timeline-details-title {
@@ -292,6 +299,7 @@
     grid-template-columns: 1fr;
     gap: 30px;
     text-align: center;
+    height: auto; /* Reset height on mobile */
   }
 
   .timeline-image-col {
@@ -304,14 +312,19 @@
   }
 
   .timeline-content-col {
+    display: flex;
+    flex-direction: column;
+    align-self: auto; /* Reset align-self */
     align-items: center;
     text-align: center;
     min-height: unset;
   }
 
   .timeline-year-above {
+    display: block;
     margin-top: 0;
     margin-bottom: 10px;
+    padding-bottom: 0; /* Reset padding-bottom */
   }
 
   .timeline-glowing-year {
@@ -333,7 +346,9 @@
   }
 
   .timeline-details-below {
+    display: block;
     margin-top: 20px;
+    padding-top: 0; /* Reset padding-top */
   }
 
   .timeline-details-title {
