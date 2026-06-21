@@ -1,6 +1,7 @@
 from ai.utils.expr.value.expr_const import ConstExprNode
 from ai.utils.expr.value.expr_var import VarExprNode
 from ai.utils.expr.value.expr_pi import PiExprNode
+from ai.utils.expr.value.expr_e import EExprNode
 
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
@@ -41,6 +42,8 @@ class Printer:
         from ai.utils.expr.trig.expr_sin import SinExprNode
         from ai.utils.expr.trig.expr_cos import CosExprNode
         from ai.utils.expr.trig.expr_tan import TanExprNode
+        from ai.utils.expr.expr_log import LogExprNode
+        from ai.utils.expr.expr_exp import ExpExprNode
 
         if isinstance(expr, ConstExprNode):
             v = expr.left
@@ -49,8 +52,17 @@ class Printer:
         if isinstance(expr, PiExprNode):
             return "\u03c0"
 
+        if isinstance(expr, EExprNode):
+            return "e"
+
         if isinstance(expr, VarExprNode):
             return str(expr.left)
+
+        if isinstance(expr, ExpExprNode):
+            return f"e^({Printer.expr_to_str(expr.left)})"
+
+        if isinstance(expr, LogExprNode):
+            return f"ln({Printer.expr_to_str(expr.left)})"
 
         if isinstance(expr, SinExprNode):
             return f"sin({Printer.expr_to_str(expr.left)})"
@@ -124,6 +136,10 @@ class Printer:
 
         if isinstance(expr, PiExprNode):
             print(f"{indent}{GRAY}{connector}{RESET}{YELLOW}π{RESET}")
+            return
+
+        if isinstance(expr, EExprNode):
+            print(f"{indent}{GRAY}{connector}{RESET}{YELLOW}e{RESET}")
             return
 
         from ai.utils.integral import Integral

@@ -19,11 +19,8 @@ class CosExprNode(ExprNode):
         if left_value is None:
             return None
         return math.cos(float(left_value))
-    def simplify(self):
-        if self.left is None:
-            return self
-        left_simplified = self.left.simplify()
-        return CosExprNode(left=left_simplified, var=self.var)
+    def simplify(self,message = [], integral = []):
+        return message, integral, self
     def has_function(self, func_name):
         l = False
         r = False

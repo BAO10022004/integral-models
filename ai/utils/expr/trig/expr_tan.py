@@ -19,11 +19,11 @@ class TanExprNode(ExprNode):
         if left_value is None:
             return None
         return math.tan(float(left_value))
-    def simplify(self):
+    def simplify(self,message = [], integral = []):
         if self.left is None:
-            return self
+            return message, integral, self
         left_simplified = self.left.simplify()
-        return TanExprNode(left=left_simplified, var=self.var)
+        return message, integral, TanExprNode(left=left_simplified, var=self.var)
     def has_function(self, func_name):
         l = False
         r = False

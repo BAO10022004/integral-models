@@ -1,6 +1,6 @@
 /* ================= SECTION 4: INTEGRAL APPLICATIONS SHOWCASE ================= */
 .history-apps-section {
-  background: #000000;
+  background: #030307;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -9,27 +9,207 @@
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
-  height: 100%;
+  height: 100vh;
   width: 100%;
-  aspect-ratio: 16 / 9;
   scroll-snap-align: start;
 }
 
 .apps-wrapper {
   width: 100%;
-  max-width: 1300px;
-  height: 90%;
+  max-width: 100%;
+  height: 94vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 0 4%;
+  padding: 2vh 0;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- Apps Body: horizontal row of info + sim + timeline ---- */
+.apps-body {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  min-height: 0;
+  gap: 0;
+  position: relative;
+}
+
+/* ---- Simulator: absolute background layer filling the whole body ---- */
+.apps-visual-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ---- Vertical Timeline Rail (Right of Simulator) ---- */
+.apps-timeline-rail {
+  position: relative;
+  z-index: 10;
+  width: 130px;
+  flex-shrink: 0;
+  order: 3;
+  margin-left: auto;
+  margin-right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 24px 12px 24px 16px;
+  pointer-events: auto;
+}
+
+/* The continuous vertical line — left: 21px = padding(16) + dot-radius(5) */
+.timeline-rail-line {
+  position: absolute;
+  left: 21px;
+  top: 8%;
+  bottom: 8%;
+  width: 1px;
+  background: linear-gradient(to bottom,
+      transparent,
+      rgba(255, 255, 255, 0.18) 15%,
+      rgba(255, 255, 255, 0.18) 85%,
+      transparent);
+}
+
+/* Each era node button */
+.timeline-era-node {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 0;
+  text-align: left;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The dot on the timeline line */
+.timeline-node-dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: none;
+}
+
+.timeline-era-node:hover .timeline-node-dot {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.3);
+}
+
+/* The text block to the right of the dot */
+.timeline-node-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0.45;
+  transition: opacity 0.35s;
+}
+
+.timeline-era-node:hover .timeline-node-content {
+  opacity: 0.75;
+}
+
+.timeline-node-year {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.timeline-node-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Active era node */
+.timeline-era-node.active {
+  transform: translateX(-12px);
+}
+
+.timeline-era-node.active .timeline-node-dot {
+  background: #00f2ff;
+  border-color: #00f2ff;
+  box-shadow: 0 0 12px rgba(0, 242, 255, 0.6), 0 0 4px rgba(0, 242, 255, 0.4);
+  transform: scale(1.4);
+}
+
+.timeline-era-node.active .timeline-node-content {
+  opacity: 1;
+}
+
+.timeline-era-node.active .timeline-node-year {
+  color: #00f2ff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
+}
+
+/* Per-era accent colours for active dot */
+.timeline-era-node.tab-1687.active .timeline-node-dot {
+  background: #ffaa33;
+  border-color: #ffaa33;
+  box-shadow: 0 0 12px rgba(255, 170, 51, 0.6);
+}
+
+.timeline-era-node.tab-1687.active .timeline-node-year {
+  color: #ffaa33;
+  text-shadow: 0 0 10px rgba(255, 170, 51, 0.4);
+}
+
+.timeline-era-node.tab-1865.active .timeline-node-dot {
+  background: #33b5ff;
+  border-color: #33b5ff;
+  box-shadow: 0 0 12px rgba(51, 181, 255, 0.6);
+}
+
+.timeline-era-node.tab-1865.active .timeline-node-year {
+  color: #33b5ff;
+  text-shadow: 0 0 10px rgba(51, 181, 255, 0.4);
+}
+
+.timeline-era-node.tab-1969.active .timeline-node-dot {
+  background: #33ff33;
+  border-color: #33ff33;
+  box-shadow: 0 0 12px rgba(51, 255, 51, 0.6);
+}
+
+.timeline-era-node.tab-1969.active .timeline-node-year {
+  color: #33ff33;
+  text-shadow: 0 0 10px rgba(51, 255, 51, 0.4);
+}
+
+.timeline-era-node.tab-2026.active .timeline-node-dot {
+  background: #00f2ff;
+  border-color: #00f2ff;
+  box-shadow: 0 0 12px rgba(0, 242, 255, 0.6);
+}
+
+.timeline-era-node.tab-2026.active .timeline-node-year {
+  color: #00f2ff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
 }
 
 /* Header Section */
 .apps-header {
   text-align: center;
   margin-bottom: 12px;
+  padding: 0 4%;
 }
 
 .apps-badge {
@@ -142,39 +322,38 @@
   color: rgba(0, 242, 255, 0.7);
 }
 
-/* Core Dashboard Panels */
-.apps-panel-container {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 24px;
-  min-height: 0;
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
-
 /* Left Column: Glassmorphic Info Card */
 .apps-info-panel {
-  width: 100%;
-  height: 100%;
-  min-height: 0;
+  position: relative;
+  z-index: 2;
+  width: 32%;
+  min-width: 360px;
+  max-width: 440px;
+  flex: 1;
+  order: 1;
+  margin-left: 3%;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: auto;
+  margin-top: 10px;
 }
 
 .info-glass-card {
   width: 100%;
-  height: 100%;
-  background: rgba(10, 12, 24, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  height: 96%;
+  background: rgba(4, 5, 12, 0.22);
+  border: none;
   border-radius: 20px;
-  padding: 22px;
+  padding: 20px;
   box-sizing: border-box;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(40px) saturate(140%) brightness(0.80);
+  -webkit-backdrop-filter: blur(40px) saturate(140%) brightness(0.80);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: none;
 }
 
 .info-card-header {
@@ -389,55 +568,59 @@
 
 /* Right Column: Visual Simulator Screen */
 .apps-visual-panel {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .simulator-screen {
   width: 100%;
   height: 100%;
-  border-radius: 20px;
+  border-radius: 0;
   overflow: hidden;
   position: relative;
-  box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background-color: #050508;
+  border: none;
+  background-color: transparent;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Screen Themes based on Era */
 .screen-theme-1687 {
-  background-color: #f7eecf;
-  background-image: radial-gradient(rgba(0, 0, 0, 0) 40%, rgba(139, 90, 43, 0.12) 100%);
-  border-color: rgba(139, 90, 43, 0.2);
+  background-color: transparent;
+  background-image: radial-gradient(circle at 75% 50%, rgba(255, 170, 51, 0.06), transparent 60%);
 }
 
 .screen-theme-1865 {
-  background-color: #0b1526;
+  background-color: transparent;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 20px 20px;
-  border-color: rgba(255, 255, 255, 0.08);
+    radial-gradient(circle at 75% 50%, rgba(0, 210, 255, 0.06), transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 100% 100%, 25px 25px, 25px 25px;
 }
 
 .screen-theme-1969 {
-  background-color: #030803;
-  border-color: #1a1a24;
+  background-color: transparent;
+  background-image:
+    radial-gradient(circle at 75% 50%, rgba(51, 255, 51, 0.05), transparent 60%),
+    linear-gradient(rgba(51, 255, 51, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(51, 255, 51, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 30px 30px, 30px 30px;
 }
 
 .screen-theme-2026 {
-  background-color: rgba(6, 7, 18, 0.95);
-  border-color: rgba(0, 242, 255, 0.2);
-  box-shadow:
-    0 25px 65px rgba(0, 0, 0, 0.65),
-    0 0 25px rgba(0, 242, 255, 0.05);
+  background-color: transparent;
+  background-image:
+    radial-gradient(circle at 75% 50%, rgba(198, 136, 255, 0.06), transparent 65%),
+    linear-gradient(rgba(0, 242, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 20px 20px, 20px 20px;
 }
 
 /* Telemetry Screen scanlines and grids */
@@ -469,13 +652,14 @@
 
 /* SVG Rendering and layout */
 .svg-container {
-  width: 90%;
-  height: 90%;
+  width: 52%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   z-index: 2;
+  margin-right: 140px;
 }
 
 .sim-svg {
@@ -822,15 +1006,29 @@
   }
 
   .apps-panel-container {
-    grid-template-columns: 1fr;
-    gap: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     min-height: unset;
     height: auto;
+    border-radius: 16px;
+  }
+
+  .apps-info-panel {
+    width: 100%;
+    min-width: unset;
+    max-width: none;
+    height: auto;
+    margin-left: 0;
+    padding: 0;
+    order: 2;
+    /* Content goes below simulator on mobile for better visual flow */
   }
 
   .info-glass-card {
     height: auto;
-    padding: 24px;
+    padding: 20px;
+    border-radius: 16px;
   }
 
   .info-controls-row {
@@ -838,209 +1036,407 @@
     flex-direction: column;
   }
 
+  .apps-visual-panel {
+    position: relative;
+    width: 100%;
+    height: 340px;
+    margin-top: 10px;
+    z-index: 1;
+    pointer-events: auto;
+    order: 1;
+  }
+
   .simulator-screen {
-    height: 380px;
+    height: 100%;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    justify-content: center;
+  }
+
+  .svg-container {
+    width: 90%;
+    height: 90%;
+    margin-right: 0;
   }
 }
 
-/* ================= NEOCLASSICAL LIGHT PARCHMENT OVERRIDES ================= */
-.history-apps-section {
-  background: #D1CAB1 !important; /* Perfect transition from Intro! */
+/* ================= MODERN COLOR SIGNATURES & ACTIVE TABS ================= */
+.apps-tab-btn.tab-1687.active {
+  border-color: #ffaa33 !important;
+  background: rgba(255, 170, 51, 0.05) !important;
+  box-shadow: 0 0 20px rgba(255, 170, 51, 0.15) !important;
 }
 
-/* Section Header */
-.history-apps-section .apps-badge {
-  color: #8c7f68 !important;
-  background: rgba(140, 127, 104, 0.08) !important;
-  border: 1px solid rgba(140, 127, 104, 0.25) !important;
+.apps-tab-btn.tab-1687.active .tab-year {
+  color: #ffaa33 !important;
+  text-shadow: 0 0 10px rgba(255, 170, 51, 0.4) !important;
+}
+
+.apps-tab-btn.tab-1687.active .tab-label {
+  color: rgba(255, 170, 51, 0.8) !important;
+}
+
+.apps-tab-btn.tab-1865.active {
+  border-color: #33b5ff !important;
+  background: rgba(51, 181, 255, 0.05) !important;
+  box-shadow: 0 0 20px rgba(51, 181, 255, 0.15) !important;
+}
+
+.apps-tab-btn.tab-1865.active .tab-year {
+  color: #33b5ff !important;
+  text-shadow: 0 0 10px rgba(51, 181, 255, 0.4) !important;
+}
+
+.apps-tab-btn.tab-1865.active .tab-label {
+  color: rgba(51, 181, 255, 0.8) !important;
+}
+
+.apps-tab-btn.tab-1969.active {
+  border-color: #33ff33 !important;
+  background: rgba(51, 255, 51, 0.05) !important;
+  box-shadow: 0 0 20px rgba(51, 255, 51, 0.15) !important;
+}
+
+.apps-tab-btn.tab-1969.active .tab-year {
+  color: #33ff33 !important;
+  text-shadow: 0 0 10px rgba(51, 255, 51, 0.4) !important;
+}
+
+.apps-tab-btn.tab-1969.active .tab-label {
+  color: rgba(51, 255, 51, 0.8) !important;
+}
+
+.apps-tab-btn.tab-2026.active {
+  border-color: #00f2ff !important;
+  background: rgba(0, 242, 255, 0.05) !important;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.15) !important;
+}
+
+.apps-tab-btn.tab-2026.active .tab-year {
+  color: #00f2ff !important;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.4) !important;
+}
+
+.apps-tab-btn.tab-2026.active .tab-label {
+  color: rgba(0, 242, 255, 0.8) !important;
+}
+
+/* Base sections background overrides to force modern dark portal */
+.history-apps-section {
+  background: #020205 !important;
+  height: 100vh !important;
+  aspect-ratio: unset !important;
+}
+
+.history-apps-section::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0, 242, 255, 0.03) 0%, transparent 70%);
+  top: -100px;
+  right: -100px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.history-apps-section::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(200, 136, 255, 0.03) 0%, transparent 70%);
+  bottom: -100px;
+  left: -100px;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .history-apps-section .apps-title {
-  color: #1c1a17 !important;
-  background: none !important;
-  -webkit-text-fill-color: #1c1a17 !important;
+  background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.65)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
 }
 
 .history-apps-section .apps-subtitle {
-  color: #5a4732 !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.history-apps-section .apps-badge {
+  color: #00f2ff !important;
+  background: rgba(0, 242, 255, 0.05) !important;
+  border: 1px solid rgba(0, 242, 255, 0.2) !important;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.05) !important;
 }
 
 /* Tabs Bar */
 .history-apps-section .apps-tabs-bar {
-  background: rgba(28, 26, 23, 0.04) !important;
-  border: 1px solid rgba(140, 127, 104, 0.2) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 .history-apps-section .apps-tab-btn {
-  background: rgba(28, 26, 23, 0.02) !important;
-  border: 1px solid rgba(140, 127, 104, 0.15) !important;
+  background: rgba(255, 255, 255, 0.01) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 .history-apps-section .apps-tab-btn .tab-year {
-  color: rgba(28, 26, 23, 0.6) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 .history-apps-section .apps-tab-btn .tab-label {
-  color: rgba(28, 26, 23, 0.4) !important;
+  color: rgba(255, 255, 255, 0.35) !important;
 }
 
 .history-apps-section .apps-tab-btn:hover {
-  background: rgba(140, 127, 104, 0.08) !important;
-  border-color: rgba(140, 127, 104, 0.4) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 .history-apps-section .apps-tab-btn:hover .tab-year {
-  color: #1c1a17 !important;
+  color: #fff !important;
 }
 
-.history-apps-section .apps-tab-btn.active {
-  background: #1c1a17 !important;
-  border-color: #1c1a17 !important;
-}
-
-.history-apps-section .apps-tab-btn.active .tab-year {
-  color: #D1CAB1 !important;
-  text-shadow: none !important;
-}
-
-.history-apps-section .apps-tab-btn.active .tab-label {
-  color: rgba(209, 202, 177, 0.8) !important;
-}
-
-/* Info Glass Cards */
+/* Info Glass Cards Overrides for Dark Mode */
 .history-apps-section .info-glass-card {
-  background: #fdfaf2 !important; /* Ivory board */
-  border: 1px solid #c5a880 !important;
-  color: #1c1a17 !important;
-  box-shadow: 
-    0 15px 40px rgba(42, 33, 21, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  background: rgba(4, 5, 12, 0.22) !important;
+  border: none !important;
+  color: #fff !important;
+  backdrop-filter: blur(40px) saturate(140%) brightness(0.80) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(140%) brightness(0.80) !important;
+  box-shadow: none !important;
 }
 
 .history-apps-section .info-card-header {
-  border-bottom: 1px solid rgba(140, 127, 104, 0.2) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .history-apps-section .era-subtitle {
-  color: #8c7f68 !important;
+  color: rgba(255, 255, 255, 0.45) !important;
 }
 
 .history-apps-section .era-title-text {
-  color: #1c1a17 !important;
+  color: #fff !important;
 }
 
 .history-apps-section .info-row {
-  border-bottom: 1px solid rgba(140, 127, 104, 0.12) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
 }
 
 .history-apps-section .row-label {
-  color: #7c6244 !important;
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 
 .history-apps-section .row-val {
-  color: #1c1a17 !important;
+  color: #fff !important;
 }
 
-.history-apps-section .pioneer-bio-section {
-  background: rgba(140, 127, 104, 0.04) !important;
-  border: 1px solid rgba(140, 127, 104, 0.15) !important;
+.history-apps-section .row-val.highlight-pioneer {
+  color: #ffc83b !important;
+  text-shadow: 0 0 8px rgba(255, 200, 59, 0.15) !important;
 }
 
-.history-apps-section .pioneer-name {
-  color: #1c1a17 !important;
+.history-apps-section .formula-glass-board {
+  background: rgba(4, 5, 10, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
-.history-apps-section .pioneer-era {
-  color: #8c7f68 !important;
+.history-apps-section .formula-board-header {
+  color: rgba(255, 255, 255, 0.35) !important;
 }
 
-.history-apps-section .pioneer-bio {
-  color: #5a4732 !important;
+.history-apps-section .formula-desc {
+  color: rgba(255, 255, 255, 0.4) !important;
 }
 
-/* Simulator Screen Overrides (Sepia Ink Style) */
-.history-apps-section .sim-visuals-card {
-  background: #fdfaf2 !important;
-  border: 1px solid #c5a880 !important;
-  box-shadow: 
-    0 15px 40px rgba(42, 33, 21, 0.12) !important;
+.history-apps-section .era-paragraph-desc {
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
-.history-apps-section .visual-title {
-  color: #7c6244 !important;
-  border-bottom: 1px solid rgba(124, 98, 68, 0.15) !important;
+.history-apps-section .sim-play-btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
-.history-apps-section .visual-title::before {
-  background: #b89053 !important;
-  box-shadow: none !important;
-  animation: none !important;
+.history-apps-section .sim-play-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-.history-apps-section .simulator-screen {
-  background: #fdfaf2 !important;
-  box-shadow: inset 0 2px 10px rgba(42, 33, 21, 0.1) !important;
-  border: 1px solid rgba(140, 127, 104, 0.2) !important;
+.history-apps-section .sim-play-btn.playing {
+  background: rgba(255, 183, 0, 0.04) !important;
+  border-color: rgba(255, 183, 0, 0.25) !important;
+  color: #ffb700 !important;
 }
 
-/* DSKY monitor texts */
-.history-apps-section .dsky-monitor {
-  background: rgba(140, 127, 104, 0.03) !important;
-  border: 1px solid rgba(140, 127, 104, 0.2) !important;
+.history-apps-section .sim-action-btn {
+  background: #00f2ff !important;
+  border: 1px solid #00f2ff !important;
+  color: #020205 !important;
 }
 
-.history-apps-section .dsky-lbl {
-  color: #8c7f68 !important;
+.history-apps-section .sim-action-btn:hover {
+  background: #33f5ff !important;
+  border-color: #33f5ff !important;
+  box-shadow: 0 0 25px rgba(0, 242, 255, 0.35) !important;
 }
 
-.history-apps-section .dsky-val {
-  color: #1c1a17 !important;
+/* Reset SVGs theme styles to default dark glows */
+.history-apps-section .orbit-path-line {
+  stroke: rgba(255, 255, 255, 0.08) !important;
 }
 
-.history-apps-section .log-line {
-  color: #5a4732 !important;
+.history-apps-section .orbit-swept-area {
+  fill: rgba(255, 170, 51, 0.1) !important;
+  stroke: rgba(255, 170, 51, 0.3) !important;
 }
 
-.history-apps-section .log-header {
-  color: #7c6244 !important;
-  border-bottom: 1px solid rgba(140, 127, 104, 0.2) !important;
+.history-apps-section .orbit-sun-glow {
+  fill: rgba(255, 170, 51, 0.15) !important;
 }
 
-/* Simulated objects colors in SVG */
-.history-apps-section .svg-orbit-path {
-  stroke: rgba(124, 98, 68, 0.2) !important;
+.history-apps-section .orbit-sun-core {
+  fill: #ffaa33 !important;
 }
 
-.history-apps-section .svg-sun {
-  fill: #b89053 !important;
+.history-apps-section .orbit-planet-glow {
+  fill: rgba(51, 181, 255, 0.25) !important;
 }
 
-.history-apps-section .svg-planet {
-  fill: #7c6244 !important;
+.history-apps-section .orbit-planet-core {
+  fill: #33b5ff !important;
 }
 
-.history-apps-section .svg-gravity-vector {
-  stroke: #b33939 !important;
+.history-apps-section .orbit-radius-line {
+  stroke: rgba(255, 255, 255, 0.1) !important;
 }
 
-.history-apps-section .svg-wave-ac,
-.history-apps-section .svg-field-line {
-  stroke: #218c74 !important;
+.history-apps-section .screen-theme-1687 .sun-label {
+  fill: #ffaa33 !important;
 }
 
-.history-apps-section .svg-wave-quantum {
-  stroke: #7c6244 !important;
-  fill: rgba(184, 144, 83, 0.1) !important;
+.history-apps-section .screen-theme-1687 .planet-label {
+  fill: #33b5ff !important;
 }
 
-/* Play/Pause controls */
-.history-apps-section .action-btn {
-  background: #1c1a17 !important;
-  color: #D1CAB1 !important;
-  border: 1px solid #1c1a17 !important;
+.history-apps-section .osc-grid-axis {
+  stroke: rgba(255, 255, 255, 0.05) !important;
 }
 
-.history-apps-section .action-btn:hover {
-  background: #5a4732 !important;
-  border-color: #5a4732 !important;
+.history-apps-section .osc-sine-wave {
+  stroke: #ff9d00 !important;
+  filter: drop-shadow(0 0 6px rgba(255, 157, 0, 0.4)) !important;
+}
+
+.history-apps-section .osc-cosine-wave {
+  stroke: #33b5ff !important;
+  filter: drop-shadow(0 0 6px rgba(51, 181, 255, 0.4)) !important;
+}
+
+.history-apps-section .coil-iron-core {
+  fill: #151e29 !important;
+  stroke: rgba(255, 255, 255, 0.1) !important;
+}
+
+.history-apps-section .coil-copper-turns {
+  stroke: #e67e22 !important;
+}
+
+.history-apps-section .screen-theme-1865 .coil-label {
+  fill: rgba(255, 255, 255, 0.4) !important;
+}
+
+.history-apps-section .legend-bg {
+  fill: rgba(4, 5, 10, 0.8) !important;
+  stroke: rgba(255, 255, 255, 0.06) !important;
+}
+
+.history-apps-section .moon-ground {
+  fill: #030803 !important;
+  stroke: #33ff33 !important;
+}
+
+.history-apps-section .landing-pad {
+  fill: #33ff33 !important;
+}
+
+.history-apps-section .lander-pad-text {
+  fill: #33ff33 !important;
+}
+
+.history-apps-section .rocket-projection-line {
+  stroke: rgba(51, 255, 51, 0.1) !important;
+}
+
+.history-apps-section .rocket-altitude-indicator {
+  stroke: rgba(51, 255, 51, 0.3) !important;
+}
+
+.history-apps-section .rocket-fire-thrust {
+  fill: #ff3300 !important;
+}
+
+.history-apps-section .apollo-body-outer {
+  fill: #030a03 !important;
+  stroke: #33ff33 !important;
+}
+
+.history-apps-section .apollo-cabin {
+  fill: rgba(51, 255, 51, 0.1) !important;
+  stroke: #33ff33 !important;
+}
+
+.history-apps-section .apollo-lander-leg {
+  stroke: #33ff33 !important;
+}
+
+.history-apps-section .apollo-footpad {
+  fill: #33ff33 !important;
+}
+
+.history-apps-section .sim-telemetry-text {
+  fill: #33ff33 !important;
+  text-shadow: 0 0 3px rgba(51, 255, 51, 0.5) !important;
+}
+
+.history-apps-section .quantum-prob-wave {
+  stroke: #c888ff !important;
+}
+
+.history-apps-section .quantum-boundary-line {
+  stroke: rgba(0, 242, 255, 0.25) !important;
+}
+
+.history-apps-section .quantum-boundary-text {
+  fill: rgba(0, 242, 255, 0.6) !important;
+}
+
+.history-apps-section .quantum-shaded-integral {
+  fill: rgba(0, 242, 255, 0.1) !important;
+  stroke: rgba(0, 242, 255, 0.2) !important;
+}
+
+.history-apps-section .neural-node {
+  fill: #04040e !important;
+  stroke: #00f2ff !important;
+}
+
+.history-apps-section .neural-node.active {
+  fill: #00f2ff !important;
+  stroke: #fff !important;
+}
+
+.history-apps-section .neural-connection-lines {
+  stroke: rgba(0, 242, 255, 0.15) !important;
+}
+
+.history-apps-section .quantum-text-title {
+  fill: #00f2ff !important;
+}
+
+.history-apps-section .neural-compute-tag {
+  fill: #ff007f !important;
 }

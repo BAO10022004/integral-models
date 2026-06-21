@@ -55,13 +55,25 @@ public class IntegralController : ControllerBase
                 int count = 1;
                 foreach (var stepItem in stepsArray.EnumerateArray())
                 {
-                    integralResponse.Steps.Add(new SolutionStep
+                    var step = new SolutionStep
                     {
                         StepNumber = count++,
                         Action = stepItem.TryGetProperty("description", out var desc) ? desc.GetString() ?? "" : "",
                         Expression = stepItem.TryGetProperty("integral", out var integ) ? integ.GetString() ?? "" : "",
-                        Explanation = stepItem.TryGetProperty("kind", out var kind) ? kind.GetString() ?? "" : ""
-                    });
+                        Explanation = stepItem.TryGetProperty("kind", out var kindStr) ? kindStr.GetString() ?? "" : "",
+                        Kind = stepItem.TryGetProperty("kind", out var k) ? k.GetString() ?? "" : "",
+                        Depth = stepItem.TryGetProperty("depth", out var d) && d.ValueKind == JsonValueKind.Number ? d.GetInt32() : 0,
+                        Description = stepItem.TryGetProperty("description", out var ds) ? ds.GetString() ?? "" : "",
+                        Formula = stepItem.TryGetProperty("formula", out var f) ? f.GetString() ?? "" : "",
+                        IntegralStr = stepItem.TryGetProperty("integral", out var i) ? i.GetString() ?? "" : ""
+                    };
+                    
+                    if (stepItem.TryGetProperty("value", out var v) && v.ValueKind == JsonValueKind.Number)
+                    {
+                        step.Value = v.GetDouble();
+                    }
+                    
+                    integralResponse.Steps.Add(step);
                 }
             }
 

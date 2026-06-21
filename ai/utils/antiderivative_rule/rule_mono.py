@@ -43,7 +43,6 @@ def rule_mono(expr: MonoExprNode, dee: str):
 
     n = float(expr.right.left)
 
-    # Trường hợp đặc biệt: n = -1 → ∫ x⁻¹ dx = ln|x|  (xử lý ở rule_frac)
     if n == -1:
         from ai.utils.expr.expr_log import LogExprNode
         return LogExprNode(left=VarExprNode(left=dee, var=dee), var=dee)

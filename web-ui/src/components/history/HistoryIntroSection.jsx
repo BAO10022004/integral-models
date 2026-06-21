@@ -1,15 +1,15 @@
 import React from "react";
 import "../../styles/HistoryIntroSection.css";
 
-export default function HistoryIntroSection({ 
-  nextSectionRef, 
-  headlineText, 
-  introductionText, 
-  showcaseImgSrc 
+export default function HistoryIntroSection({
+  nextSectionRef,
+  headlineText,
+  introductionText,
+  showcaseImgSrc
 }) {
   return (
-    <section 
-      ref={nextSectionRef} 
+    <section
+      ref={nextSectionRef}
       className="history-snap-section history-intro-section"
     >
       {/* Realistically Torn Paper Transition Effect */}
@@ -37,25 +37,35 @@ export default function HistoryIntroSection({
         </svg>
       </div>
 
-      <div className="intro-split-container">
-        {/* Left Column: Text Content */}
-        <div className="intro-left-col">
-          <span className="intro-label">Introduction</span>
-          <h2 className="intro-headline">{headlineText}</h2>
-          <p className="intro-text" style={{ whiteSpace: "pre-line" }}>
-            {introductionText}
-          </p>
+      <div className="intro-mockup-layout">
+        {/* Left half: Full Height Image Column */}
+        <div className="intro-image-column">
+          <img src={showcaseImgSrc} alt="Showcase" className="intro-mockup-img" />
+          <div className="intro-image-overlay-text">TRUE</div>
         </div>
 
-        {/* Right Column: Image Showcase */}
-        <div className="intro-right-col">
-          <div className="intro-img-frame">
-            <img
-              className="intro-img"
-              src={showcaseImgSrc}
-              alt="AI Solver Introduction"
-              loading="lazy"
-            />
+        {/* Right half: Content Column */}
+        <div className="intro-content-column">
+          {/* Top navigation header */}
+
+          {/* Main big headline */}
+          <h2 className="intro-mockup-title">About us.</h2>
+
+          {/* Two-column text block */}
+          <div className="intro-text-row">
+            <div className="intro-text-left">
+              {headlineText}
+            </div>
+            <div className="intro-text-right">
+              {introductionText.split('\n\n').map((para, i) => (
+                <p key={i} className="intro-para">{para}</p>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom decorative banner */}
+          <div className="intro-bottom-banner">
+            <img src={showcaseImgSrc} alt="Bottom Banner" className="intro-banner-img" />
           </div>
         </div>
       </div>

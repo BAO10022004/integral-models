@@ -1,220 +1,411 @@
 import React, { useState } from "react";
 import Footer from "../components/common/Footer";
+import MenuOverlay from "../components/common/MenuOverlay";
+import { motion, AnimatePresence } from "framer-motion";
+import "../styles/KoaDesign.css";
 
-export default function InfoPage({ onNavigate }) {
+const STATUS_ONLINE = "online";
+const STATUS_BUILDING = "building";
+const STATUS_PENDING = "pending";
+
+const StatusBadge = ({ status }) => {
+  const config = {
+    online: { label: "Online", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0", dot: "#22c55e" },
+    building: { label: "Building", color: "#d97706", bg: "#fffbeb", border: "#fde68a", dot: "#f59e0b" },
+    pending: { label: "Pending", color: "#6b7280", bg: "#f9fafb", border: "#e5e7eb", dot: "#9ca3af" },
+  };
+  const c = config[status] || config.pending;
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 5,
+      padding: "3px 10px", borderRadius: 99, fontSize: 11, fontWeight: 700,
+      color: c.color, background: c.bg, border: `1px solid ${c.border}`,
+      letterSpacing: "0.04em", textTransform: "uppercase",
+    }}>
+      <span style={{
+        width: 6, height: 6, borderRadius: "50%", background: c.dot, flexShrink: 0,
+        boxShadow: status === STATUS_ONLINE ? `0 0 6px ${c.dot}` : "none"
+      }} />
+      {c.label}
+    </span>
+  );
+};
+
+const StatCard = ({ value, label, color = "#592eff", delay = 0 }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.45, delay }}
+    style={{
+      background: "#ffffff", border: "1px solid #e0e0db",
+      borderRadius: 24, padding: "24px 20px", textAlign: "center",
+      boxShadow: "0 2px 16px rgba(53,50,65,0.04)",
+    }}
+  >
+    <div style={{ fontSize: 30, fontWeight: 800, color, letterSpacing: "-0.03em", lineHeight: 1.1 }}>{value}</div>
+    <div style={{ fontSize: 12, color: "#5f5f69", fontWeight: 600, marginTop: 6, letterSpacing: "0.03em", textTransform: "uppercase" }}>{label}</div>
+  </motion.div>
+);
+
+const SpecRow = ({ label, value, mono = false, accent = false }) => (
+  <div style={{
+    display: "flex", justifyContent: "space-between", alignItems: "center",
+    padding: "11px 0", borderBottom: "1px solid #f0efec",
+    gap: 12,
+  }}>
+    <span style={{ fontSize: 13, color: "#5f5f69", fontWeight: 500 }}>{label}</span>
+    <span style={{
+      fontSize: 13, fontWeight: 700,
+      color: accent ? "#592eff" : "#21164c",
+      fontFamily: mono ? "monospace" : "inherit",
+      background: mono ? "#f4f3ff" : "transparent",
+      padding: mono ? "2px 8px" : 0,
+      borderRadius: mono ? 6 : 0,
+    }}>{value}</span>
+  </div>
+);
+
+export default function InfoPage({ onNavigate, user, onLogout }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   const [checklist, setChecklist] = useState([
-    { id: 1, label: "Giao diện React Web UI (Vite)", checked: true, desc: "Trình thiết kế tối giản, hỗ trợ xem kết quả phân tích phân phối xác suất và lời giải derivation từng bước trực quan." },
-    { id: 2, label: "Mô hình học máy AI (Gradient Boosting)", checked: true, desc: "Mô hình phân loại đa phân lớp đạt F1-Score 95.82%, chịu trách nhiệm nhận diện và phân tích cấu trúc của biểu thức tích phân." },
-    { id: 3, label: "Flask API Inference Server", checked: true, desc: "Cung cấp cổng dịch vụ microservice suy luận mô hình AI tốc độ cao chạy trên cổng localhost:5000." },
-    { id: 4, label: "Hệ thống backend xử lý chính (.NET 8 Core API)", checked: false, desc: "Đảm nhận xác minh token, tích hợp Firebase Auth, lưu trữ lịch sử bài toán và giao lưu cơ sở dữ liệu." },
-    { id: 5, label: "Tích hợp Firebase Authentication", checked: false, desc: "Hệ thống bảo mật người dùng, hỗ trợ xác minh đăng nhập bằng Google Sign-In đồng bộ trực tiếp giữa Client và Backend." }
+    {
+      id: 1,
+      label: "Giao diện React Web UI (Vite)",
+      status: STATUS_ONLINE,
+      desc: "Trình thiết kế tối giản, hỗ trợ xem kết quả phân tích xác suất và lời giải từng bước trực quan.",
+      icon: "🌐",
+    },
+    {
+      id: 2,
+      label: "Mô hình AI (Gradient Boosting)",
+      status: STATUS_ONLINE,
+      desc: "Phân loại đa phân lớp đạt F1-Score 95.82%, nhận diện và phân tích cấu trúc biểu thức tích phân.",
+      icon: "🤖",
+    },
+    {
+      id: 3,
+      label: "Flask API Inference Server",
+      status: STATUS_ONLINE,
+      desc: "Microservice suy luận mô hình AI tốc độ cao, chạy trên cổng localhost:5000.",
+      icon: "⚡",
+    },
+    {
+      id: 4,
+      label: "Backend .NET 8 Core API",
+      status: STATUS_BUILDING,
+      desc: "Xác minh token, tích hợp Firebase Auth, lưu trữ lịch sử bài toán và quản lý cơ sở dữ liệu.",
+      icon: "⚙️",
+    },
+    {
+      id: 5,
+      label: "Firebase Authentication",
+      status: STATUS_PENDING,
+      desc: "Bảo mật người dùng, xác minh đăng nhập Google Sign-In đồng bộ giữa Client và Backend.",
+      icon: "🔐",
+    },
   ]);
 
-  const toggleCheck = (id) => {
-    setChecklist(prev => prev.map(item => item.id === id ? { ...item, checked: !item.checked } : item));
-  };
-
-  const completedCount = checklist.filter(item => item.checked).length;
-  const progressPercent = Math.round((completedCount / checklist.length) * 100);
+  const onlineCount = checklist.filter(i => i.status === STATUS_ONLINE).length;
+  const progressPercent = Math.round((onlineCount / checklist.length) * 100);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#030307", color: "#fff", padding: "40px 24px", fontFamily: "'Outfit', sans-serif" }}>
+    <div style={{
+      minHeight: "100vh",
+      background: "#f7f7f5",
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+      color: "#353241",
+      overflowX: "hidden",
+    }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
-        .info-bg-noise {
-          position: fixed;
+        .info-hero-bg {
+          position: absolute;
           inset: 0;
+          background: linear-gradient(135deg, #eef0ff 0%, #fce4f7 40%, #e8f9ff 75%, #f0ffe8 100%);
           z-index: 0;
-          opacity: 0.02;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-          pointer-events: none;
         }
-
-        .info-title {
-          font-size: clamp(2.5rem, 5vw, 4.5rem);
-          font-weight: 800;
-          letter-spacing: -2px;
-          text-align: center;
-          margin-bottom: 12px;
-          background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.5));
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
+        .info-orb-1 { position:absolute; top:5%; left:3%; width:460px; height:460px; border-radius:50%; background:rgba(188,242,255,0.45); filter:blur(100px); pointer-events:none; z-index:1; }
+        .info-orb-2 { position:absolute; top:20%; right:2%; width:500px; height:500px; border-radius:50%; background:rgba(255,170,230,0.35); filter:blur(110px); pointer-events:none; z-index:1; }
+        .info-orb-3 { position:absolute; bottom:0; left:25%; width:400px; height:400px; border-radius:50%; background:rgba(223,255,157,0.3); filter:blur(90px); pointer-events:none; z-index:1; }
 
         .info-card {
-          background: rgba(255, 255, 255, 0.01);
-          border: 1px solid rgba(255, 255, 255, 0.04);
-          border-radius: 24px;
+          background: #ffffff;
+          border: 1px solid #e0e0db;
+          border-radius: 28px;
           padding: 28px;
-          backdrop-filter: blur(20px);
-          transition: all 0.3s;
-          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+          box-shadow: 0 4px 24px rgba(53,50,65,0.04);
+          transition: box-shadow 0.25s, border-color 0.25s;
         }
-
         .info-card:hover {
-          border-color: rgba(0, 242, 255, 0.15);
-          background: rgba(255, 255, 255, 0.02);
+          box-shadow: 0 8px 40px rgba(89,46,255,0.08);
+          border-color: rgba(89,46,255,0.15);
         }
 
-        .checklist-item {
+        .checklist-row {
           display: flex;
-          align-items: start;
-          gap: 16px;
-          background: rgba(255,255,255,0.01);
-          border: 1px solid rgba(255,255,255,0.03);
+          align-items: flex-start;
+          gap: 14px;
+          padding: 16px;
           border-radius: 16px;
-          padding: 18px;
-          margin-bottom: 12px;
-          cursor: pointer;
+          border: 1px solid #ededea;
+          background: #fafaf8;
           transition: all 0.2s;
+          cursor: default;
+        }
+        .checklist-row:hover {
+          background: #f4f3ff;
+          border-color: rgba(89,46,255,0.15);
         }
 
-        .checklist-item:hover {
-          background: rgba(255,255,255,0.02);
-          border-color: rgba(255,255,255,0.06);
-        }
-
-        .checklist-item.checked {
-          border-color: rgba(0, 255, 136, 0.15);
-          background: rgba(0, 255, 136, 0.01);
-        }
-
-        .checkbox-custom {
-          width: 20px;
-          height: 20px;
-          border-radius: 6px;
-          border: 2px solid #555;
-          background: transparent;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 12px;
-          color: #030307;
-          font-weight: 800;
-          flex-shrink: 0;
-          margin-top: 2px;
-          transition: all 0.2s;
-        }
-
-        .checklist-item.checked .checkbox-custom {
-          background: #00ff88;
-          border-color: #00ff88;
-        }
-
-        .progress-bar-wrap {
-          height: 10px;
-          background: rgba(255,255,255,0.05);
+        .info-progress-track {
+          height: 8px;
+          background: #ededea;
           border-radius: 99px;
           overflow: hidden;
-          margin: 16px 0;
+          margin: 12px 0 20px;
         }
-
-        .progress-bar-fill {
+        .info-progress-fill {
           height: 100%;
           border-radius: 99px;
-          background: linear-gradient(90deg, #00f2ff, #7000ff);
-          transition: width 0.4s ease-out;
+          background: linear-gradient(90deg, #592eff, #bc4fff, #2ed6ff);
+          transition: width 0.6s cubic-bezier(.4,0,.2,1);
+        }
+
+        .endpoint-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 14px;
+          border-radius: 12px;
+          background: #f7f7f5;
+          border: 1px solid #ededea;
+          gap: 12px;
+        }
+
+        .section-label {
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #9ca3af;
+          margin-bottom: 14px;
         }
       `}</style>
 
-      <div className="info-bg-noise" />
-
-      {/* Navigation */}
-      <div style={{ maxWidth: 1000, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 40, position: "relative", zIndex: 10 }}>
-        <button onClick={() => onNavigate("intro")} style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.6)", fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", transition: "0.3s" }}>
-          ← Quay Lại
+      {/* ── NAV ── */}
+      <nav className="koa-nav" style={{ justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <button
+            onClick={() => onNavigate("intro")}
+            style={{
+              background: "transparent", border: "none", color: "inherit",
+              fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center",
+              gap: 6, cursor: "pointer", transition: "0.3s", opacity: 0.75, padding: 0,
+            }}
+          >
+            ← Quay lại
+          </button>
+          <span style={{ fontSize: "0.68rem", letterSpacing: "0.3em", fontWeight: 800, opacity: 0.55, textTransform: "uppercase" }}>
+            Thông Tin Hệ Thống
+          </span>
+        </div>
+        <button className="koa-menu-btn" onClick={() => setMenuOpen(true)}>
+          <span className="koa-menu-line" />
+          <span className="koa-menu-line" />
         </button>
-        <span style={{ fontSize: 11, letterSpacing: "0.2em", fontWeight: 800, color: "rgba(255,255,255,0.4)" }}>INTEGRAL ARCHITECTURE SPEC</span>
+      </nav>
+
+      <MenuOverlay menuOpen={menuOpen} setMenuOpen={setMenuOpen} onNavigate={onNavigate} user={user} onLogout={onLogout} />
+
+      {/* ── HERO ── */}
+      <div style={{ position: "relative", overflow: "hidden", paddingTop: 80, paddingBottom: 80 }}>
+        <div className="info-hero-bg" />
+        <div className="info-orb-1" />
+        <div className="info-orb-2" />
+        <div className="info-orb-3" />
+
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 960, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "4px 14px", borderRadius: 99,
+              border: "1px solid rgba(89,46,255,0.25)",
+              color: "#592eff", fontSize: 11, fontWeight: 700,
+              background: "rgba(89,46,255,0.06)", marginBottom: 20,
+              letterSpacing: "0.06em", textTransform: "uppercase",
+            }}
+          >
+            Architecture Spec v1.0
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.08 }}
+            style={{
+              fontSize: "clamp(2.4rem, 5vw, 3.8rem)",
+              fontWeight: 800, letterSpacing: "-0.03em",
+              color: "#21164c", lineHeight: 1.1, marginBottom: 16,
+            }}
+          >
+            Thông Tin{" "}
+            <span style={{
+              background: "linear-gradient(90deg,#592eff,#c026d3)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            }}>
+              Hệ Thống
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.16 }}
+            style={{ fontSize: 15, color: "#5f5f69", maxWidth: 520, margin: "0 auto 48px", lineHeight: 1.7 }}
+          >
+            Kiến trúc vi dịch vụ và trạng thái hoàn thiện của hệ thống phân tích tích phân thông minh.
+          </motion.p>
+
+          {/* Stat Cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, maxWidth: 720, margin: "0 auto" }}>
+            <StatCard value="95.82%" label="F1-Score AI" color="#592eff" delay={0.2} />
+            <StatCard value="52K+" label="Samples" color="#c026d3" delay={0.25} />
+            <StatCard value="3" label="Services" color="#0284c7" delay={0.3} />
+            <StatCard value={`${progressPercent}%`} label="Hoàn thiện" color="#16a34a" delay={0.35} />
+          </div>
+        </div>
       </div>
 
-      <div style={{ maxWidth: 1000, margin: "0 auto", position: "relative", zIndex: 1 }}>
-        <h1 className="info-title">Thông Tin Hệ Thống</h1>
-        <p style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: 15, maxWidth: 500, margin: "0 auto 40px", lineHeight: 1.6 }}>
-          Phân tích kiến trúc vi dịch vụ và danh sách kiểm tra tiến độ hoàn thiện hệ thống phân tích tích phân thông minh.
-        </p>
+      {/* ── BODY ── */}
+      <div style={{ maxWidth: 980, margin: "0 auto", padding: "48px 24px 80px", display: "grid", gridTemplateColumns: "1.25fr 1fr", gap: 28, alignItems: "start" }}>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 32, alignItems: "start" }}>
-          
-          {/* Left Column - Systems Checklist */}
-          <div>
-            <div className="info-card" style={{ marginBottom: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em" }}>ĐỘ HOÀN THIỆN HỆ THỐNG</span>
-                <span style={{ fontSize: 14, fontWeight: 800, color: "#00f2ff" }}>{progressPercent}% COMPLETE</span>
-              </div>
-              <div className="progress-bar-wrap">
-                <div className="progress-bar-fill" style={{ width: `${progressPercent}%` }} />
-              </div>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
-                Hệ thống cốt lõi phân tích toán học & web-client đã hoàn thiện 100% và đang chạy ổn định. Phân vùng Backend cơ sở dữ liệu và tích hợp Firebase đang được hoàn thiện tích hợp sâu.
-              </p>
+        {/* Left — Checklist */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+          {/* Progress card */}
+          <motion.div
+            className="info-card"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.1 }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.08em", color: "#9ca3af", textTransform: "uppercase" }}>
+                Độ hoàn thiện hệ thống
+              </span>
+              <span style={{ fontSize: 14, fontWeight: 800, color: "#592eff" }}>{progressPercent}%</span>
             </div>
+            <div className="info-progress-track">
+              <div className="info-progress-fill" style={{ width: `${progressPercent}%` }} />
+            </div>
+            <p style={{ fontSize: 13, color: "#5f5f69", lineHeight: 1.6, margin: 0 }}>
+              Lõi AI phân tích toán học và web-client đã ổn định. Backend cơ sở dữ liệu và Firebase đang trong giai đoạn tích hợp sâu.
+            </p>
+          </motion.div>
 
-            <div>
-              {checklist.map(item => (
-                <div 
-                  key={item.id} 
-                  className={`checklist-item ${item.checked ? "checked" : ""}`}
-                  onClick={() => toggleCheck(item.id)}
+          {/* Checklist items */}
+          <motion.div
+            className="info-card"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.18 }}
+            style={{ padding: 20 }}
+          >
+            <div className="section-label">Trạng thái thành phần</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {checklist.map((item, i) => (
+                <motion.div
+                  key={item.id}
+                  className="checklist-row"
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.35, delay: 0.2 + i * 0.07 }}
                 >
-                  <div className="checkbox-custom">
-                    {item.checked && "✓"}
+                  <span style={{ fontSize: 22, flexShrink: 0, marginTop: 1 }}>{item.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 5, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: "#21164c" }}>{item.label}</span>
+                      <StatusBadge status={item.status} />
+                    </div>
+                    <p style={{ fontSize: 12, color: "#5f5f69", lineHeight: 1.55, margin: 0 }}>{item.desc}</p>
                   </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Right — Specs */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+          {/* AI Architecture */}
+          <motion.div
+            className="info-card"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.14 }}
+          >
+            <div className="section-label">🤖 AI Model Architecture</div>
+            <SpecRow label="Algorithm" value="Gradient Boosting Classifier" />
+            <SpecRow label="Validation Accuracy" value="95.82% F1-Score" accent />
+            <SpecRow label="Features Curated" value="U-Sub, IBP, Trig, PF" />
+            <SpecRow label="Dataset Volume" value="52,482 Samples" />
+            <SpecRow label="Training Framework" value="scikit-learn / Python" />
+            <div style={{ height: 0, borderBottom: "none" }} />
+          </motion.div>
+
+          {/* Microservice Endpoints */}
+          <motion.div
+            className="info-card"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.22 }}
+          >
+            <div className="section-label">⚙️ Microservice Endpoints</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {[
+                { name: "Web Application", port: "localhost:5173", status: STATUS_ONLINE },
+                { name: "Flask AI Server", port: "localhost:5000", status: STATUS_ONLINE },
+                { name: ".NET REST API", port: "localhost:5093", status: STATUS_BUILDING },
+              ].map((ep) => (
+                <div key={ep.port} className="endpoint-row">
                   <div>
-                    <h4 style={{ fontSize: 15, fontWeight: 700, color: item.checked ? "#00ff88" : "#fff", marginBottom: 6 }}>{item.label}</h4>
-                    <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>{item.desc}</p>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#21164c" }}>{ep.name}</div>
+                    <code style={{ fontSize: 11, color: "#592eff", fontWeight: 700 }}>{ep.port}</code>
                   </div>
+                  <StatusBadge status={ep.status} />
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Column - Tech Specs */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <div className="info-card">
-              <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: 10 }}>🤖 AI Model Architecture</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                  <span style={{ color: "rgba(255,255,255,0.5)" }}>Algorithm</span>
-                  <span style={{ fontWeight: 700 }}>Gradient Boosting Classifier</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                  <span style={{ color: "rgba(255,255,255,0.5)" }}>Validation Accuracy</span>
-                  <span style={{ fontWeight: 700, color: "#00ff88" }}>95.82% F1-Score</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                  <span style={{ color: "rgba(255,255,255,0.5)" }}>Features Curated</span>
-                  <span style={{ fontWeight: 700 }}>Add/Sub, Power, U-Sub, IBP, Trig</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                  <span style={{ color: "rgba(255,255,255,0.5)" }}>Dataset Volume</span>
-                  <span style={{ fontWeight: 700 }}>52,482 Samples</span>
-                </div>
-              </div>
+          {/* Tech Stack */}
+          <motion.div
+            className="info-card"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.3 }}
+          >
+            <div className="section-label">🛠 Tech Stack</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {["React + Vite", "Python 3.11", ".NET 8", "FastAPI", "scikit-learn", "KaTeX", "Firebase", "Framer Motion", "Tailwind CSS"].map((tech) => (
+                <span key={tech} style={{
+                  fontSize: 12, fontWeight: 700, padding: "5px 12px",
+                  borderRadius: 99, background: "#f4f3ff",
+                  color: "#592eff", border: "1px solid rgba(89,46,255,0.15)",
+                }}>
+                  {tech}
+                </span>
+              ))}
             </div>
-
-            <div className="info-card">
-              <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: 10 }}>⚙️ Microservice Endpoints</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                  <span style={{ color: "rgba(255,255,255,0.5)" }}>Web Application</span>
-                  <span style={{ fontFamily: "monospace", fontWeight: 700 }}>localhost:5173</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                  <span style={{ color: "rgba(255,255,255,0.5)" }}>Flask Server API</span>
-                  <span style={{ fontFamily: "monospace", fontWeight: 700 }}>localhost:5000</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                  <span style={{ color: "rgba(255,255,255,0.5)" }}>.NET REST Server API</span>
-                  <span style={{ fontFamily: "monospace", fontWeight: 700 }}>localhost:5093</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          </motion.div>
         </div>
       </div>
+
       <Footer onNavigate={onNavigate} />
     </div>
   );

@@ -22,6 +22,7 @@ from ai.utils.expr.trig.expr_tan        import TanExprNode
 from ai.utils.expr.expr_log             import LogExprNode
 from ai.utils.expr.expr_exp             import ExpExprNode
 from ai.utils.expr.value.expr_pi        import PiExprNode
+from ai.utils.expr.value.expr_e         import EExprNode
 
 
 def expr_to_latex(expr: ExprNode, dee: str = "x") -> str:
@@ -52,6 +53,9 @@ def expr_to_latex(expr: ExprNode, dee: str = "x") -> str:
 
     if isinstance(e, PiExprNode):
         return r"\pi"
+
+    if isinstance(e, EExprNode):
+        return "e"
 
     if isinstance(e, VarExprNode):
         return dee

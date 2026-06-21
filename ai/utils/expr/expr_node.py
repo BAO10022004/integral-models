@@ -1,8 +1,3 @@
-
-
-
-################## Lớp trừu tượng để biểu diễn các hàm toán học##################
-
 class ExprNode:
     def __init__(self,left=None, right=None, var=None):
         self.left = left

@@ -9,7 +9,6 @@ class SinExprNode(ExprNode):
         if not isinstance(e, SinExprNode):
             return False
        
-        # so sánh đệ quy
         return self.left._equals(e.left)
     def is_leaf(self):
         return False
@@ -20,8 +19,8 @@ class SinExprNode(ExprNode):
         if left_value is None:
             return None
         return math.sin(float(left_value))
-    def simplify(self):
-        return self
+    def simplify(self,message = [], integral = []):
+        return message, integral, self
     def has_function(self, func_name):
         l = False
         r = False

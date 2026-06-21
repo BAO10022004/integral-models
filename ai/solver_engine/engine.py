@@ -1,19 +1,3 @@
-"""
-engine.py
----------
-Class SolverEngine — vòng lặp chính Model → Rule → Model → ...
-
-Sử dụng ActionsMixin (actions.py) cho các handler từng action,
-và các helpers (helpers.py) cho predict, evaluate, stringify.
-
-Action dispatch:
-  0 → _apply_direct   : công thức trực tiếp
-  1 → _apply_const    : rút hằng số  c·∫f dx
-  2 → _apply_split    : tách tổng    ∫(f±g) = ∫f ± ∫g
-  3 → _apply_special  : công thức đặc trưng
-  4 → _apply_usub     : đổi biến u = ax + b
-  5 → _apply_byparts  : tích phân từng phần (IBP)
-"""
 
 import sys
 import os
@@ -33,31 +17,9 @@ from ai.solver_engine.actions   import ActionsMixin
 
 
 class SolverEngine(ActionsMixin):
-    """
-    Giải tích phân qua vòng lặp Model → Rule → Model → ...
-
-    Parameters
-    ----------
-    model : sklearn estimator — mô hình đã load.
-    """
-
     def __init__(self, model):
         self.model = model
-
-    # ── Public API ────────────────────────────────────────────────────────────
-
     def solve(self, latex: str) -> dict:
-        """
-        Giải tích phân từ chuỗi LaTeX.
-
-        Returns
-        -------
-        dict
-            steps   : list[dict]  — danh sách bước giải
-            answer  : float|None  — kết quả số (tích phân xác định)
-            success : bool
-            error   : str|None
-        """
         steps = []
 
         try:
@@ -79,72 +41,66 @@ class SolverEngine(ActionsMixin):
             "error":   None if answer is not None else "Không thể tính được tích phân này",
         }
 
-    # ── Core recursive solver ─────────────────────────────────────────────────
-
     def _solve_integral(self, integral: Integral, steps: list, depth: int) -> float | None:
-        """
-        Đệ quy giải một Integral object.
-        Trả về giá trị số (float) hoặc None nếu thất bại.
-        """
+        from ai.utils.antiderivative_rule.rule_linear import apply_basic_rule
         if depth > MAX_DEPTH:
             steps.append(make_step("error", depth,
                 description="Vượt quá độ sâu tối đa — dừng vòng lặp",
                 integral_str=integral_str(integral)))
             return None
 
-        int_s  = integral_str(integral)
-        action, probs = predict_action(self.model, integral.latex)
+        int_s = integral_str(integral)
+        anti = apply_basic_rule(integral.integrand, integral.dee)
+        if anti is not integral.integrand:
+            steps.append(make_step("predict", depth,
+                action="direct",
+                description="Áp dụng công thức cơ bản trực tiếp",
+                integral_str=int_s,
+                probabilities={"direct": 1.0}))
+            return self._apply_direct(integral, steps, depth)
 
+        action, probs = predict_action(self.model, integral.latex)
         steps.append(make_step("predict", depth,
             action=action,
             description=action_desc(action),
             integral_str=int_s,
             probabilities=probs))
-
-        # ── Dispatch theo action ──────────────────────────────────────────────
-        if action == 0:
-            return self._apply_direct(integral, steps, depth)
-
-        if action == 1:
+        if action == 0:  
             return self._apply_const(integral, steps, depth)
 
-        if action == 2:
+        if action == 1:  
             return self._apply_split(integral, steps, depth)
 
-        if action == 3:
+        if action == 2:  
             return self._apply_special(integral, steps, depth)
 
-        if action == 4:
+        if action == 3:  
             return self._apply_usub(integral, steps, depth)
 
-        if action == 5:
+        if action == 4:   
             return self._apply_byparts(integral, steps, depth)
 
-        # Unknown action → fallback
         steps.append(make_step("error", depth,
             description=f"Action {action} không được hỗ trợ",
             integral_str=int_s))
         return None
-
-    # ── Utility ───────────────────────────────────────────────────────────────
-
     def _clone_integral(self, original: Integral, new_expr: ExprNode) -> Integral:
-        """Tạo Integral mới cùng cận và dee, nhưng integrand khác."""
         body_latex = expr_to_latex(new_expr, original.dee)
-        new_latex  = rf"\int_{{{original.left}}}^{{{original.right}}}{body_latex}d{original.dee}"
+        if original.left is None and original.right is None:
+            new_latex  = rf"\int {body_latex}d{original.dee}"
+        else:
+            new_latex  = rf"\int_{{{original.left}}}^{{{original.right}}}{body_latex}d{original.dee}"
 
         try:
             new_integral = Integral(new_latex)
             if new_integral.integrand is None:
                 raise ValueError("parse fail")
         except Exception:
-            # Fallback: gán thủ công
             new_integral = object.__new__(Integral)
             new_integral.latex          = new_latex
+            new_integral.integrand      = new_expr
             new_integral.left           = original.left
             new_integral.right          = original.right
             new_integral.dee            = original.dee
-            new_integral.integrand      = new_expr
-            new_integral.antiderivative = False
 
         return new_integral

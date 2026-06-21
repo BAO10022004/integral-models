@@ -1,4 +1,4 @@
-/* ================= SECTION 2: INTRODUCTION SPLIT ================= */
+/* ================= SECTION 2: INTRODUCTION SPLIT (MOCKUP DESIGN) ================= */
 .history-intro-section {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -10,151 +10,226 @@
   align-items: center;
   overflow: hidden;
   box-sizing: border-box;
-  background: #D1CAB1;
+  background: #D1CAB1; /* Keeps original brown background */
   color: #1c1a17;
 }
 
-.intro-split-container {
-  display: flex;
+/* Custom Mockup Layout for Section 2 */
+.intro-mockup-layout {
+  display: grid;
+  grid-template-columns: 45% 55%; /* Split 45% image, 55% content */
   width: 100%;
-  max-width: 1200px;
-  height: 80%;
-  margin: 0 auto;
-  padding: 0 40px;
-  gap: 60px;
-  align-items: center;
+  height: 100%;
+  position: relative;
   box-sizing: border-box;
-  position: relative;
-  z-index: 6;
 }
 
-.intro-left-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  text-align: left;
-}
-
-.intro-label {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: #8c7f68; /* Elegant bronze-beige tone */
-  margin-bottom: 16px;
-  display: inline-block;
-  position: relative;
-}
-
-.intro-label::after {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 2px;
-  background: #8c7f68;
-  margin-top: 8px;
-}
-
-.intro-headline {
-  font-size: clamp(2rem, 3.5vw, 3rem);
-  font-weight: 800;
-  line-height: 1.15;
-  color: #1c1a17;
-  margin-bottom: 24px;
-  letter-spacing: -1px;
-}
-
-.intro-text {
-  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
-  color: rgba(28, 26, 23, 0.75);
-  line-height: 1.7;
-  margin-bottom: 30px;
-}
-
-.intro-right-col {
-  flex: 1.1;
-  height: 100%;
-  max-height: 520px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.intro-img-frame {
+/* Left Column: Full height image */
+.intro-image-column {
   width: 100%;
   height: 100%;
-  border-radius: 24px;
+  position: relative;
   overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border: 6px solid #fff; /* Elegant gallery frame look */
-  background: #fff;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
 }
 
-.intro-img {
+.intro-mockup-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
 }
 
-@media (max-width: 968px) {
+.intro-image-overlay-text {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Right Column: Content */
+.intro-content-column {
+  width: 100%;
+  height: 100%;
+  background: #D1CAB1; /* Keeps the original brown background */
+  padding: 60px 8%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Top Nav */
+.intro-top-nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
+}
+
+.intro-top-nav .nav-link {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: rgba(28, 26, 23, 0.55);
+  cursor: pointer;
+  transition: color 0.3s;
+  position: relative;
+}
+
+.intro-top-nav .nav-link.active {
+  color: #1c1a17;
+}
+
+.intro-top-nav .nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #1c1a17;
+}
+
+.intro-top-nav .nav-link:hover {
+  color: #1c1a17;
+}
+
+.intro-top-nav .nav-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: #1c1a17;
+  background: transparent;
+  border: 1px solid rgba(28, 26, 23, 0.25);
+  padding: 8px 20px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+.intro-top-nav .nav-btn:hover {
+  background: #1c1a17;
+  color: #D1CAB1;
+  border-color: #1c1a17;
+}
+
+/* Big Title */
+.intro-mockup-title {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: clamp(3rem, 6.5vw, 6.5rem);
+  font-weight: 400;
+  color: #1c1a17;
+  margin: 30px 0 20px;
+  line-height: 0.95;
+  letter-spacing: -2px;
+}
+
+/* Two column text row */
+.intro-text-row {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 40px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.intro-text-left {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1rem, 1.4vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.45;
+  color: #1c1a17;
+}
+
+.intro-text-right {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.8rem, 1vw, 0.95rem);
+  color: rgba(28, 26, 23, 0.65);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.intro-para {
+  margin: 0;
+}
+
+/* Bottom banner */
+.intro-bottom-banner {
+  width: 100%;
+  height: clamp(100px, 15vh, 160px);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(28, 26, 23, 0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.intro-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Responsive adjustments for mobile/tablet */
+@media (max-width: 1024px) {
   .history-intro-section {
     aspect-ratio: unset;
     height: auto;
-    min-height: 100svh;
+    min-height: 100vh;
   }
 
-  .intro-split-container {
-    flex-direction: column;
-    gap: 24px;
+  .intro-mockup-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .intro-image-column {
+    height: 40vh;
+  }
+
+  .intro-content-column {
+    padding: 40px 24px;
     height: auto;
-    padding: 80px 24px 40px; /* added extra padding at top for the torn paper */
-    align-items: stretch;
+    gap: 30px;
   }
 
-  .intro-left-col {
-    flex: none;
-    align-items: center;
-    text-align: center;
-    width: 100%;
-  }
-
-  .intro-label::after {
-    margin: 8px auto 0;
-  }
-
-  .intro-headline {
-    font-size: 24px;
-    letter-spacing: -0.5px;
-  }
-
-  .intro-text {
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  .intro-right-col {
-    flex: none;
-    width: 100%;
-    max-height: none;
-    display: flex;
+  .intro-top-nav {
     justify-content: center;
-    align-items: center;
+    gap: 20px;
   }
 
-  .intro-img-frame {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    height: auto;
-    border-radius: 16px;
+  .intro-mockup-title {
+    font-size: 3.5rem;
+    text-align: center;
+    margin: 10px 0;
   }
 
-  .intro-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .intro-text-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .intro-text-left {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .intro-text-right {
+    text-align: justify;
+  }
+
+  .intro-bottom-banner {
+    height: 120px;
   }
 }

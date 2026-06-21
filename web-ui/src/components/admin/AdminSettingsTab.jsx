@@ -8,6 +8,12 @@ export default function AdminSettingsTab() {
   const [websiteTitle, setWebsiteTitle] = useState("");
   const [faviconUrl, setFaviconUrl] = useState("");
 
+  // Gemini API Key States
+  const [geminiKey, setGeminiKey] = useState("");
+  const [geminiStatus, setGeminiStatus] = useState({ configured: false, key_preview: "" });
+  const [showKey, setShowKey] = useState(false);
+  const [geminiSaveStatus, setGeminiSaveStatus] = useState("");
+
   // Load custom font and identity settings on mount
   useEffect(() => {
     const storedFont = localStorage.getItem("navbar_font");
@@ -19,6 +25,17 @@ export default function AdminSettingsTab() {
 
     const storedFavicon = localStorage.getItem("website_favicon") || "";
     setFaviconUrl(storedFavicon);
+
+    // Fetch Gemini config status from backend
+    fetch(`${AI_API_URL}/chat/config`)
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error();
+      })
+      .then(data => {
+        setGeminiStatus(data);
+      })
+      .catch(() => {});
   }, []);
 
   const handleFontChange = (fontValue) => {
@@ -42,6 +59,28 @@ export default function AdminSettingsTab() {
     }
     setSaveStatus("Global website font updated successfully!");
     setTimeout(() => setSaveStatus(""), 2000);
+  };
+
+  const handleSaveGeminiKey = async (e) => {
+    e.preventDefault();
+    if (!geminiKey.trim()) return;
+    
+    setGeminiSaveStatus("Saving...");
+    try {
+      const res = await fetch(`${AI_API_URL}/chat/config`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ api_key: geminiKey.trim() })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Server error");
+      setGeminiStatus(data);
+      setGeminiKey("");
+      setGeminiSaveStatus("Gemini API Key updated successfully!");
+      setTimeout(() => setGeminiSaveStatus(""), 3000);
+    } catch (err) {
+      setGeminiSaveStatus(`Error: ${err.message}`);
+    }
   };
 
   const handleTitleChange = (val) => {
@@ -92,7 +131,7 @@ export default function AdminSettingsTab() {
         {/* CONNECTION SETTINGS */}
         <div className="admin-card-inner" style={{ marginTop: 0 }}>
           <h4 className="admin-card-inner-title">API Connection Settings</h4>
-          <p className="admin-card-inner-desc">Endpoints configured dynamically inside the environment environment variables.</p>
+          <p className="admin-card-inner-desc">Endpoints configured dynamically inside the environment variables.</p>
 
           <div className="admin-form-row">
             <div className="admin-form-group">
@@ -105,6 +144,86 @@ export default function AdminSettingsTab() {
               <input type="text" className="control-input" value={DOTNET_API_URL} disabled />
             </div>
           </div>
+        </div>
+
+        {/* GEMINI API SETTINGS */}
+        <div className="admin-card-inner">
+          <h4 className="admin-card-inner-title">Google Gemini AI Configuration</h4>
+          <p className="admin-card-inner-desc">Configure your Gemini API Key to enable the Calculus Chat Assistant chatbot.</p>
+
+          <form onSubmit={handleSaveGeminiKey}>
+            <div className="admin-form-row">
+              <div className="admin-form-group">
+                <label className="admin-form-label">GEMINI API KEY STATUS</label>
+                <div className="admin-status-pill">
+                  <span 
+                    className="admin-status-pill-dot" 
+                    style={{ 
+                      backgroundColor: geminiStatus.configured ? "#00ff88" : "#fca5a5", 
+                      boxShadow: geminiStatus.configured ? "0 0 8px #00ff88" : "0 0 8px #fca5a5" 
+                    }} 
+                  />
+                  <span className="admin-status-pill-text">
+                    {geminiStatus.configured 
+                      ? `Active (${geminiStatus.key_preview || "Configured"})` 
+                      : "Not Configured (Chat Assistant will display setup instruction)"
+                    }
+                  </span>
+                </div>
+              </div>
+
+              <div className="admin-form-group">
+                <label className="admin-form-label">SET / UPDATE GEMINI API KEY</label>
+                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                  <input
+                    type={showKey ? "text" : "password"}
+                    className="control-input"
+                    placeholder="Enter your Gemini API key (AIzaSy...)"
+                    value={geminiKey}
+                    onChange={(e) => setGeminiKey(e.target.value)}
+                    style={{ flex: 1 }}
+                  />
+                  <button 
+                    type="button" 
+                    className="btn-glass" 
+                    onClick={() => setShowKey(!showKey)}
+                    style={{ padding: "10px 14px", fontSize: "11px", borderRadius: "12px", margin: 0 }}
+                  >
+                    {showKey ? "Hide" : "Show"}
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-glass"
+                    disabled={!geminiKey.trim()}
+                    style={{
+                      padding: "10px 20px",
+                      borderRadius: "12px",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      background: geminiKey.trim() ? "linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)" : "rgba(255,255,255,0.05)",
+                      border: "none",
+                      color: geminiKey.trim() ? "#000" : "rgba(255,255,255,0.3)",
+                      cursor: geminiKey.trim() ? "pointer" : "default"
+                    }}
+                  >
+                    Save Key
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {geminiSaveStatus && (
+              <div style={{ 
+                color: geminiSaveStatus.startsWith("Error") ? "#fca5a5" : geminiSaveStatus === "Saving..." ? "#a5b4fc" : "#00ff88", 
+                fontWeight: "700", 
+                fontSize: "13px", 
+                marginTop: "12px", 
+                transition: "all 0.3s" 
+              }}>
+                {geminiSaveStatus.startsWith("Error") ? "❌" : geminiSaveStatus === "Saving..." ? "⏳" : "✓"} {geminiSaveStatus}
+              </div>
+            )}
+          </form>
         </div>
 
         {/* SECURITY & SDK CLOUD */}

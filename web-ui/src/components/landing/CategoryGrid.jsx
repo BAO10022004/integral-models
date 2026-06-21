@@ -9,16 +9,32 @@ import infoImg from '../../assets/information.jpg';
 import contactImg from '../../assets/contract.jpg';
 
 const CategoryGrid = ({ onNavigate }) => {
-    const categories = [
-        { title: 'LỊCH SỬ PHÁT TRIỂN ', img: historyImg, route: 'history' },
-        { title: 'KIẾN THỨC', img: theoryImg, route: 'theory' },
-        { title: 'AI', img: aiImg, route: 'ai' },
-        { title: 'THÔNG TIN', img: infoImg, route: 'info' },
-        { title: 'LIÊN HỆ', img: contactImg, route: 'contact' }
-    ];
-
+    const [categories, setCategories] = useState([]);
     const [inView, setInView] = useState(false);
     const containerRef = useRef(null);
+
+    useEffect(() => {
+        // Load custom category images from localStorage
+        const storedImages = localStorage.getItem("landing_category_images");
+        let customImages = {};
+        if (storedImages) {
+            try {
+                customImages = JSON.parse(storedImages);
+            } catch (e) {
+                console.error("Failed to parse custom landing category images", e);
+            }
+        }
+
+        // Merge custom configuration values with default assets
+        const list = [
+            { title: 'LỊCH SỬ PHÁT TRIỂN ', img: customImages.history || historyImg, route: 'history' },
+            { title: 'KIẾN THỨC', img: customImages.theory || theoryImg, route: 'theory' },
+            { title: 'AI', img: customImages.ai || aiImg, route: 'ai' },
+            { title: 'THÔNG TIN', img: customImages.info || infoImg, route: 'info' },
+            { title: 'LIÊN HỆ', img: customImages.contact || contactImg, route: 'contact' }
+        ];
+        setCategories(list);
+    }, []);
 
     useEffect(() => {
         const observer = new IntersectionObserver(

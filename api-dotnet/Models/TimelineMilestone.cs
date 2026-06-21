@@ -44,6 +44,9 @@ public class HistoryConfig
 
     [FirestoreProperty]
     public string IntroText { get; set; } = "The intelligent calculus solver system was born from a desire to bridge the gap between complex mathematical theories and real-world digital applications.";
+
+    [FirestoreProperty]
+    public List<string> MarqueeImages { get; set; } = [];
 }
 
 [FirestoreData]

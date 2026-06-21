@@ -1,112 +1,136 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import SolutionPage from "./SolutionPage";
 import Footer from "../components/common/Footer";
-import ConfidenceBar from "../components/tester/ConfidenceBar";
-import SolveStepCard from "../components/tester/SolveStepCard";
 import HistoryItem from "../components/tester/HistoryItem";
 import PredictionCard from "../components/tester/PredictionCard";
 import ProbabilityDistribution from "../components/tester/ProbabilityDistribution";
 import MathInput from "../components/tester/MathInput";
 import { AI_API_URL as API, DOTNET_API_URL } from "../config";
+import { AuroraTextEffect } from "@/components/lightswind/aurora-text-effect";
+import RippleLoader from "@/components/lightswind/RippleLoader";
+import { Menu, X, ArrowRight, ArrowLeft, Zap, Brain, Cpu, Network, Bot, AtomIcon } from "lucide-react";
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
+import { motion } from "framer-motion";
+import BeamCircle from "@/components/ui/beam-circle";
+import { Button } from "@/components/ui/button";
+import AnimatedBubbleParticles from "@/components/lightswind/animated-bubble-particles";
+import AuroraShader from "@/components/lightswind/aurora-shader";
+import GoBackButton from "@/components/common/GoBackButton";
 
-const EXAMPLES = [
-  { label: "x²", latex: String.raw`\int_{0}^{1}x^2 dx`, action: 0 },
-  { label: "sin(x)", latex: String.raw`\int_{0}^{1}\sin(x) dx`, action: 0 },
-  { label: "3x²", latex: String.raw`\int_{0}^{1}3x^2 dx`, action: 1 },
-  { label: "x²+sin(x)", latex: String.raw`\int_{0}^{1}(x^2+\sin(x)) dx`, action: 2 },
-  { label: "sin(2x)", latex: String.raw`\int_{0}^{1}\sin(2x) dx`, action: 4 },
-  { label: "(x+1)³", latex: String.raw`\int_{0}^{1}(x+1)^3 dx`, action: 4 },
-  { label: "x·sin(x)", latex: String.raw`\int_{0}^{1}x\sin(x) dx`, action: 5 },
-  { label: "x·eˣ", latex: String.raw`\int_{0}^{1}xe^x dx`, action: 5 },
-];
-
-const LATEX_SNIPPETS = [
-  { label: "\\int", insert: String.raw`\int_{0}^{1} ` },
-  { label: "xⁿ", insert: "x^n" },
-  { label: "sin", insert: String.raw`\sin(x)` },
-  { label: "cos", insert: String.raw`\cos(x)` },
-  { label: "tan", insert: String.raw`\tan(x)` },
-  { label: "ln", insert: String.raw`\ln(x)` },
-  { label: "eˣ", insert: "e^x" },
-  { label: "√", insert: String.raw`\sqrt{x}` },
-  { label: "frac", insert: String.raw`\frac{1}{x}` },
-  { label: "dx", insert: " dx" },
-];
+import "../styles/ModelTester.css";
+import "../styles/KoaDesign.css";
 
 export default function ModelTester({ user, onNavigate }) {
   const [latex, setLatex] = useState("");
   const [result, setResult] = useState(null);
   const [solveResult, setSolveResult] = useState(null);
   const [showSolution, setShowSolution] = useState(false);
-  const [mode, setMode] = useState("predict"); // "predict" | "solve"
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [history, setHistory] = useState([]);
   const [apiStatus, setApiStatus] = useState("unknown");
+  const [modelMeta, setModelMeta] = useState(null);
+  const [solveGlitch, setSolveGlitch] = useState(false);
+  const [showPredictModal, setShowPredictModal] = useState(false);
   const inputRef = useRef(null);
+  const lenisRef = useRef(null);
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    // Initialize Lenis globally to smooth out the native scroll
+    // This allows sticky elements to work while adding silky inertia
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.08,
+      smoothWheel: true,
+      wheelMultiplier: 0.9,
+    });
+    lenisRef.current = lenis;
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+      lenisRef.current = null;
+    };
+  }, []);
+
+  const handleTryModelClick = (e) => {
+    e.preventDefault();
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo('#model', { offset: 0, duration: 1.5 });
+    } else {
+      document.getElementById('model')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    if (showPredictModal) {
+      lenisRef.current?.stop();
+      document.body.style.overflow = "hidden";
+    } else {
+      lenisRef.current?.start();
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showPredictModal]);
 
   useEffect(() => {
     const checkApi = async () => {
       try {
-        const r = await fetch(`${API}/`, { method: 'GET', mode: 'cors', signal: AbortSignal.timeout(3000) });
-        setApiStatus(r.ok ? "ok" : "error");
-      } catch (e) { setApiStatus("error"); }
+        const r = await fetch(`${API}/health`, { method: "GET", mode: "cors", signal: AbortSignal.timeout(3000) });
+        if (r.ok) {
+          const meta = await r.json();
+          setApiStatus("ok");
+          setModelMeta(meta);
+        } else {
+          setApiStatus("error");
+        }
+      } catch { setApiStatus("error"); }
     };
     checkApi();
   }, []);
 
-  // Fetch Firestore solved calculations history if user is logged in
   useEffect(() => {
     if (user && user.uid) {
       fetch(`${DOTNET_API_URL}/Integral/history?userId=${user.uid}`)
-        .then(res => {
-          if (!res.ok) throw new Error("Failed to load calculation history");
-          return res.json();
-        })
+        .then(res => { if (!res.ok) throw new Error(); return res.json(); })
         .then(data => {
           if (Array.isArray(data)) {
-            // Map C# Firestore documents to local calculation history list
-            const formattedHistory = data.map(item => ({
+            setHistory(data.map(item => ({
               latex: item.input || "",
               action: "✓",
               name: `= ${item.finalAnswer || item.result || "?"}`,
-              id: Date.now() - Math.random() // Unique ID
-            }));
-            setHistory(formattedHistory.slice(0, 8));
+              id: Date.now() - Math.random()
+            })).slice(0, 8));
           }
         })
-        .catch(err => {
-          console.warn("Failed to fetch calculation history from server Firestore:", err);
-        });
+        .catch(() => { });
     }
   }, [user]);
-
-  const insertSnippet = (text) => {
-    const el = inputRef.current;
-    if (!el) { setLatex(p => p + text); return; }
-    const s = el.selectionStart, e = el.selectionEnd;
-    setLatex(latex.slice(0, s) + text + latex.slice(e));
-    setTimeout(() => { el.focus(); el.setSelectionRange(s + text.length, s + text.length); }, 0);
-  };
 
   async function callApi(endpoint) {
     let cleanLatex = latex.trim();
     if (!cleanLatex) return;
-
-    // Auto-formatting raw expressions (e.g. "2x" or "x^2") into valid LaTeX integrals
     if (!cleanLatex.includes("\\int") && !cleanLatex.toLowerCase().includes("int")) {
-      // Auto-wrap into definite integral format
       cleanLatex = `\\int_{0}^{1}{${cleanLatex}}dx`;
-      // Update UI input as well for visual clarity
-      setLatex(cleanLatex);
     }
-
     setError(""); setResult(null); setSolveResult(null); setLoading(true);
     try {
       const url = endpoint === "solve"
         ? `${DOTNET_API_URL}/Integral/solve?userId=${user?.uid || ""}`
-        : `${API}/${endpoint}`;
-
+        : `${API}/integrals/${endpoint}`;
       const res = await fetch(url, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ latex: cleanLatex }),
@@ -117,17 +141,26 @@ export default function ModelTester({ user, onNavigate }) {
       if (endpoint === "predict") {
         setResult(data);
         setHistory(h => [{ latex, action: data.action, name: data.action_name, id: Date.now() }, ...h].slice(0, 8));
+        setShowPredictModal(true);
       } else {
         setSolveResult(data);
         const ansText = data.finalAnswer || data.result || data.answer || "?";
-        setHistory(h => [{ latex, action: data.success || (data.result && !data.error) ? "✓" : "✗", name: `= ${ansText}`, id: Date.now() }, ...h].slice(0, 8));
+        setHistory(h => [{ latex, action: (data.success || (data.result && !data.error)) ? "✓" : "✗", name: `= ${ansText}`, id: Date.now() }, ...h].slice(0, 8));
         if (data.success || (data.result && !data.error)) setShowSolution(true);
       }
     } catch (e) {
-      setError(e.message.includes("fetch") ? "Không kết nối được API. Hãy chạy: dotnet run & python -m ai.api" : e.message);
+      setError(e.message.includes("fetch") ? "Could not connect to API. Please run: dotnet run & python -m ai.api" : e.message);
       setApiStatus("error");
     } finally { setLoading(false); }
   }
+
+  const handleSolveClick = () => {
+    setSolveGlitch(true);
+    setTimeout(() => {
+      setSolveGlitch(false);
+    }, 400);
+    callApi("solve");
+  };
 
   const solutionData = solveResult ? {
     expr: solveResult.input || solveResult.expr || latex,
@@ -136,365 +169,345 @@ export default function ModelTester({ user, onNavigate }) {
     dv: solveResult.dv ?? "x",
     result: solveResult.result ?? solveResult.finalAnswer ?? solveResult.answer ?? "?",
     definite_value: solveResult.definite_value ?? solveResult.finalAnswer ?? null,
-    steps: (solveResult.steps ?? []).map(s => {
-      if (typeof s === "string") return s;
-      const act = s.action || s.description || "";
-      const exp = s.expression || s.formula || "";
-      const expl = s.explanation || s.kind || "";
-
-      let str = "";
-      if (expl) str += `${expl}: `;
-      if (act) str += `${act} `;
-      if (exp) str += `-> ${exp}`;
-
-      return str.trim() || JSON.stringify(s);
-    }),
+    steps: solveResult.steps ?? [],
   } : null;
+
+  const hasInput = latex.trim().length > 0;
+
+  const SITE_CONFIG = {
+    logo: "Callo",
+    logoHighlight: "X"
+  };
+
+  const NAVIGATION_LINKS = [
+    { label: "Home", href: "#home" },
+    { label: "Features", href: "#features" },
+    { label: "Model", href: "#model" },
+    { label: "History", href: "#history" }
+  ];
+
+  const HEADER_CTA = {
+    signIn: { label: "Sign in", href: "#signin" },
+    getStarted: { label: "Get Started", href: "#get-started" }
+  };
+
+  const HERO_CONTENT = {
+    title: {
+      line1: "Introducing Integral AI",
+      line2: "The Future of Math Solutions"
+    },
+    description: "Solve complex integrals instantly with AI-driven models that deliver step-by-step reasoning and prediction probabilities. Empower your research and learning.",
+    cta: {
+      primary: { label: "Try Model Now", href: "#model" },
+      secondary: { label: "Learn More", href: "#learn-more" }
+    }
+  };
+
+  const beamOrbits = useMemo(() => [
+    { id: 1, radiusFactor: 0.25, speed: 10, icon: <Brain className="text-gray-900" />, iconSize: 32, orbitThickness: 1.5 },
+    { id: 2, radiusFactor: 0.45, speed: 15, icon: <Cpu className="text-gray-900" />, iconSize: 36, orbitThickness: 1.5 },
+    { id: 3, radiusFactor: 0.65, speed: 12, icon: <Network className="text-gray-900" />, iconSize: 40, orbitThickness: 2 },
+    { id: 4, radiusFactor: 0.85, speed: 18, icon: <Zap className="text-gray-900" />, iconSize: 36, orbitThickness: 1.5 },
+    { id: 5, radiusFactor: 1.05, speed: 20, icon: <Bot className="text-gray-900" />, iconSize: 32, orbitThickness: 1 },
+  ], []);
+
+  const centerIcon = useMemo(() => (
+    <AtomIcon className="text-gray-900" size={40} strokeWidth={2} />
+  ), []);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
 
   if (showSolution && solutionData) return <SolutionPage data={solutionData} onBack={() => setShowSolution(false)} />;
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#f8fafc",
-      color: "#0f172a",
-      padding: "24px",
-      fontFamily: "Arial, Helvetica, sans-serif"
-    }}>
-      <style>{`
-        body, body *, body input, body select, body button, body textarea {
-          font-family: Arial, Helvetica, sans-serif !important;
-        }
-        @keyframes fadeSlide { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
-        @keyframes spin { to{transform:rotate(360deg)} }
-        @keyframes runNeon {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .solve-neon-btn {
-          flex: 1;
-          padding: 16px 24px;
-          position: relative;
-          background: transparent;
-          border: none !important;
-          border-radius: 99px;
-          color: #2563eb;
-          font-weight: 800;
-          font-size: 15px;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          z-index: 1;
-        }
-        .solve-neon-btn::before {
-          content: "";
-          position: absolute;
-          inset: -4px;
-          border-radius: 99px;
-          background: linear-gradient(90deg, #2563eb, #7c3aed, #10b981, #2563eb);
-          background-size: 300% 300%;
-          filter: blur(8px);
-          z-index: -3;
-          animation: runNeon 4s linear infinite;
-          opacity: 0.4;
-          transition: all 0.3s;
-        }
-        .solve-neon-btn::after {
-          content: "";
-          position: absolute;
-          inset: -2px;
-          border-radius: 99px;
-          background: linear-gradient(90deg, #2563eb, #7c3aed, #10b981, #2563eb);
-          background-size: 300% 300%;
-          z-index: -2;
-          animation: runNeon 4s linear infinite;
-          transition: all 0.3s;
-        }
-        .solve-neon-btn-bg {
-          position: absolute;
-          inset: 0;
-          background: #ffffff;
-          border-radius: 99px;
-          z-index: -1;
-          transition: all 0.3s;
-        }
-        .solve-neon-btn:hover:not(:disabled) {
-          color: #ffffff !important;
-          transform: translateY(-2px);
-        }
-        .solve-neon-btn:hover:not(:disabled)::before {
-          opacity: 0.8;
-          filter: blur(12px);
-        }
-        .solve-neon-btn:hover:not(:disabled) .solve-neon-btn-bg {
-          opacity: 0;
-        }
-        .solve-neon-btn:active:not(:disabled) {
-          transform: translateY(0);
-        }
-        .solve-neon-btn:disabled {
-          color: #94a3b8 !important;
-          cursor: not-allowed;
-        }
-        .solve-neon-btn:disabled::before {
-          display: none;
-        }
-        .solve-neon-btn:disabled::after {
-          background: #cbd5e1;
-          animation: none;
-          inset: -1px;
-        }
-        .solve-neon-btn:disabled .solve-neon-btn-bg {
-          background: #cbd5e1;
-          opacity: 0.15;
-        }
-      `}</style>
+    <div className="w-full min-h-screen bg-[#020205] text-[#0f172a] font-sans">
+      {loading && (
+        <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", zIndex: 9999, backgroundColor: "rgba(0, 0, 0, 0.4)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s" }}>
+          <RippleLoader size={50} duration="3s" logoColor="dodgerblue" />
+        </div>
+      )}
 
-      {/* Ambient Blue Background Orbs */}
-      <div style={{ position: "fixed", inset: 0, zIndex: -1, overflow: "hidden", pointerEvents: "none" }}>
-        <div style={{ position: "absolute", width: 500, height: 500, top: "-10%", left: "-5%", borderRadius: "50%", background: "rgba(37, 99, 235, 0.04)", filter: "blur(80px)" }} />
-        <div style={{ position: "absolute", width: 400, height: 400, bottom: "-5%", right: "0", borderRadius: "50%", background: "rgba(124, 58, 237, 0.03)", filter: "blur(80px)" }} />
+      <GoBackButton onClick={() => onNavigate('intro')} />
+
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
+        <AuroraShader
+          colorStops={["#3b82f6", "#8b5cf6", "#06b6d4"]}
+          amplitude={1.2}
+          blend={0.6}
+          speed={0.8}
+        />
+        <section id="home" className="relative h-full w-full flex items-center justify-center pt-16 text-white">
+          <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+              <div className="text-center lg:text-left">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-6 leading-tight">
+                  <span className="block text-white">{HERO_CONTENT.title.line1}</span>
+                  <span className="block text-gray-400 mt-2">{HERO_CONTENT.title.line2}</span>
+                </h1>
+                <p className="text-base sm:text-lg text-gray-400 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                  {HERO_CONTENT.description}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start items-center">
+                  <a href={HERO_CONTENT.cta.primary.href} onClick={handleTryModelClick} className="koa-btn flex items-center justify-center gap-2" style={{ textDecoration: 'none', padding: '14px 32px' }}>
+                    {HERO_CONTENT.cta.primary.label}
+                    <ArrowRight size={18} strokeWidth={2.5} />
+                  </a>
+                </div>
+              </div>
+
+              <div className="relative flex items-center justify-center min-h-[500px]">
+                <div className="relative z-10 scale-75 sm:scale-75 md:scale-90 lg:scale-100">
+                  <BeamCircle size={400} orbits={beamOrbits} centerIcon={centerIcon} />
+                  <motion.div
+                    className="absolute bottom-1/2 right-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-green-500/10 blur-2xl pointer-events-none"
+                    animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-green-500/10 blur-2xl pointer-events-none"
+                    animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+      <AnimatedBubbleParticles
+        className="sticky top-0 z-10 bg-[#f8fafc] w-full min-h-screen rounded-t-[40px] shadow-[0_-30px_60px_rgba(0,0,0,0.6)] border-t border-white/10"
+        height="auto"
+        particleColor="rgba(6, 182, 212, 0.4)" // cyan color to match the theme
+        spawnInterval={300}
+      >
+        <section id="model" style={{ position: "relative", maxWidth: 1400, margin: "0 auto", padding: "64px 24px 100px" }}>
 
-        {/* Top Header Section */}
-        <div style={{ textAlign: "center", marginBottom: 40, animation: "fadeSlide .5s ease-out" }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
-            background: "#eff6ff", border: "1px solid #bfdbfe",
-            borderRadius: 99, padding: "6px 18px", fontSize: 12, fontWeight: 800,
-            color: "#2563eb", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 20,
-          }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#2563eb", display: "inline-block" }} />
-            Model Tester — F1: 95.82%
-          </div>
-
-          <h1 style={{ fontSize: 42, fontWeight: 900, letterSpacing: "-1.5px", margin: "0 0 12px", color: "#0f172a" }}>
-            Kiểm Tra Mô Hình
-          </h1>
-
-          <div style={{
-            fontSize: 13,
-            fontWeight: 700,
-            color: apiStatus === "ok" ? "#10b981" : "#ef4444",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6
-          }}>
-            <span style={{
-              width: 8, height: 8, borderRadius: "50%",
-              background: apiStatus === "ok" ? "#10b981" : "#ef4444",
-              display: "inline-block"
-            }} />
-            {apiStatus === "ok" ? "API Connected" : "API Offline"}
-          </div>
-        </div>
-
-        {/* Two-Column Grid Layout */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: 24, alignItems: "start" }}>
-
-          {/* Left Column (Inputs & Options) */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-
-            {/* Visual Formula Builder */}
-            <MathInput
-              latex={latex}
-              setLatex={setLatex}
-              inputRef={inputRef}
-              onPredict={() => callApi("predict")}
-              onInsert={insertSnippet}
-              loading={loading}
-              snippets={LATEX_SNIPPETS}
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <AuroraTextEffect
+              text="INTEGRAL INTELLIGENCE"
+              textClassName="title-font-wide"
+              fontSize="clamp(32px, 5vw, 52px)"
+              colors={{ first: 'bg-cyan-400', second: 'bg-yellow-400', third: 'bg-green-400', fourth: 'bg-primarylw' }}
+              blurAmount="blur-lg"
+              animationSpeed={{ border: 6, first: 5, second: 5, third: 3, fourth: 13 }}
             />
-
-            {/* Action Buttons */}
-            <div style={{ display: "flex", gap: 14 }}>
-              <button
-                onClick={() => callApi("predict")}
-                disabled={loading || !latex.trim()}
-                style={{
-                  flex: 1, padding: 16,
-                  background: latex.trim() ? "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)" : "#cbd5e1",
-                  borderRadius: 16, border: "none", color: "#fff",
-                  fontWeight: 800, cursor: latex.trim() ? "pointer" : "not-allowed",
-                  boxShadow: latex.trim() ? "0 4px 12px rgba(37, 99, 235, 0.2)" : "none",
-                  transition: "all 0.2s"
-                }}
-                onMouseEnter={e => { if (latex.trim()) e.currentTarget.style.transform = "translateY(-1px)"; }}
-                onMouseLeave={e => { if (latex.trim()) e.currentTarget.style.transform = "none"; }}
-              >
-                Phân Tích
-              </button>
-              <button
-                onClick={() => callApi("solve")}
-                disabled={loading || !latex.trim()}
-                className="solve-neon-btn"
-              >
-                <span className="solve-neon-btn-bg" />
-                ✨ Giải Chi Tiết
-              </button>
-            </div>
-
-            {/* Examples Grid Card */}
-            <div style={{
-              background: "#ffffff",
-              border: "1px solid #e2e8f0",
-              padding: 24,
-              borderRadius: 24,
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.02)"
-            }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: "#64748b", marginBottom: 16, letterSpacing: ".1em" }}>VÍ DỤ MẪU</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", gap: 8 }}>
-                {EXAMPLES.map(ex => (
-                  <button
-                    key={ex.label}
-                    onClick={() => setLatex(ex.latex)}
-                    style={{
-                      background: "#f8fafc",
-                      border: "1px solid #e2e8f0",
-                      color: "#475569",
-                      padding: "10px",
-                      borderRadius: 12,
-                      cursor: "pointer",
-                      fontSize: 13,
-                      fontWeight: 700,
-                      transition: "all 0.2s"
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = "#eff6ff";
-                      e.currentTarget.style.borderColor = "#bfdbfe";
-                      e.currentTarget.style.color = "#2563eb";
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = "#f8fafc";
-                      e.currentTarget.style.borderColor = "#e2e8f0";
-                      e.currentTarget.style.color = "#475569";
-                    }}
-                  >
-                    {ex.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* History List Card */}
-            {history.length > 0 && (
-              <div style={{
-                background: "#ffffff",
-                border: "1px solid #e2e8f0",
-                padding: 24,
-                borderRadius: 24,
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.02)"
-              }}>
-                <div style={{ fontSize: 11, fontWeight: 800, color: "#64748b", marginBottom: 16, letterSpacing: ".1em" }}>
-                  LỊCH SỬ TRA CỨU
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {history.map(h => <HistoryItem key={h.id} item={h} onClick={() => setLatex(h.latex)} />)}
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Right Column (Results Display) */}
-          <div style={{ position: "sticky", top: 24 }}>
+          <div className="mt-grid-layout">
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <MathInput
+                latex={latex}
+                setLatex={setLatex}
+                inputRef={inputRef}
+                onPredict={() => callApi("predict")}
+                onInsert={() => { }}
+                loading={loading}
+                snippets={[]}
+              />
 
-            {/* Empty State Display */}
-            {!result && !loading && !solveResult && (
-              <div style={{
-                background: "#ffffff",
-                border: "2px dashed #bfdbfe",
-                borderRadius: 24,
-                padding: "60px 24px",
-                textAlign: "center",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.01)"
-              }}>
-                <div style={{ fontSize: 48, color: "#2563eb", marginBottom: 14, fontWeight: 300 }}>∫</div>
-                <p style={{ color: "#64748b", fontSize: 14, fontWeight: 600, margin: 0 }}>
-                  Nhập biểu thức để xem kết quả phân tích
-                </p>
-              </div>
-            )}
-
-            {/* Loading Indicator */}
-            {loading && (
-              <div style={{ textAlign: "center", padding: 60, background: "#ffffff", borderRadius: 24, border: "1px solid #e2e8f0" }}>
-                <div style={{
-                  width: 40, height: 40,
-                  border: "3px solid #eff6ff",
-                  borderTopColor: "#2563eb",
-                  borderRadius: "50%",
-                  animation: "spin .8s linear infinite",
-                  margin: "0 auto"
-                }} />
-              </div>
-            )}
-
-            {/* Predictive Results */}
-            {result && !loading && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <PredictionCard result={result} />
-                {result.probabilities && <ProbabilityDistribution probabilities={result.probabilities} />}
-              </div>
-            )}
-
-            {/* Solved Calculation Display */}
-            {solveResult && !loading && solveResult.success && (
-              <div style={{
-                background: "#ecfdf5",
-                border: "1px solid #a7f3d0",
-                borderRadius: 24,
-                padding: 24,
-                boxShadow: "0 10px 25px rgba(16, 185, 129, 0.05)"
-              }}>
-                <div style={{ fontSize: 11, color: "#10b981", fontWeight: 800, marginBottom: 10, letterSpacing: ".05em" }}>
-                  KẾT QUẢ GIẢI
-                </div>
-                <div style={{ fontSize: 32, fontWeight: 900, color: "#065f46" }}>
-                  = {solveResult.answer}
-                </div>
-                <button
-                  onClick={() => setShowSolution(true)}
-                  style={{
-                    width: "100%", marginTop: 20, padding: 14,
-                    background: "#10b981", color: "#ffffff",
-                    border: "none", borderRadius: 12,
-                    fontWeight: 800, cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(16, 185, 129, 0.2)",
-                    transition: "all 0.2s"
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; }}
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 8 }}>
+                <div
+                  className={`btn-solve-wrapper ${loading || !hasInput ? "disabled" : ""} ${solveGlitch ? "click-glitch" : ""}`}
+                  style={{ width: "100%", height: "54px" }}
                 >
-                  Xem Lời Giải Chi Tiết
+                  <button
+                    className="btn-solve"
+                    onClick={handleSolveClick}
+                    disabled={loading || !hasInput}
+                    style={{ height: "100%", fontSize: "16px", fontWeight: "800", letterSpacing: "1.5px" }}
+                  >
+                    {loading ? (
+                      <span style={{ width: 18, height: 18, border: "2.5px solid rgba(196,181,253,0.3)", borderTopColor: "#c4b5fd", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block", marginRight: "8px" }} />
+                    ) : (
+                      <svg style={{ width: 20, height: 20, marginRight: 8, display: "inline-block", verticalAlign: "middle" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                      </svg>
+                    )}
+                    SOLVE INTEGRAL
+                  </button>
+                </div>
+
+                <button
+                  className="btn-glass"
+                  onClick={() => callApi("predict")}
+                  disabled={loading || !hasInput}
+                  style={{
+                    width: "100%",
+                    justifyContent: "center",
+                    padding: "12px",
+                    fontSize: "13px",
+                    fontWeight: "800",
+                    letterSpacing: "1.5px",
+                    color: "#00d2ff",
+                    textShadow: "0 0 10px rgba(0, 210, 255, 0.6)",
+                    opacity: (loading || !hasInput) ? 0.5 : 1
+                  }}
+                >
+                  <svg style={{ width: 18, height: 18, marginRight: 6, filter: "drop-shadow(0 0 5px rgba(0,210,255,0.8))" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                  PHÂN TÍCH AI (PREDICT)
                 </button>
               </div>
-            )}
 
-            {/* Error Message Alert */}
-            {error && (
-              <div style={{
-                color: "#ef4444",
-                padding: 16,
-                background: "#fef2f2",
-                borderRadius: 16,
-                border: "1px solid #fca5a5",
-                fontSize: 13,
-                fontWeight: 600,
-                lineHeight: 1.5
-              }}>
-                ⚠️ {error}
+              {error && (
+                <div className="result-appear glass-card-light" style={{ padding: "14px 18px", border: "1px solid rgba(239,68,68,0.3)", background: "rgba(239,68,68,0.07)", borderRadius: 14, color: "#fca5a5", fontSize: 13, fontWeight: 500, lineHeight: 1.6 }}>
+                  ⚠️ {error}
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {/* Removed empty state as requested */}
+
+              {loading && (
+                <div className="glass-card" style={{ padding: "52px 24px", textAlign: "center" }}>
+                  <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                    <div style={{ width: 44, height: 44, border: "3px solid rgba(99,102,241,0.15)", borderTopColor: "#6366f1", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                    <span style={{ color: "#64748b", fontSize: 13, fontWeight: 500 }}>Processing...</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Prediction results are now shown in the center pop-up modal */}
+
+              {solveResult && !loading && solveResult.success && (
+                <div className="result-appear glass-card" style={{ padding: 24, border: "1px solid rgba(52,211,153,0.3)", background: "#ecfdf5" }}>
+                  <div style={{ fontSize: 11, color: "#34d399", fontWeight: 700, marginBottom: 8, letterSpacing: ".08em", textTransform: "uppercase" }}>Result</div>
+                  <div style={{ fontSize: 36, fontWeight: 900, background: "linear-gradient(135deg, #34d399, #6ee7b7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: 20 }}>
+                    = {solveResult.finalAnswer || solveResult.answer || solveResult.result}
+                  </div>
+                  <button
+                    onClick={() => setShowSolution(true)}
+                    style={{ width: "100%", padding: "13px 20px", background: "linear-gradient(135deg, #059669, #047857)", border: "none", borderRadius: 12, color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer", transition: "all 0.2s", fontFamily: "inherit", boxShadow: "0 4px 20px rgba(5,150,105,0.3)" }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(5,150,105,0.4)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(5,150,105,0.3)"; }}
+                  >
+                    📖 View Detailed Solution
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      </AnimatedBubbleParticles>
+
+      {/* History Session (3rd Layer) */}
+      <div className="relative z-20 bg-[#0f172a] w-full min-h-screen rounded-t-[40px] shadow-[0_-30px_60px_rgba(0,0,0,0.6)] border-t border-white/10 flex flex-col overflow-hidden">
+        <section id="history" className="relative z-10 flex-1 flex flex-col" style={{ maxWidth: 1000, margin: "0 auto", padding: "80px 24px", width: "100%" }}>
+          <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
+              Calculation History
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Review your past integral evaluations and AI predictions.
+            </p>
+          </div>
+
+          {history.length > 0 ? (
+            <div className="grid gap-4 w-full">
+              {history.map(h => (
+                <div
+                  key={h.id}
+                  className="cursor-pointer transition-all hover:scale-[1.01]"
+                  onClick={() => {
+                    setLatex(h.latex);
+                    if (lenisRef.current) lenisRef.current.scrollTo('#model', { duration: 1.2 });
+                  }}
+                  style={{ padding: 24, display: 'flex', alignItems: 'center', gap: 20, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 16 }}
+                >
+                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: h.action === "✓" ? "rgba(52,211,153,0.1)" : h.action === "✗" ? "rgba(248,113,113,0.1)" : "rgba(165,180,252,0.1)", color: h.action === "✓" ? "#34d399" : h.action === "✗" ? "#f87171" : "#a5b4fc", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, fontWeight: "bold" }}>
+                    {h.action === "✓" ? "✓" : h.action === "✗" ? "✗" : `#`}
+                  </div>
+                  <div style={{ flex: 1, overflow: "hidden" }}>
+                    <div style={{ fontSize: 20, color: "#f8fafc", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", marginBottom: 6 }}>{h.latex}</div>
+                    {h.name && <div style={{ fontSize: 15, color: "#94a3b8" }}>{h.name}</div>}
+                  </div>
+                  <ArrowRight size={20} className="text-gray-600" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50 py-20">
+              <Bot size={64} className="mb-6 text-gray-500" />
+              <div className="text-xl font-semibold text-gray-400 mb-2">No history yet</div>
+              <div className="text-base text-gray-500">Your recent integral calculations will appear here.</div>
+            </div>
+          )}
+        </section>
+
+        <Footer onNavigate={onNavigate} theme="dark" />
+      </div>
+
+      {showPredictModal && result && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-all duration-300"
+          style={{ animation: "fadeIn 0.2s ease-out" }}
+        >
+          <div
+            className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-2xl flex flex-col gap-6"
+            style={{
+              animation: "fadeUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+              maxHeight: "90vh",
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
+            <button
+              onClick={() => setShowPredictModal(false)}
+              className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-900 rounded-full hover:bg-slate-100 transition-all cursor-pointer border-none bg-transparent"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-cyan-500/10 text-cyan-500 rounded-xl">
+                <Brain size={24} />
               </div>
-            )}
+              <div style={{ textAlign: "left" }}>
+                <h3 className="text-xl font-bold text-slate-900">AI Analysis Results</h3>
+                <p className="text-xs text-slate-500">Model prediction and feature analysis</p>
+              </div>
+            </div>
+
+            <div
+              className="flex-1 overflow-y-auto pr-2"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+                maxHeight: "calc(90vh - 180px)",
+                textAlign: "left"
+              }}
+            >
+              <PredictionCard result={result} />
+              {result.probabilities && <ProbabilityDistribution probabilities={result.probabilities} />}
+            </div>
+
+            <button
+              onClick={() => setShowPredictModal(false)}
+              className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 rounded-xl text-white font-bold text-sm shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30 transition-all cursor-pointer border-none mt-2"
+            >
+              Done
+            </button>
           </div>
         </div>
-      </div>
-      <Footer onNavigate={onNavigate} />
+      )}
     </div>
   );
 }

@@ -13,6 +13,7 @@ from ai.utils.expr.trig.expr_cos       import CosExprNode
 from ai.utils.expr.trig.expr_tan       import TanExprNode
 from ai.utils.expr.expr_log            import LogExprNode
 from ai.utils.expr.expr_exp            import ExpExprNode
+from ai.utils.expr.Power.expr_power     import PowerExprNode
 from ai.utils.antiderivative_rule.rule_linear import apply_basic_rule
 
 
@@ -39,21 +40,28 @@ class Integral:
     def _parse_latex(self):
             from ai.utils.parse import Parse
             latex = self.latex
-
+            
             int_pos = latex.find('\\int_')
             if int_pos == -1:
-                return
-            
-            idx = int_pos + len('\\int_')
-            
-            lower, idx = self._extract_brace_content(latex, idx)
-            self.left = lower
-            
-            if idx < len(latex) and latex[idx] == '^':
-                idx += 1
-            
-            upper, idx = self._extract_brace_content(latex, idx)
-            self.right = upper
+                # Support indefinite integrals (e.g. \int f(x) dx)
+                int_pos = latex.find('\\int')
+                if int_pos == -1:
+                    return
+                idx = int_pos + len('\\int')
+                self.left = None
+                self.right = None
+                self.antiderivative = True
+            else:
+                idx = int_pos + len('\\int_')
+                
+                lower, idx = self._extract_brace_content(latex, idx)
+                self.left = lower
+                
+                if idx < len(latex) and latex[idx] == '^':
+                    idx += 1
+                
+                upper, idx = self._extract_brace_content(latex, idx)
+                self.right = upper
             
             rest = latex[idx:]
             body, dee = re.split(r'(d[a-zA-Z])$', rest)[0:2]
@@ -113,5 +121,5 @@ class Integral:
             ConstExprNode, VarExprNode, MonoExprNode, SqrtExprNode,
             FracExprNode, AddExprNode, SubExprNode, MulExprNode,
             SinExprNode, CosExprNode, TanExprNode,
-            LogExprNode, ExpExprNode,
+            LogExprNode, ExpExprNode, PowerExprNode,
         ))

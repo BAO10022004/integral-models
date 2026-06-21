@@ -1,40 +1,13 @@
-# config.py
 
-# ──────────────────────────────────────────────────────────────────────────────
-# ACTION MAP  (nhãn mới 0-5 — dùng trong model và solver)
-# ──────────────────────────────────────────────────────────────────────────────
-#   0 — apply_direct  : áp dụng công thức tích phân cơ bản trực tiếp
-#   1 — apply_const   : rút hằng số ra ngoài   ∫ c·f(x) dx = c·∫ f(x) dx
-#   2 — apply_split   : tách tổng / hiệu        ∫ (f±g) dx = ∫f dx ± ∫g dx
-#   3 — apply_special : công thức đặc trưng     (khai triển, lượng giác, …)
-#   4 — apply_usub    : đổi biến u = ax + b
-#   5 — apply_byparts : tích phân từng phần     (IBP)
-# ──────────────────────────────────────────────────────────────────────────────
 ACTION_MAP = {
-    0: 0,  # apply_direct
-    1: 1,  # apply_const   — c * f(x)
-    2: 2,  # apply_split   — f(x) ± g(x)
-    3: 3,  # apply_special — công thức đặc trưng
-    4: 4,  # apply_usub    — đổi biến u = ax + b
-    5: 5,  # apply_byparts — tích phân từng phần (IBP)
+    0: 0,  # apply_const   — c * f(x)
+    1: 1,  # apply_split   — f(x) ± g(x)
+    2: 2,  # apply_special — công thức đặc trưng
+    3: 3,  # apply_usub    — đổi biến u = ax + b
+    4: 4,  # apply_byparts — tích phân từng phần (IBP)
 }
 
-# ──────────────────────────────────────────────────────────────────────────────
-# LABEL REMAP  (nhãn cũ trong dataset.csv → nhãn mới)
-# ──────────────────────────────────────────────────────────────────────────────
-LABEL_REMAP = {
-    0: 0,  # apply_direct  (old 0  → new 0)
-    1: 1,  # apply_const   (old 1  → new 1)
-    3: 2,  # apply_split   (old 3  → new 2)
-    6: 3,  # apply_special (old 6  → new 3)
-    7: 4,  # apply_usub    (old 7  → new 4)
-    8: 5,  # apply_byparts (old 8  → new 5)
-}
-
-# Các nhãn cũ được giữ lại (loại bỏ nhãn ngoài danh sách này)
-VALID_OLD_LABELS = set(LABEL_REMAP.keys())
-
-NUM_ACTIONS = len(ACTION_MAP)   # = 6
+NUM_ACTIONS = len(ACTION_MAP)   # = 5
 
 EMBED_SIZE  = 128
 HIDDEN_SIZE = 256
@@ -46,7 +19,6 @@ import random
 class LatexGenerator:
 
     def __init__(self):
-        # regex patterns
         self.patterns = {
             "pow": re.compile(r"\{(.+)\}\^\{?(.+?)\}?"),
             "sqrt": re.compile(r"\\sqrt\[(.+)\]\{(.+)\}"),

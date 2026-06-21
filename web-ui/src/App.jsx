@@ -243,11 +243,11 @@ export default function App() {
       ) : page === "history-article" ? (
         <HistoryArticlePage articleData={articleData} onNavigate={navigate} />
       ) : page === "theory" ? (
-        <TheoryPage onNavigate={navigate} />
+        <TheoryPage onNavigate={navigate} user={user} onLogout={handleLogout} />
       ) : page === "info" ? (
-        <InfoPage onNavigate={navigate} />
+        <InfoPage onNavigate={navigate} user={user} onLogout={handleLogout} />
       ) : page === "contact" ? (
-        <ContactPage onNavigate={navigate} />
+        <ContactPage onNavigate={navigate} user={user} onLogout={handleLogout} />
       ) : (
         <ModelTester user={user} onNavigate={navigate} />
       )}

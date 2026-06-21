@@ -15,6 +15,7 @@ from ai.utils.expr.operation.expr_frac import FracExprNode
 from ai.utils.expr.expr_log import LogExprNode
 from ai.utils.expr.expr_exp import ExpExprNode
 from ai.utils.expr.value.expr_pi import PiExprNode
+from ai.utils.expr.value.expr_e import EExprNode
 
 class Parse :
 
@@ -35,7 +36,6 @@ class Parse :
         while True:
             if (latex.startswith('(') and latex.endswith(')')) or \
             (latex.startswith('{') and latex.endswith('}')):
-                # Kiểm tra xem ngoặc mở đầu có khớp với ngoặc đóng cuối không
                 depth = 0
                 paired = False
                 for i, c in enumerate(latex):
@@ -54,6 +54,7 @@ class Parse :
     @staticmethod
     def parse_latex(latex: str, dee: str):
         latex = latex.strip()
+        latex = re.sub(r'(\d+)([a-zA-Z\\(])', r'\1*\2', latex)
         latex = Parse.strip_outer_brackets(latex)
         var = dee[1:]
 
@@ -80,19 +81,15 @@ class Parse :
     def parse_atom(latex, dee, var):
         latex = latex.strip().strip('{}')
         
-        # Biến
         if latex == var:
             return VarExprNode(left=var, var=var)
         
-        # Hằng số e (Euler's number)
         if latex == 'e':
-            return ConstExprNode(left=math.e)
+            return EExprNode()
         
-        # Hằng số pi
         if latex in ('\\pi', 'pi', 'π'):
             return PiExprNode()
         
-        # Số
         try:
             return ConstExprNode(left=float(latex))
         except ValueError:
@@ -115,7 +112,6 @@ class Parse :
         if not sub:
             return None
         left_str, right_str = sub
-        # Xử lý dấu trừ đơn nguyên: -x → 0 - x
         if left_str.strip() == '':
             left_node = ConstExprNode(left=0.0)
         else:
@@ -158,8 +154,7 @@ class Parse :
         )
     @staticmethod
     def parse_trig(latex, dee, var):
-        # Hỗ trợ cả \sin{...} và \sin(...)
-        trig = re.fullmatch(r'\\(sin|cos|tan|cot)[{(](.+)[})]', latex)
+        trig = re.fullmatch(r'\\?(sin|cos|tan|cot)[{(](.+)[})]', latex)
         if not trig:
             return None
         if trig:
@@ -190,7 +185,7 @@ class Parse :
     @staticmethod
     def parse_sqrt(latex, dee, var):
         # căn bậc n
-        sqrt_n = re.fullmatch(r'\\sqrt\[(.+)\]\{(.+)\}', latex)
+        sqrt_n = re.fullmatch(r'\\?sqrt\[(.+)\][{(](.+)[})]', latex)
         if sqrt_n:
             n = sqrt_n.group(1)
             inside = Parse.parse_latex(sqrt_n.group(2), dee)
@@ -202,7 +197,7 @@ class Parse :
                 )
 
         # căn bậc 2
-        sqrt = re.fullmatch(r'\\sqrt\{(.+)\}', latex)
+        sqrt = re.fullmatch(r'\\?sqrt[{(](.+)[})]', latex)
         if sqrt:
             inside = Parse.parse_latex(sqrt.group(1).replace('\\', ''), dee)
 
@@ -215,23 +210,20 @@ class Parse :
         return None
     @staticmethod
     def parse_power(latex, dee, var):
-        # Pattern 1: {base}^{exp} hoặc {base}^exp
-        power = re.fullmatch(r'\{(.+)\}\^\{?(.+?)\}?', latex)
+        power = Parse.split_top(latex, '^')
         if not power:
-            # Pattern 2: atom^n inline (ví dụ: x^2, x^3) — không có ngoặc nhọn
-            power_inline = re.fullmatch(r'([a-zA-Z]+)\^(\d+)', latex)
-            if power_inline:
-                base = Parse.parse_latex(power_inline.group(1), dee)
-                exp = Parse.parse_latex(power_inline.group(2), dee)
-                if base is not None and exp is not None:
-                    return MonoExprNode(left=base, right=exp, var=var)
             return None
-        base = Parse.parse_latex(power.group(1), dee)
-        exp = Parse.parse_latex(power.group(2), dee)
+        base_str, exp_str = power
+        # Strip outer braces from base and exp
+        base_str = base_str.strip().strip('{}')
+        exp_str = exp_str.strip().strip('{}')
+        
+        base = Parse.parse_latex(base_str, dee)
+        exp = Parse.parse_latex(exp_str, dee)
         if base is None or exp is None:
             return None
         # c^x → PowerExprNode (hằng mũ biến, ví dụ: e^x, 2^x)
-        if isinstance(base, ConstExprNode) and not isinstance(exp, ConstExprNode):
+        if isinstance(base, (ConstExprNode, PiExprNode, EExprNode)) and not isinstance(exp, (ConstExprNode, PiExprNode, EExprNode)):
             return PowerExprNode(
                 left=base,
                 right=exp,
@@ -245,8 +237,9 @@ class Parse :
         )
     @staticmethod
     def parse_exp(latex, dee, var):
-        """Parse e^{...} → ExpExprNode."""
         exp_match = re.fullmatch(r'e\^\{(.+)\}', latex)
+        if not exp_match:
+            exp_match = re.fullmatch(r'e\^([a-zA-Z0-9.*+-]+)', latex)
         if not exp_match:
             return None
         return ExpExprNode(
@@ -255,8 +248,8 @@ class Parse :
         )
     @staticmethod
     def parse_ln(latex, dee, var):
-        """Parse \ln{...} → LogExprNode."""
-        ln_match = re.fullmatch(r'\\ln\{(.+)\}', latex)
+        """Parse \ln{...}, \ln(...), ln{...}, ln(...) → LogExprNode."""
+        ln_match = re.fullmatch(r'\\?ln[{(](.+)[})]', latex)
         if not ln_match:
             return None
         return LogExprNode(

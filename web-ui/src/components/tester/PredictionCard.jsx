@@ -1,58 +1,98 @@
-import React from 'react';
-import ConfidenceBar from './ConfidenceBar';
+import React from "react";
+import ConfidenceBar from "./ConfidenceBar";
 
-const PredictionCard = ({ result }) => (
-  <div style={{
-    background: "#ffffff", 
-    border: `1px solid ${result.color}33`,
-    borderRadius: 24, padding: 24, position: "relative", overflow: "hidden",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01)",
-    fontFamily: "Arial, Helvetica, sans-serif"
-  }}>
-    <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: `${result.color}08`, filter: "blur(20px)" }} />
-    
-    <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: ".12em", color: "#64748b", textTransform: "uppercase", marginBottom: 16 }}>
-      Phương Pháp Phân Tích
-    </div>
+const PredictionCard = ({ result }) => {
+  // Map action color to dark-theme compatible accent
+  const accent = result.color || "#6366f1";
 
-    <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-      <div style={{
-        width: 54, height: 54, borderRadius: 16, fontSize: 26,
-        background: `${result.color}08`, border: `2px solid ${result.color}33`,
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>{result.icon}</div>
-      <div>
-        <div style={{ fontSize: 20, fontWeight: 800, color: "#0f172a" }}>
-          Action {result.action}
-        </div>
-        <div style={{ fontSize: 14, color: result.color, fontWeight: 800 }}>
-          {result.action_name}
-        </div>
-      </div>
-    </div>
-
+  return (
     <div style={{
-      padding: "12px 16px", borderRadius: 12,
-      background: "#f8fafc", 
-      fontSize: 13, color: "#334155", marginBottom: 16,
-      border: "1px solid #e2e8f0",
-      fontFamily: "monospace",
-      fontWeight: 700,
-      wordBreak: "break-all"
-    }}>{result.latex}</div>
+      background: "rgba(255,255,255,0.9)",
+      border: `1px solid ${accent}40`,
+      boxShadow: `0 4px 15px ${accent}15`,
+      borderRadius: 20,
+      padding: 24,
+      backdropFilter: "blur(20px)",
+      WebkitBackdropFilter: "blur(20px)",
+      position: "relative",
+      overflow: "hidden",
+      fontFamily: "'Inter','Segoe UI',Arial,sans-serif",
+    }}>
+      {/* Ambient glow */}
+      <div style={{
+        position: "absolute", top: -60, right: -60,
+        width: 180, height: 180, borderRadius: "50%",
+        background: `radial-gradient(circle, ${accent}18 0%, transparent 70%)`,
+        pointerEvents: "none",
+      }} />
 
-    <p style={{ color: "#475569", fontSize: 13, lineHeight: 1.6, marginBottom: 20, fontWeight: 500 }}>
-      {result.description}
-    </p>
-
-    <div style={{ marginBottom: 4 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 6, fontWeight: 700 }}>
-        <span style={{ color: "#64748b" }}>Độ tin cậy</span>
-        <span style={{ color: result.color }}>{result.confidence}%</span>
+      <div style={{
+        fontSize: 10, fontWeight: 700, letterSpacing: ".12em",
+        color: "#64748b", textTransform: "uppercase", marginBottom: 16,
+      }}>
+        Analysis Method
       </div>
-      <ConfidenceBar pct={result.confidence} color={result.color} />
+
+      {/* Method badge */}
+      <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 18 }}>
+        <div style={{
+          width: 52, height: 52, borderRadius: 14, fontSize: 24,
+          background: `${accent}15`,
+          border: `1.5px solid ${accent}35`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          flexShrink: 0,
+          boxShadow: `0 0 20px ${accent}20`,
+        }}>
+          {result.icon}
+        </div>
+        <div>
+          <div style={{
+            fontSize: 11, fontWeight: 600, color: "#64748b",
+            marginBottom: 3, letterSpacing: ".06em",
+          }}>
+            Action {result.action}
+          </div>
+          <div style={{
+            fontSize: 18, fontWeight: 800, color: "#0f172a", letterSpacing: "-0.3px",
+          }}>
+            {result.action_name}
+          </div>
+        </div>
+      </div>
+
+      {/* LaTeX expression */}
+      <div style={{
+        padding: "10px 14px", borderRadius: 10,
+        background: "rgba(241,245,249,0.8)",
+        border: "1px solid rgba(0,0,0,0.05)",
+        fontFamily: "'Courier New', monospace",
+        fontSize: 12, color: "#475569",
+        marginBottom: 14, wordBreak: "break-all", lineHeight: 1.5,
+      }}>
+        {result.latex}
+      </div>
+
+      {/* Description */}
+      <p style={{
+        color: "#334155", fontSize: 13,
+        lineHeight: 1.7, marginBottom: 18, fontWeight: 400,
+      }}>
+        {result.description}
+      </p>
+
+      {/* Confidence */}
+      <div>
+        <div style={{
+          display: "flex", justifyContent: "space-between",
+          fontSize: 12, marginBottom: 8, fontWeight: 600,
+        }}>
+          <span style={{ color: "#64748b" }}>Confidence</span>
+          <span style={{ color: accent, fontWeight: 700 }}>{result.confidence}%</span>
+        </div>
+        <ConfidenceBar pct={result.confidence} color={accent} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default PredictionCard;

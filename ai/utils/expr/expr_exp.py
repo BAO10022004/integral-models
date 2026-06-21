@@ -4,11 +4,7 @@ import math
 
 
 class ExpExprNode(ExprNode):
-    """Node biểu diễn hàm mũ e^{f(x)}.
-    
-    - left: biểu thức mũ f(x)
-    - right: None (không dùng)
-    """
+
     def __init__(self, left=None, right=None, var=None):
         super().__init__(left=left, right=right, var=var)
 

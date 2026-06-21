@@ -1,16 +1,3 @@
-"""
-actions.py
-----------
-Mixin chứa toàn bộ logic xử lý từng action tích phân:
-
-  Action 0 — _apply_direct  : áp dụng công thức trực tiếp
-  Action 1 — _apply_const   : rút hằng số ra ngoài   c · ∫ f(x) dx
-  Action 2 — _apply_split   : tách tổng / hiệu        ∫ (f±g) = ∫f ± ∫g
-  Action 3 — _apply_special : công thức đặc trưng (khai triển, lượng giác…)
-  Action 4 — _apply_usub    : đổi biến u = ax + b
-  Action 5 — _apply_byparts : tích phân từng phần (IBP)
-"""
-
 from ai.utils.integral                      import Integral
 from ai.utils.expr.expr_node                import ExprNode
 from ai.utils.expr.value.expr_const         import ConstExprNode
@@ -28,16 +15,8 @@ from ai.solver_engine.helpers import (
 
 
 class ActionsMixin:
-    """
-    Mixin cần được kế thừa cùng với SolverEngine.
-    Các phương thức này dùng self._solve_integral và self._clone_integral
-    được định nghĩa trong engine.py.
-    """
-
-    # ── Action 0 — apply_direct ───────────────────────────────────────────────
 
     def _apply_direct(self, integral: Integral, steps: list, depth: int) -> float | None:
-        """Áp dụng công thức tích phân cơ bản trực tiếp, tính giá trị số."""
         try:
             expr = integral.integrand
             anti = apply_basic_rule(expr, integral.dee)
@@ -54,9 +33,14 @@ class ActionsMixin:
                 formula=anti_s,
                 integral_str=integral_str(integral)))
 
-            # Tính F(upper) − F(lower)
             r = evaluate(anti, integral.right)
             l = evaluate(anti, integral.left)
+
+            if integral.right is None and integral.left is None:
+                steps.append(make_step("result", depth,
+                    description="Tích phân bất định",
+                    formula=anti_s))
+                return anti_s
 
             if r is None or l is None:
                 steps.append(make_step("error", depth,
@@ -79,18 +63,12 @@ class ActionsMixin:
                 integral_str=integral_str(integral)))
             return None
 
-    # ── Action 1 — apply_const ────────────────────────────────────────────────
 
     def _apply_const(self, integral: Integral, steps: list, depth: int) -> float | None:
-        """
-        Rút hằng số ra ngoài dấu tích phân:
-            ∫ c · f(x) dx  =  c · ∫ f(x) dx
-        """
         expr = integral.integrand
         dee  = integral.dee
 
         if not isinstance(expr, MulExprNode):
-            # Không phải dạng nhân → fallback direct
             return self._apply_direct(integral, steps, depth)
 
         L, R = expr.left, expr.right
@@ -100,7 +78,6 @@ class ActionsMixin:
         elif isinstance(R, ConstExprNode) and not isinstance(L, ConstExprNode):
             const_val, func_expr = R.left, L
         else:
-            # Cả hai vế đều là hằng hoặc không có hằng → fallback direct
             return self._apply_direct(integral, steps, depth)
 
         func_s = expr_str(func_expr)
@@ -116,24 +93,25 @@ class ActionsMixin:
         if sub_result is None:
             return None
 
+        if isinstance(sub_result, str):
+            result = f"{const_val} * ({sub_result})"
+            steps.append(make_step("result", depth,
+                description=f"Nhân hằng số: {result}",
+                formula=result))
+            return result
+
         result = const_val * sub_result
         steps.append(make_step("result", depth,
-            description=f"Nhân hằng số: {const_val} × {round(sub_result, 6)} = {round(result, 6)}",
+            description=f"Nhân hằng số: {const_val} × {round(float(sub_result), 6)} = {round(float(result), 6)}",
             value=result))
         return result
 
-    # ── Action 2 — apply_split ────────────────────────────────────────────────
 
     def _apply_split(self, integral: Integral, steps: list, depth: int) -> float | None:
-        """
-        Tách tổng / hiệu thành hai tích phân riêng:
-            ∫ (f ± g) dx  =  ∫ f dx  ±  ∫ g dx
-        """
         expr = integral.integrand
         dee  = integral.dee
 
         if not isinstance(expr, (AddExprNode, SubExprNode)):
-            # Không phải tổng/hiệu → fallback direct
             return self._apply_direct(integral, steps, depth)
 
         is_sub = isinstance(expr, SubExprNode)
@@ -158,31 +136,46 @@ class ActionsMixin:
         steps.append(make_step("info", depth, description=f"Giải phần phải: ∫ ({R_s}) d{dee}"))
         res_R = self._solve_integral(int_R, steps, depth + 1)
 
+        if isinstance(res_L, str) and isinstance(res_R, str):
+            result = f"{res_L} {op_str} {res_R}"
+            steps.append(make_step("result", depth,
+                description=f"Kết hợp: {result}",
+                formula=result))
+            return result
+
         if res_L is None or res_R is None:
             return None
 
         result = res_L - res_R if is_sub else res_L + res_R
         steps.append(make_step("result", depth,
-            description=f"Kết hợp: {round(res_L,6)} {op_str} {round(res_R,6)} = {round(result,6)}",
+            description=f"Kết hợp: {round(float(res_L),6)} {op_str} {round(float(res_R),6)} = {round(float(result),6)}",
             value=result))
         return result
 
-    # ── Action 3 — apply_special ──────────────────────────────────────────────
-
     def _apply_special(self, integral: Integral, steps: list, depth: int) -> float | None:
-        """
-        Công thức đặc trưng / khai triển (sin²+cos²=1, (ax)^n, v.v.).
-        Hiện tại fallback về direct; có thể mở rộng sau.
-        """
-        steps.append(make_step("info", depth,
-            description="Áp dụng công thức đặc trưng / khai triển (tự động)",
-            integral_str=integral_str(integral)))
-        return self._apply_direct(integral, steps, depth)
-
-    # ── Action 4 — apply_usub ─────────────────────────────────────────────────
+        from ai.utils.rules.rule_special import SpecialFormulaRegistry
+        
+        expr = integral.integrand
+        new_expr, rule_name = SpecialFormulaRegistry.apply_first_match(expr, integral.dee)
+        
+        if new_expr is not None:
+            # Nếu có công thức khớp và áp dụng thành công
+            old_s = expr_str(expr)
+            new_s = expr_str(new_expr)
+            steps.append(make_step("transform", depth,
+                description=f"Áp dụng {rule_name}",
+                formula=f"{old_s} = {new_s}"))
+            
+            # Giải tiếp tích phân với biểu thức mới
+            sub_integral = self._clone_integral(integral, new_expr)
+            return self._solve_integral(sub_integral, steps, depth + 1)
+        else:
+            steps.append(make_step("info", depth,
+                description="Không tìm thấy công thức đặc trưng phù hợp (chưa đăng ký) — tự động thử áp dụng trực tiếp",
+                integral_str=integral_str(integral)))
+            return self._apply_direct(integral, steps, depth)
 
     def _apply_usub(self, integral: Integral, steps: list, depth: int) -> float | None:
-        """Đổi biến u = ax + b."""
         expr = integral.integrand
         dee  = integral.dee
 
@@ -197,9 +190,15 @@ class ActionsMixin:
 
         anti_s = expr_str(anti)
         steps.append(make_step("antiderivative", depth,
-            description=f"Đổi biến u = ax+b → Nguyên hàm: F(x) = {anti_s}",
+            description=f"Đổi biến u = ax+b → Tìm được nguyên hàm theo x: F(x) = {anti_s}\n(Lưu ý: Vì ta đã thế ngược lại biến x vào F(x) nên không cần đổi cận, vẫn dùng cận gốc)",
             formula=anti_s,
             integral_str=integral_str(integral)))
+
+        if integral.right is None and integral.left is None:
+            steps.append(make_step("result", depth,
+                description="Tích phân bất định",
+                formula=anti_s))
+            return anti_s
 
         r = evaluate(anti, integral.right)
         l = evaluate(anti, integral.left)
@@ -219,22 +218,75 @@ class ActionsMixin:
             value=result))
         return result
 
-    # ── Action 5 — apply_byparts ──────────────────────────────────────────────
-
     def _apply_byparts(self, integral: Integral, steps: list, depth: int) -> float | None:
-        """
-        Tích phân từng phần (IBP): ∫ u·v' dx = u·v − ∫ v·u' dx.
-        Chưa triển khai đầy đủ — fallback về direct.
-        """
-        steps.append(make_step("info", depth,
-            description=(
-                "Phương pháp tích phân từng phần (IBP) — chưa triển khai đầy đủ."
-                " Thử áp dụng trực tiếp."
-            ),
-            integral_str=integral_str(integral)))
-        return self._apply_direct(integral, steps, depth)
+        expr = integral.integrand
+        dee  = integral.dee
 
-    # ── Alias tương thích ngược ───────────────────────────────────────────────
+        from ai.utils.antiderivative_rule.rule_byparts import rule_byparts
+        res_byparts = rule_byparts(expr, dee)
+
+        if res_byparts is None:
+            # Không phân tích được hoặc v' không có nguyên hàm -> fallback direct
+            steps.append(make_step("info", depth,
+                description="Không tách được u, dv hoặc không tìm thấy nguyên hàm v — chuyển sang giải trực tiếp",
+                integral_str=integral_str(integral)))
+            return self._apply_direct(integral, steps, depth)
+
+        u, v, du, v_du = res_byparts
+        u_s = expr_str(u)
+        v_s = expr_str(v)
+        du_s = expr_str(du)
+        v_du_s = expr_str(v_du)
+
+        steps.append(make_step("transform", depth,
+            description=(
+                f"Từng phần: Đặt u = {u_s}, dv = ({expr_str(expr.right if isinstance(expr, MulExprNode) else ConstExprNode(left=1.0))}) d{dee}\n"
+                f" suy ra du = ({du_s}) d{dee}, v = {v_s}\n"
+                f" ∫ u dv = [{u_s} · {v_s}] - ∫ ({v_du_s}) d{dee}"
+            ),
+            formula=f"[{u_s} * {v_s}] - ∫ ({v_du_s}) d{dee}"))
+
+        uv_expr = MulExprNode(left=u, right=v, var=dee)
+        
+        if integral.right is None and integral.left is None:
+            sub_integral = self._clone_integral(integral, v_du)
+            sub_result   = self._solve_integral(sub_integral, steps, depth + 1)
+            if sub_result is None:
+                return None
+            if isinstance(sub_result, str):
+                result = f"{u_s} * {v_s} - ({sub_result})"
+                steps.append(make_step("result", depth,
+                    description=f"Kết quả từng phần: {result}",
+                    formula=result))
+                return result
+            return None
+
+        val_b = evaluate(uv_expr, integral.right)
+        val_a = evaluate(uv_expr, integral.left)
+
+        if val_b is None or val_a is None:
+            steps.append(make_step("error", depth,
+                description="Không evaluate được thế cận [u * v] tại cận",
+                integral_str=integral_str(integral)))
+            return None
+
+        uv_bound_val = val_b - val_a
+        steps.append(make_step("info", depth,
+            description=f"Thế cận: [{u_s} · {v_s}] từ {integral.left} đến {integral.right} = {round(val_b, 6)} - ({round(val_a, 6)}) = {round(uv_bound_val, 6)}"))
+
+        # Giải phần tích phân còn lại: ∫ v du
+        sub_integral = self._clone_integral(integral, v_du)
+        sub_result   = self._solve_integral(sub_integral, steps, depth + 1)
+
+        if sub_result is None:
+            return None
+        
+        result = uv_bound_val - sub_result
+        steps.append(make_step("result", depth,
+            description=f"Kết hợp: {round(uv_bound_val, 6)} - {round(float(sub_result), 6)} = {round(float(result), 6)}",
+            value=result))
+        return result
+
 
     def _apply_linear(self, integral: Integral, steps: list, depth: int) -> float | None:
         """

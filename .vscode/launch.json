@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Run & Debug API",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/fastapi_server/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

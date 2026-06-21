@@ -84,12 +84,52 @@ const CKEditorWrapper = ({ value, onChange }) => {
   );
 };
 
+const compressImage = (file, maxWidth = 1200, maxHeight = 900, quality = 0.7) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+        resolve(compressedBase64);
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
 export default function AdminHistoryTab() {
   const [config, setConfig] = useState({
     heroImgUrl: "",
     showcaseImgUrl: "",
     headline: "The Journey of AI Innovation",
-    introText: "The intelligent calculus solver system was born from a desire to bridge the gap between complex mathematical theories and real-world digital applications.\n\nThrough numerous cycles of research and algorithmic optimization, we developed a state-of-the-art action classification model powered by Deep Learning. Today, any integral problem—from fundamental concepts to highly complex derivations—is processed in the blink of an eye with absolute precision."
+    introText: "The intelligent calculus solver system was born from a desire to bridge the gap between complex mathematical theories and real-world digital applications.\n\nThrough numerous cycles of research and algorithmic optimization, we developed a state-of-the-art action classification model powered by Deep Learning. Today, any integral problem—from fundamental concepts to highly complex derivations—is processed in the blink of an eye with absolute precision.",
+    marqueeImages: []
   });
 
   const [milestones, setMilestones] = useState([]);
@@ -111,6 +151,7 @@ export default function AdminHistoryTab() {
       .then(data => {
         if (data && data.config) {
           const parsed = data.config;
+          parsed.marqueeImages = parsed.marqueeImages || [];
           setConfig(parsed);
 
           // Determine source type for hero image
@@ -148,6 +189,7 @@ export default function AdminHistoryTab() {
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
+            parsed.marqueeImages = parsed.marqueeImages || [];
             setConfig(parsed);
             if (!parsed.heroImgUrl) setHeroSourceType("default");
             else if (parsed.heroImgUrl.startsWith("data:")) setHeroSourceType("upload");
@@ -206,38 +248,98 @@ export default function AdminHistoryTab() {
     setMilestones(newMilestones);
   };
 
+  const handleMilestoneImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    compressImage(file, 600, 450, 0.7)
+      .then(base64 => {
+        handleFieldChange("image", base64);
+      })
+      .catch(err => {
+        console.error("Image compression failed", err);
+      });
+  };
+
   const activeMilestone = milestones.find(m => m.id === selectedMilestoneId);
 
   const handleHeroFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert("⚠️ Image file is larger than 2MB! To save permanently without browser storage limitations (5MB limit), please copy the image file to the 'web-ui/src/assets/' directory and configure using the 'File Path / URL' option.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setConfig(prev => ({ ...prev, heroImgUrl: reader.result }));
-    };
-    reader.readAsDataURL(file);
+    compressImage(file, 1600, 1000, 0.75)
+      .then(base64 => {
+        setConfig(prev => ({ ...prev, heroImgUrl: base64 }));
+      })
+      .catch(err => console.error("Hero image compression failed", err));
   };
 
   const handleShowcaseFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      alert("⚠️ Image file is larger than 2MB! To save permanently without browser storage limitations, copy the image to assets folder and use File Path option.");
-      return;
-    }
+    compressImage(file, 800, 600, 0.7)
+      .then(base64 => {
+        setConfig(prev => ({ ...prev, showcaseImgUrl: base64 }));
+      })
+      .catch(err => console.error("Showcase image compression failed", err));
+  };
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setConfig(prev => ({ ...prev, showcaseImgUrl: reader.result }));
-    };
-    reader.readAsDataURL(file);
+  const handleMarqueeBulkUpload = (files) => {
+    if (!files || files.length === 0) return;
+    const fileList = Array.from(files);
+
+    fileList.forEach(file => {
+      compressImage(file, 970, 700, 0.7)
+        .then(base64 => {
+          setConfig(prev => ({
+            ...prev,
+            marqueeImages: [...(prev.marqueeImages || []), base64]
+          }));
+        })
+        .catch(err => console.error("Marquee image compression failed", err));
+    });
+  };
+
+  const handleReplaceMarqueeImage = (index, file) => {
+    if (!file) return;
+    compressImage(file, 970, 700, 0.7)
+      .then(base64 => {
+        setConfig(prev => {
+          const updated = [...(prev.marqueeImages || [])];
+          updated[index] = base64;
+          return { ...prev, marqueeImages: updated };
+        });
+      })
+      .catch(err => console.error("Replace image compression failed", err));
+  };
+
+  const handleDeleteMarqueeImage = (index) => {
+    if (window.confirm("🗑️ Bạn có chắc chắn muốn xóa ảnh này khỏi album cuộn không?")) {
+      setConfig(prev => {
+        const updated = (prev.marqueeImages || []).filter((_, idx) => idx !== index);
+        return { ...prev, marqueeImages: updated };
+      });
+    }
+  };
+
+  const handleSwapMarqueeImages = (i, j) => {
+    setConfig(prev => {
+      const updated = [...(prev.marqueeImages || [])];
+      if (i < 0 || i >= updated.length || j < 0 || j >= updated.length) return prev;
+      const temp = updated[i];
+      updated[i] = updated[j];
+      updated[j] = temp;
+      return { ...prev, marqueeImages: updated };
+    });
+  };
+
+  const handleMarqueeUrlChange = (index, value) => {
+    setConfig(prev => {
+      const updated = [...(prev.marqueeImages || [])];
+      updated[index] = value;
+      return { ...prev, marqueeImages: updated };
+    });
   };
 
   const handleSave = () => {
@@ -321,8 +423,10 @@ export default function AdminHistoryTab() {
           localStorage.removeItem("history_page_config");
           localStorage.removeItem("history_timeline_milestones");
 
-          setConfig(defaultPayload.config);
-          setMilestones(defaultPayload.milestones);
+          const resetConfig = defaultPayload.config || {};
+          resetConfig.marqueeImages = resetConfig.marqueeImages || [];
+          setConfig(resetConfig);
+          setMilestones(defaultPayload.milestones || []);
           setHeroSourceType("default");
           setShowcaseSourceType("default");
           setCustomHeroUrl("");
@@ -386,6 +490,22 @@ export default function AdminHistoryTab() {
           }}
         >
           ⏳ Quản lý Dòng Sự Kiện (Timeline Eras)
+        </button>
+        <button
+          onClick={() => setActiveCategory("marquee")}
+          style={{
+            background: activeCategory === "marquee" ? "rgba(0, 242, 255, 0.08)" : "transparent",
+            border: "1px solid " + (activeCategory === "marquee" ? "rgba(0, 242, 255, 0.25)" : "transparent"),
+            color: activeCategory === "marquee" ? "#00f2ff" : "rgba(255, 255, 255, 0.6)",
+            padding: "8px 20px",
+            borderRadius: "8px",
+            fontSize: "13px",
+            fontWeight: "700",
+            cursor: "pointer",
+            transition: "all 0.3s"
+          }}
+        >
+          🌌 Bộ Sưu Tập Cuộn (Marquee Album)
         </button>
       </div>
 
@@ -698,14 +818,108 @@ export default function AdminHistoryTab() {
                   </div>
 
                   <div className="admin-form-group">
-                    <label className="admin-form-label">IMAGE PATH / SYMBOL URL</label>
-                    <input
-                      type="text"
-                      className="control-input"
-                      value={activeMilestone.image}
-                      onChange={(e) => handleFieldChange("image", e.target.value)}
-                      placeholder="e.g. /src/assets/history.webp or URL link"
-                    />
+                    <label className="admin-form-label">MILESTONE IMAGE (PREVIEW & UPLOAD)</label>
+                    <div style={{ display: "grid", gridTemplateColumns: "150px 1fr", gap: "16px", alignItems: "center", marginTop: "8px" }}>
+                      {/* Image Preview */}
+                      <div style={{
+                        width: "150px",
+                        height: "100px",
+                        borderRadius: "10px",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        background: "rgba(0, 0, 0, 0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        overflow: "hidden",
+                        position: "relative"
+                      }}>
+                        {activeMilestone.image ? (
+                          <img
+                            src={activeMilestone.image}
+                            alt="preview"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+                        ) : (
+                          <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)" }}>No Image</span>
+                        )}
+                      </div>
+
+                      {/* Upload and URL controls */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <input
+                            type="text"
+                            className="control-input"
+                            value={activeMilestone.image || ""}
+                            onChange={(e) => handleFieldChange("image", e.target.value)}
+                            placeholder="Image URL or File Path (e.g. /src/assets/history.webp)"
+                            style={{ flex: 1 }}
+                          />
+                          <label className="btn-primary" style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            padding: "10px 16px",
+                            fontSize: "12px",
+                            height: "auto",
+                            background: "rgba(0, 242, 255, 0.1)",
+                            border: "1px solid rgba(0, 242, 255, 0.3)",
+                            color: "#00f2ff",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                            margin: 0
+                          }}>
+                            Upload File
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleMilestoneImageChange}
+                              style={{ display: "none" }}
+                            />
+                          </label>
+                        </div>
+                        {/* Drag and Drop */}
+                        <div
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            e.currentTarget.style.borderColor = "#00f2ff";
+                            e.currentTarget.style.background = "rgba(0, 242, 255, 0.05)";
+                          }}
+                          onDragLeave={(e) => {
+                            e.preventDefault();
+                            e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                            e.currentTarget.style.background = "rgba(255,255,255,0.01)";
+                          }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                            e.currentTarget.style.background = "rgba(255,255,255,0.01)";
+                            const file = e.dataTransfer.files[0];
+                            if (file) {
+                              compressImage(file, 600, 450, 0.7)
+                                .then(base64 => {
+                                  handleFieldChange("image", base64);
+                                })
+                                .catch(err => console.error("Milestone drop image compression failed", err));
+                            }
+                          }}
+                          style={{
+                            border: "1px dashed rgba(255,255,255,0.1)",
+                            borderRadius: "8px",
+                            padding: "10px",
+                            textAlign: "center",
+                            fontSize: "11px",
+                            color: "rgba(255,255,255,0.4)",
+                            background: "rgba(255,255,255,0.01)",
+                            transition: "all 0.3s",
+                            cursor: "pointer"
+                          }}
+                        >
+                          Drag & drop image file here to upload (max 2MB)
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="admin-form-group">
@@ -772,6 +986,261 @@ export default function AdminHistoryTab() {
               )}
             </div>
 
+          </div>
+        )}
+
+        {/* ================= CATEGORY 3: MARQUEE ALBUM MANAGER ================= */}
+        {activeCategory === "marquee" && (
+          <div className="admin-card-inner" style={{ marginTop: 0 }}>
+            <h4 className="admin-card-inner-title">🌌 Cấu hình Bộ Sưu Tập Cuộn (3D Marquee Album)</h4>
+            <p className="admin-card-inner-desc">
+              Quản lý danh sách các ảnh chạy cuộn 3D ở phần thiết kế trên trang Lịch sử. Khuyên dùng tối thiểu 4 - 8 ảnh để đạt hiệu ứng cuộn mượt mà nhất.
+            </p>
+
+            <div style={{
+              marginBottom: "24px",
+              padding: "12px 16px",
+              background: "rgba(0, 242, 255, 0.03)",
+              border: "1px solid rgba(0, 242, 255, 0.15)",
+              borderRadius: "12px",
+              fontSize: "13px",
+              color: "rgba(0, 242, 255, 0.85)",
+              lineHeight: "1.5"
+            }}>
+              💡 <strong>Kích thước tối ưu:</strong> Tỷ lệ khuyên dùng là <strong>970px x 700px</strong> (tương đương tỷ lệ ~1.4:1). Các ảnh có tỷ lệ khác sẽ được tự động căn giữa và phủ kín khung hiển thị. Dung lượng mỗi ảnh tải trực tiếp không nên vượt quá 2MB.
+            </div>
+
+            {/* Bulk upload / drag & drop zone */}
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.currentTarget.style.borderColor = "#00f2ff";
+                e.currentTarget.style.background = "rgba(0, 242, 255, 0.06)";
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.01)";
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.01)";
+                handleMarqueeBulkUpload(e.dataTransfer.files);
+              }}
+              style={{
+                border: "2px dashed rgba(255,255,255,0.12)",
+                borderRadius: "16px",
+                padding: "32px",
+                textAlign: "center",
+                background: "rgba(255,255,255,0.01)",
+                transition: "all 0.3s ease",
+                cursor: "pointer",
+                marginBottom: "28px"
+              }}
+            >
+              <div style={{ fontSize: "28px", marginBottom: "12px" }}>📥</div>
+              <p style={{ margin: 0, fontSize: "14px", fontWeight: "700", color: "#fff" }}>
+                Kéo thả nhiều ảnh vào đây hoặc bấm để tải lên
+              </p>
+              <p style={{ margin: "4px 0 16px 0", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
+                Hỗ trợ PNG, JPG, WEBP (tối đa 2MB/ảnh)
+              </p>
+              <label className="btn-primary" style={{
+                display: "inline-block",
+                padding: "8px 20px",
+                fontSize: "12px",
+                height: "auto",
+                background: "rgba(0, 242, 255, 0.1)",
+                border: "1px solid rgba(0, 242, 255, 0.3)",
+                color: "#00f2ff",
+                borderRadius: "8px",
+                fontWeight: "bold",
+                margin: 0,
+                cursor: "pointer"
+              }}>
+                Chọn file ảnh
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => handleMarqueeBulkUpload(e.target.files)}
+                  style={{ display: "none" }}
+                />
+              </label>
+            </div>
+
+            {/* Gallery Grid */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: "24px"
+            }}>
+              {(config.marqueeImages || []).map((img, idx) => (
+                <div key={idx} style={{
+                  background: "rgba(255, 255, 255, 0.02)",
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  borderRadius: "16px",
+                  padding: "16px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                  transition: "all 0.3s ease",
+                  position: "relative"
+                }}>
+                  {/* Image preview */}
+                  <div style={{
+                    width: "100%",
+                    height: "160px",
+                    borderRadius: "10px",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "rgba(0,0,0,0.2)",
+                    overflow: "hidden",
+                    position: "relative"
+                  }}>
+                    {img.startsWith("data:") ? (
+                      <img src={img} alt={`Preview ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#1a1a24" }}>
+                        <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>🔍 Ảnh từ đường dẫn / asset</span>
+                        <img src={img} alt={`Preview ${idx + 1}`} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} onError={(e) => { e.target.style.display = 'none'; }} />
+                      </div>
+                    )}
+
+                    {/* Index Badge */}
+                    <div style={{
+                      position: "absolute",
+                      top: "10px",
+                      left: "10px",
+                      background: "rgba(0, 242, 255, 0.8)",
+                      color: "#000",
+                      padding: "2px 8px",
+                      borderRadius: "6px",
+                      fontSize: "11px",
+                      fontWeight: "800"
+                    }}>
+                      #{idx + 1}
+                    </div>
+                  </div>
+
+                  {/* Edit path/url input */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>Đường dẫn hoặc URL ảnh</label>
+                    <input
+                      type="text"
+                      className="control-input"
+                      value={img.startsWith("data:") ? "[Tệp Base64 tải lên]" : img}
+                      disabled={img.startsWith("data:")}
+                      onChange={(e) => handleMarqueeUrlChange(idx, e.target.value)}
+                      placeholder="e.g. /src/assets/history/design_orbit.png"
+                      style={{ fontSize: "12px", padding: "8px 12px" }}
+                    />
+                  </div>
+
+                  {/* Actions row */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <button
+                        onClick={() => handleSwapMarqueeImages(idx, idx - 1)}
+                        disabled={idx === 0}
+                        style={{
+                          background: "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          color: idx === 0 ? "rgba(255,255,255,0.15)" : "#fff",
+                          cursor: idx === 0 ? "not-allowed" : "pointer",
+                          padding: "6px 10px",
+                          borderRadius: "8px",
+                          fontSize: "12px",
+                          transition: "all 0.2s"
+                        }}
+                        title="Di chuyển sang trái"
+                      >
+                        ◀
+                      </button>
+                      <button
+                        onClick={() => handleSwapMarqueeImages(idx, idx + 1)}
+                        disabled={idx === (config.marqueeImages || []).length - 1}
+                        style={{
+                          background: "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.08)",
+                          color: idx === (config.marqueeImages || []).length - 1 ? "rgba(255,255,255,0.15)" : "#fff",
+                          cursor: idx === (config.marqueeImages || []).length - 1 ? "not-allowed" : "pointer",
+                          padding: "6px 10px",
+                          borderRadius: "8px",
+                          fontSize: "12px",
+                          transition: "all 0.2s"
+                        }}
+                        title="Di chuyển sang phải"
+                      >
+                        ▶
+                      </button>
+                    </div>
+
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      {/* Replace */}
+                      <label className="btn-primary" style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "6px 10px",
+                        fontSize: "11px",
+                        height: "auto",
+                        background: "rgba(0, 242, 255, 0.06)",
+                        border: "1px solid rgba(0, 242, 255, 0.2)",
+                        color: "#00f2ff",
+                        borderRadius: "8px",
+                        fontWeight: "bold",
+                        margin: 0,
+                        cursor: "pointer"
+                      }}>
+                        Thay thế
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleReplaceMarqueeImage(idx, e.target.files[0])}
+                          style={{ display: "none" }}
+                        />
+                      </label>
+
+                      {/* Delete */}
+                      <button
+                        onClick={() => handleDeleteMarqueeImage(idx)}
+                        style={{
+                          background: "rgba(255, 70, 70, 0.08)",
+                          border: "1px solid rgba(255, 70, 70, 0.25)",
+                          color: "#ff4646",
+                          padding: "6px 10px",
+                          borderRadius: "8px",
+                          fontSize: "11px",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          transition: "all 0.2s"
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = "#ff4646"}
+                        onMouseLeave={e => e.currentTarget.style.background = "rgba(255, 70, 70, 0.08)"}
+                      >
+                        🗑️ Xóa
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Empty state */}
+            {(!config.marqueeImages || config.marqueeImages.length === 0) && (
+              <div style={{
+                textAlign: "center",
+                padding: "40px",
+                color: "rgba(255,255,255,0.35)",
+                fontSize: "14px",
+                border: "1px dashed rgba(255,255,255,0.06)",
+                borderRadius: "12px",
+                background: "rgba(0,0,0,0.1)"
+              }}>
+                ⚠️ Album hiện đang rỗng. Trang Lịch sử sẽ tự động hiển thị 8 ảnh toán học/mô phỏng mặc định.
+              </div>
+            )}
           </div>
         )}
 

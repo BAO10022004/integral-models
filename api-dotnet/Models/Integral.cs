@@ -56,4 +56,22 @@ public class SolutionStep
 
     [FirestoreProperty]
     public string Explanation { get; set; } = string.Empty;
+
+    [FirestoreProperty]
+    public string Kind { get; set; } = string.Empty;
+
+    [FirestoreProperty]
+    public int Depth { get; set; }
+
+    [FirestoreProperty]
+    public string Description { get; set; } = string.Empty;
+
+    [FirestoreProperty]
+    public string Formula { get; set; } = string.Empty;
+
+    [FirestoreProperty]
+    public string IntegralStr { get; set; } = string.Empty;
+
+    [FirestoreProperty]
+    public double? Value { get; set; }
 }

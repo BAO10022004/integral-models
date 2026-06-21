@@ -372,7 +372,7 @@
   background: rgba(0, 242, 255, 0.03);
   border: 1px solid rgba(0, 242, 255, 0.25);
   color: #00f2ff;
-  font-family: 'MathFont', sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-size: clamp(0.85rem, 1.1vw, 0.95rem);
   font-weight: 700;
   padding: 10px 24px;

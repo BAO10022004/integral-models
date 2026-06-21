@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/HistoryApplicationsSection.css";
+import BeamGridBackground from "../lightswind/BeamGridBackground";
 
 const ERAS_APPLICATIONS = [
   {
@@ -55,16 +56,15 @@ const ERAS_APPLICATIONS = [
 export default function HistoryApplicationsSection() {
   const [activeEraId, setActiveEraId] = useState("2026");
   const [isPlaying, setIsPlaying] = useState(true);
+  const [detailModal, setDetailModal] = useState(null);
   const activeEra = ERAS_APPLICATIONS.find(e => e.id === activeEraId);
 
-  // Simulation animation states
   const [orbitAngle, setOrbitAngle] = useState(0);
   const [waveOffset, setWaveOffset] = useState(0);
   const [rocketY, setRocketY] = useState(120);
   const [rocketTargetY, setRocketTargetY] = useState(120);
   const [quantumTime, setQuantumTime] = useState(0);
 
-  // Orbit animation loop
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
@@ -75,16 +75,14 @@ export default function HistoryApplicationsSection() {
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  // Rocket simulator handler
   const handleIgniteThrust = () => {
     if (rocketTargetY > 50) {
       setRocketTargetY(prev => prev - 25);
     } else {
-      setRocketTargetY(120); // reset
+      setRocketTargetY(120);
     }
   };
 
-  // Smooth rocket interpolation
   useEffect(() => {
     const interval = setInterval(() => {
       setRocketY(prev => {
@@ -96,53 +94,47 @@ export default function HistoryApplicationsSection() {
     return () => clearInterval(interval);
   }, [rocketTargetY]);
 
-  // Compute orbit coordinates based on Elip Kepler
-  const a = 110; // semi-major axis
-  const b = 75;  // semi-minor axis
-  const e = Math.sqrt(1 - (b * b) / (a * a)); // eccentricity
+  const a = 110;
+  const b = 75;
+  const e = Math.sqrt(1 - (b * b) / (a * a));
   const orbitRad = (orbitAngle * Math.PI) / 180;
-  // Kepler polar coordinates relative to focus
-  const focusX = a * e; // distance from center to focus
+  const focusX = a * e;
   const planetX = a * Math.cos(orbitRad) - focusX;
   const planetY = b * Math.sin(orbitRad);
 
   return (
     <section className="history-snap-section history-apps-section">
+      {/* Beam Grid Background */}
+      <BeamGridBackground
+        gridSize={45}
+        darkGridColor="#0d1117"
+        gridColor="#0d1117"
+        beamColor="rgba(0, 210, 255, 0.7)"
+        darkBeamColor="rgba(0, 242, 255, 0.8)"
+        beamSpeed={0.12}
+        beamThickness={2}
+        beamGlow={true}
+        glowIntensity={35}
+        beamCount={10}
+        extraBeamCount={4}
+        idleSpeed={1.2}
+        interactive={true}
+        asBackground={true}
+        showFade={true}
+        fadeIntensity={15}
+      />
+
       <div className="apps-wrapper">
 
-        {/* Header Section */}
+        {/* Header */}
         <div className="apps-header">
-          <div className="apps-badge">REAL-WORLD APPLICATIONS</div>
           <h2 className="apps-title">How Integration Shaped the Modern World</h2>
-          <p className="apps-subtitle">
-            Explore the timeless, real-world impacts of integral calculus. From steering planets in classical space to optimizing neural models in the quantum frontier.
-          </p>
         </div>
 
-        {/* Dynamic Era Navigation Tabs */}
-        <div className="apps-tabs-bar">
-          {ERAS_APPLICATIONS.map(era => (
-            <button
-              key={era.id}
-              className={`apps-tab-btn ${activeEraId === era.id ? "active" : ""}`}
-              onClick={() => {
-                setActiveEraId(era.id);
-                if (era.id === "1969") {
-                  setRocketY(120);
-                  setRocketTargetY(120);
-                }
-              }}
-            >
-              <span className="tab-year">{era.id}</span>
-              <span className="tab-label">{era.title.split(" & ")[0]}</span>
-            </button>
-          ))}
-        </div>
+        {/* Body: Info card (left) + Simulator background + Timeline rail (right) */}
+        <div className="apps-body">
 
-        {/* Dashboard Panels */}
-        <div className="apps-panel-container">
-
-          {/* Left Column: Era application metadata */}
+          {/* Left: Glassmorphic info card — compact summary */}
           <div className="apps-info-panel">
             <div className="info-glass-card">
 
@@ -159,28 +151,23 @@ export default function HistoryApplicationsSection() {
               </div>
 
               <div className="info-row">
-                <span className="row-label">Real-World Impact:</span>
-                <span className="row-val">{activeEra.impact}</span>
+                <span className="row-label">Impact:</span>
+                <span className="row-val era-impact-short">{activeEra.impact}</span>
               </div>
 
-              {/* Formula Board */}
               <div className="formula-glass-board">
                 <div className="formula-board-header">CORE EQUATION</div>
                 <div className="formula-latex">
                   <span className="latex-expression">
-                    {activeEra.id === "1687" && "A = \u222B [t\u2080 \u279F t\u2081] \u00BD r\u00B2 (d\u03B8/dt) dt"}
-                    {activeEra.id === "1865" && "\u03A6\u209B = \u222B\u222B_S B \u22C5 da"}
-                    {activeEra.id === "1969" && "v(t) = v\u2080 + \u222B [0 \u279F t] ( (F_thrust - F_drag)/m + g ) d\u03C4"}
-                    {activeEra.id === "2026" && "P(a \u2264 x \u2264 b) = \u222B [a \u279F b] |\u03A8(x, t)|\u00B2 dx"}
+                    {activeEra.id === "1687" && "A = ∫ [t₀ → t₁] ½ r² (dθ/dt) dt"}
+                    {activeEra.id === "1865" && "Φ_B = ∬_S B · da"}
+                    {activeEra.id === "1969" && "v(t) = v₀ + ∫ [0 → t] ( (F_thrust - F_drag)/m + g ) dτ"}
+                    {activeEra.id === "2026" && "P(a ≤ x ≤ b) = ∫ [a → b] |Ψ(x, t)|² dx"}
                   </span>
                 </div>
-                <div className="formula-desc">{activeEra.equationDesc}</div>
               </div>
 
-              <p className="era-paragraph-desc">{activeEra.description}</p>
-
-              {/* Simulation Action Controls */}
-              <div className="info-controls-row">
+              <div className="info-controls-row" style={{ marginTop: "auto" }}>
                 <button
                   className={`sim-play-btn ${isPlaying ? "playing" : ""}`}
                   onClick={() => setIsPlaying(!isPlaying)}
@@ -189,44 +176,45 @@ export default function HistoryApplicationsSection() {
                 </button>
                 {activeEra.id === "1969" && (
                   <button className="sim-action-btn rocket-ignite" onClick={handleIgniteThrust}>
-                    Ignite Engine Thrust 🚀
+                    Ignite 🚀
                   </button>
                 )}
               </div>
 
+              <button
+                className="era-detail-btn"
+                onClick={() => setDetailModal(activeEra)}
+              >
+                <span>View Full Details</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+
             </div>
           </div>
 
-          {/* Right Column: High-fidelity graphical visual simulator */}
+          {/* Background: Full-height simulator (absolute, behind everything) */}
           <div className="apps-visual-panel">
             <div className={`simulator-screen screen-theme-${activeEra.id}`}>
 
               {activeEra.id === "1969" && <div className="sim-crt-scanlines" />}
               {activeEra.id === "2026" && <div className="sim-neural-grid" />}
 
-              {/* SVG SIMULATOR 1: Kepler Orbit Planet Simulator */}
               {activeEra.simulationType === "orbit" && (
                 <div className="svg-container">
                   <svg className="sim-svg" viewBox="-200 -120 400 240">
                     <ellipse cx={-focusX} cy="0" rx={a} ry={b} className="orbit-path-line" />
-
-                    <path
-                      d={`M ${-focusX} 0 L ${planetX} ${planetY} A ${a} ${b} 0 0 ${planetY < 0 ? 0 : 1} ${a * Math.cos(orbitRad - 0.25) - focusX} ${b * Math.sin(orbitRad - 0.25)} Z`}
-                      className="orbit-swept-area"
-                    />
-
+                    <path d={`M ${-focusX} 0 L ${planetX} ${planetY} A ${a} ${b} 0 0 ${planetY < 0 ? 0 : 1} ${a * Math.cos(orbitRad - 0.25) - focusX} ${b * Math.sin(orbitRad - 0.25)} Z`} className="orbit-swept-area" />
                     <circle cx={-focusX} cy="0" r="14" className="orbit-sun-glow" />
                     <circle cx={-focusX} cy="0" r="8" className="orbit-sun-core" />
                     <text x={-focusX} y="22" className="orbit-text sun-label">SUN (FOCUS)</text>
-
                     <g transform={`translate(${planetX}, ${planetY})`}>
                       <circle cx="0" cy="0" r="9" className="orbit-planet-glow" />
                       <circle cx="0" cy="0" r="6" className="orbit-planet-core" />
                     </g>
                     <text x={planetX - 10} y={planetY - 15} className="orbit-text planet-label">EARTH (PLANET)</text>
-
                     <line x1={-focusX} y1="0" x2={planetX} y2={planetY} className="orbit-radius-line" />
-
                     <g transform="translate(-180, 95)" className="sim-meta-text">
                       <text x="0" y="0">Orbit: Ellipse (e = {e.toFixed(3)})</text>
                       <text x="0" y="12">Sweep Angle: {orbitAngle.toFixed(1)}°</text>
@@ -236,40 +224,17 @@ export default function HistoryApplicationsSection() {
                 </div>
               )}
 
-              {/* SVG SIMULATOR 2: Electromagnetic Wave Oscilloscope */}
               {activeEra.simulationType === "electromagnetic" && (
                 <div className="svg-container">
                   <svg className="sim-svg" viewBox="0 0 400 240">
                     <line x1="20" y1="120" x2="380" y2="120" className="osc-grid-axis" />
-
-                    <path
-                      d={Array.from({ length: 120 }, (_, i) => {
-                        const x = 20 + i * 3;
-                        const rad = (i / 120) * Math.PI * 4 + waveOffset;
-                        const y = 120 + Math.sin(rad) * 60;
-                        return `${i === 0 ? "M" : "L"} ${x} ${y}`;
-                      }).join(" ")}
-                      className="osc-sine-wave"
-                    />
-
-                    <path
-                      d={Array.from({ length: 120 }, (_, i) => {
-                        const x = 20 + i * 3;
-                        const rad = (i / 120) * Math.PI * 4 + waveOffset;
-                        const y = 120 + Math.cos(rad) * 60;
-                        return `${i === 0 ? "M" : "L"} ${x} ${y}`;
-                      }).join(" ")}
-                      className="osc-cosine-wave"
-                    />
-
+                    <path d={Array.from({ length: 120 }, (_, i) => { const x = 20 + i * 3; const rad = (i / 120) * Math.PI * 4 + waveOffset; const y = 120 + Math.sin(rad) * 60; return `${i === 0 ? "M" : "L"} ${x} ${y}`; }).join(" ")} className="osc-sine-wave" />
+                    <path d={Array.from({ length: 120 }, (_, i) => { const x = 20 + i * 3; const rad = (i / 120) * Math.PI * 4 + waveOffset; const y = 120 + Math.cos(rad) * 60; return `${i === 0 ? "M" : "L"} ${x} ${y}`; }).join(" ")} className="osc-cosine-wave" />
                     <g transform="translate(100, 205)" className="osc-coil-graphics">
                       <rect x="0" y="0" width="200" height="20" rx="5" className="coil-iron-core" />
-                      {Array.from({ length: 8 }).map((_, i) => (
-                        <path key={i} d={`M ${15 + i * 24} -5 C ${15 + i * 24} 25, ${25 + i * 24} 25, ${25 + i * 24} -5`} className="coil-copper-turns" />
-                      ))}
+                      {Array.from({ length: 8 }).map((_, i) => (<path key={i} d={`M ${15 + i * 24} -5 C ${15 + i * 24} 25, ${25 + i * 24} 25, ${25 + i * 24} -5`} className="coil-copper-turns" />))}
                       <text x="100" y="32" className="osc-text coil-label" textAnchor="middle">induction coil (AC motor stator)</text>
                     </g>
-
                     <g transform="translate(25, 30)" className="sim-meta-text">
                       <rect x="-5" y="-5" width="230" height="40" rx="4" className="legend-bg" />
                       <line x1="0" y1="10" x2="30" y2="10" className="osc-legend-sine" />
@@ -281,23 +246,16 @@ export default function HistoryApplicationsSection() {
                 </div>
               )}
 
-              {/* SVG SIMULATOR 3: Space Telemetry Apollo Lander */}
               {activeEra.simulationType === "rocket" && (
                 <div className="svg-container">
                   <svg className="sim-svg" viewBox="0 0 400 240">
                     <path d="M 0 210 Q 100 190 200 215 T 400 205 L 400 240 L 0 240 Z" className="moon-ground" />
-
                     <rect x="160" y="200" width="80" height="6" className="landing-pad" />
                     <text x="200" y="222" className="osc-text lander-pad-text" textAnchor="middle">target pad (tranquility base)</text>
-
                     <line x1="200" y1="20" x2="200" y2="200" className="rocket-projection-line" />
                     <line x1="120" y1={rocketY + 20} x2="200" y2={rocketY + 20} className="rocket-altitude-indicator" />
-
                     <g transform={`translate(200, ${rocketY})`}>
-                      {rocketTargetY < rocketY && (
-                        <path d="M -10 20 L 0 45 L 10 20 Z" className="rocket-fire-thrust" />
-                      )}
-
+                      {rocketTargetY < rocketY && <path d="M -10 20 L 0 45 L 10 20 Z" className="rocket-fire-thrust" />}
                       <rect x="-18" y="-12" width="36" height="24" rx="4" className="apollo-body-outer" />
                       <circle cx="0" cy="-3" r="10" className="apollo-cabin" />
                       <line x1="-18" y1="12" x2="-25" y2="24" className="apollo-lander-leg" />
@@ -305,7 +263,6 @@ export default function HistoryApplicationsSection() {
                       <circle cx="-25" cy="24" r="4" className="apollo-footpad" />
                       <circle cx="25" cy="24" r="4" className="apollo-footpad" />
                     </g>
-
                     <g transform="translate(18, 30)" className="sim-telemetry-text">
                       <text x="0" y="0">APOLLO DSKY MONITOR (AGC)</text>
                       <text x="0" y="16">ALTITUDE: {((200 - rocketY) * 23.4).toFixed(1)} METERS</text>
@@ -317,52 +274,23 @@ export default function HistoryApplicationsSection() {
                 </div>
               )}
 
-              {/* SVG SIMULATOR 4: Neural Graph & Quantum Wave */}
               {activeEra.simulationType === "quantum" && (
                 <div className="svg-container">
                   <svg className="sim-svg" viewBox="0 0 400 240">
-                    <path
-                      d={Array.from({ length: 150 }, (_, i) => {
-                        const x = 10 + i * 2.5;
-                        const basePhase = (i / 150) * Math.PI * 6;
-                        const envelope = Math.exp(-Math.pow((i - 75) / 45, 2));
-                        const y = 120 + Math.sin(basePhase - quantumTime * 2.5) * 65 * envelope;
-                        return `${i === 0 ? "M" : "L"} ${x} ${y}`;
-                      }).join(" ")}
-                      className="quantum-prob-wave"
-                    />
-
+                    <path d={Array.from({ length: 150 }, (_, i) => { const x = 10 + i * 2.5; const basePhase = (i / 150) * Math.PI * 6; const envelope = Math.exp(-Math.pow((i - 75) / 45, 2)); const y = 120 + Math.sin(basePhase - quantumTime * 2.5) * 65 * envelope; return `${i === 0 ? "M" : "L"} ${x} ${y}`; }).join(" ")} className="quantum-prob-wave" />
                     <line x1="120" y1="30" x2="120" y2="210" className="quantum-boundary-line" />
                     <line x1="280" y1="30" x2="280" y2="210" className="quantum-boundary-line" />
                     <text x="123" y="45" className="quantum-boundary-text">a</text>
                     <text x="283" y="45" className="quantum-boundary-text">b</text>
-
-                    <path
-                      d={
-                        `M 120 120 ` +
-                        Array.from({ length: 65 }, (_, i) => {
-                          const idx = 44 + i;
-                          const x = 10 + idx * 2.5;
-                          const basePhase = (idx / 150) * Math.PI * 6;
-                          const envelope = Math.exp(-Math.pow((idx - 75) / 45, 2));
-                          const y = 120 + Math.sin(basePhase - quantumTime * 2.5) * 65 * envelope;
-                          return `L ${x} ${y}`;
-                        }).join(" ") +
-                        ` L 280 120 Z`
-                      }
-                      className="quantum-shaded-integral"
-                    />
-
+                    <path d={`M 120 120 ` + Array.from({ length: 65 }, (_, i) => { const idx = 44 + i; const x = 10 + idx * 2.5; const basePhase = (idx / 150) * Math.PI * 6; const envelope = Math.exp(-Math.pow((idx - 75) / 45, 2)); const y = 120 + Math.sin(basePhase - quantumTime * 2.5) * 65 * envelope; return `L ${x} ${y}`; }).join(" ") + ` L 280 120 Z`} className="quantum-shaded-integral" />
                     <g className="neural-nodes-overlay">
                       <circle cx="200" cy="120" r="5" className="neural-node active" />
                       <circle cx="160" cy="70" r="4" className="neural-node" />
                       <circle cx="240" cy="170" r="4" className="neural-node active" />
                       <circle cx="280" cy="90" r="4" className="neural-node" />
                       <circle cx="120" cy="150" r="4" className="neural-node active" />
-
                       <path d="M 120 150 L 160 70 M 160 70 L 200 120 M 200 120 L 240 170 M 240 170 L 280 90" className="neural-connection-lines" />
                     </g>
-
                     <g transform="translate(18, 30)" className="sim-meta-text">
                       <text x="0" y="0" className="quantum-text-title">QUANTUM PROBABILITY INTEGRATOR</text>
                       <text x="0" y="14">Model: Gaussian Schrodinger Wavefunction Integration</text>
@@ -376,9 +304,83 @@ export default function HistoryApplicationsSection() {
             </div>
           </div>
 
-        </div>
+          {/* Right: Vertical Era Timeline Rail */}
+          <div className="apps-timeline-rail">
+            <div className="timeline-rail-line" />
+            {ERAS_APPLICATIONS.map(era => (
+              <button
+                key={era.id}
+                className={`timeline-era-node tab-${era.id} ${activeEraId === era.id ? "active" : ""}`}
+                onClick={() => {
+                  setActiveEraId(era.id);
+                  if (era.id === "1969") { setRocketY(120); setRocketTargetY(120); }
+                }}
+              >
+                <div className="timeline-node-dot" />
+                <div className="timeline-node-content">
+                  <span className="timeline-node-year">{era.id}</span>
+                  <span className="timeline-node-label">{era.title.split(" & ")[0]}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+
+        </div>{/* end apps-body */}
 
       </div>
+
+      {/* ===== DETAIL MODAL ===== */}
+      {detailModal && (
+        <div
+          className="era-modal-overlay"
+          onClick={() => setDetailModal(null)}
+        >
+          <div
+            className={`era-modal-card screen-theme-${detailModal.id}`}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close */}
+            <button className="era-modal-close" onClick={() => setDetailModal(null)}>✕</button>
+
+            {/* Header */}
+            <div className="era-modal-header">
+              <span className={`era-tag-badge badge-${detailModal.id}`}>{detailModal.techBadge}</span>
+              <span className="era-subtitle" style={{ marginLeft: 10 }}>{detailModal.subtitle}</span>
+            </div>
+
+            <h2 className="era-modal-title">{detailModal.title}</h2>
+
+            {/* Pioneers row */}
+            <div className="era-modal-row">
+              <span className="era-modal-label">Pioneers</span>
+              <span className="era-modal-val highlight-pioneer">{detailModal.pioneer}</span>
+            </div>
+
+            {/* Formula */}
+            <div className="formula-glass-board era-modal-formula">
+              <div className="formula-board-header">CORE EQUATION</div>
+              <div className="formula-latex">
+                <span className="latex-expression" style={{ fontSize: "clamp(1rem,1.6vw,1.35rem)" }}>
+                  {detailModal.id === "1687" && "A = ∫ [t₀ → t₁] ½ r² (dθ/dt) dt"}
+                  {detailModal.id === "1865" && "Φ_B = ∬_S B · da"}
+                  {detailModal.id === "1969" && "v(t) = v₀ + ∫ [0 → t] ( (F_thrust − F_drag)/m + g ) dτ"}
+                  {detailModal.id === "2026" && "P(a ≤ x ≤ b) = ∫ [a → b] |Ψ(x, t)|² dx"}
+                </span>
+              </div>
+              <div className="formula-desc">{detailModal.equationDesc}</div>
+            </div>
+
+            {/* Impact */}
+            <div className="era-modal-row">
+              <span className="era-modal-label">Real-World Impact</span>
+              <span className="era-modal-val">{detailModal.impact}</span>
+            </div>
+
+            {/* Full description */}
+            <p className="era-modal-desc">{detailModal.description}</p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

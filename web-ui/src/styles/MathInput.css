@@ -1,0 +1,299 @@
+.mi * {
+  box-sizing: border-box;
+  font-family: 'Be Vietnam Pro', sans-serif !important;
+}
+
+.mi-panel-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mi-panel-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.mi-panel-label-interactive {
+  cursor: pointer;
+  transition: color 0.2s, margin-bottom 0.3s;
+  user-select: none;
+}
+
+.mi-panel-label-interactive:hover {
+  color: #6d28d9;
+}
+
+/* Integral constructor */
+.mi-constructor {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 32px;
+  background: rgba(241, 245, 249, 0.6);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  border-radius: 16px;
+  margin-bottom: 4px;
+  overflow: visible;
+}
+
+.mi-int-block {
+  position: relative;
+  width: 72px;
+  height: 100px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.mi-int-sign {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 90px;
+  font-weight: 200;
+  line-height: 1;
+  background: linear-gradient(160deg, #6366f1, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  user-select: none;
+  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.3));
+}
+
+.mi-limit-input {
+  position: absolute;
+  width: 48px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(99, 102, 241, 0.25);
+  border-radius: 10px;
+  color: #6366f1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.2s;
+  z-index: 2;
+}
+
+.mi-limit-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  background: #ffffff;
+}
+
+.mi-limit-input::placeholder {
+  color: rgba(148, 163, 184, 0.4);
+}
+
+.mi-limit-upper {
+  top: -36px;
+  right: -24px;
+}
+
+.mi-limit-lower {
+  bottom: -22px;
+  left: -24px;
+}
+
+.mi-paren {
+  font-size: 68px;
+  font-weight: 200;
+  color: rgba(99, 102, 241, 0.3);
+  user-select: none;
+  line-height: 1;
+}
+
+.mi-integrand {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  color: #0f172a;
+  font-size: 22px;
+  font-weight: 600;
+  padding: 16px 20px;
+  outline: none;
+  transition: all 0.2s;
+  caret-color: #6366f1;
+}
+
+.mi-integrand:focus {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  background: #ffffff;
+}
+
+.mi-integrand::placeholder {
+  color: rgba(148, 163, 184, 0.3);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.mi-dvar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 10px 16px;
+  transition: border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.mi-dvar:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.mi-d {
+  font-size: 22px;
+  font-weight: 700;
+  font-style: italic;
+  color: #6366f1;
+}
+
+.mi-var-select {
+  background: transparent;
+  border: none;
+  color: #6366f1;
+  font-size: 19px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+}
+
+.mi-var-select option {
+  background: #ffffff;
+}
+
+/* Calculator Grid & Keys */
+.mi-calc-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  background: rgba(241, 245, 249, 0.5);
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 600px) {
+  .mi-calc-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.mi-calc-key {
+  padding: 12px 6px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.mi-calc-key:active {
+  transform: scale(0.95);
+}
+
+/* Key themes */
+.key-num {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.05);
+  color: #334155;
+}
+
+.key-num:hover {
+  background: #f8fafc;
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.1);
+}
+
+.key-op {
+  background: rgba(14, 116, 144, 0.15);
+  border-color: rgba(14, 116, 144, 0.25);
+  color: #0891b2;
+}
+
+.key-op:hover {
+  background: rgba(14, 116, 144, 0.25);
+  border-color: #22d3ee;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.2);
+}
+
+.key-func {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.25);
+  color: #4f46e5;
+}
+
+.key-func:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #818cf8;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+}
+
+.key-var {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: rgba(139, 92, 246, 0.25);
+  color: #7e22ce;
+  font-style: italic;
+}
+
+.key-var:hover {
+  background: rgba(139, 92, 246, 0.22);
+  border-color: #c084fc;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+}
+
+.key-del {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #dc2626;
+}
+
+.key-del:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: #ef4444;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+}
+
+.key-clear {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.25);
+  color: #d97706;
+}
+
+.key-clear:hover {
+  background: rgba(245, 158, 11, 0.22);
+  border-color: #f59e0b;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+}
+
+.key-shortcut {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #059669;
+}
+
+.key-shortcut:hover {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: #34d399;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}

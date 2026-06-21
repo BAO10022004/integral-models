@@ -1,15 +1,4 @@
-import React, { useState, useEffect } from 'react';
-
-const C = {
-  card: "#ffffff",
-  blue: "#2563eb",
-  text: "#0f172a",
-  muted: "#64748b",
-  muted2: "#475569",
-  green: "#10b981",
-  greenDim: "#ecfdf5",
-  border: "#e2e8f0",
-};
+import React, { useState, useEffect } from "react";
 
 const IntegralHeader = ({ data }) => {
   const [show, setShow] = useState(false);
@@ -19,75 +8,103 @@ const IntegralHeader = ({ data }) => {
   return (
     <div style={{
       opacity: show ? 1 : 0,
-      transform: show ? "translateY(0)" : "translateY(-20px)",
-      transition: "opacity .6s ease, transform .6s cubic-bezier(0.22,1,0.36,1)",
-      marginBottom: 36,
-      fontFamily: "Arial, Helvetica, sans-serif"
+      transform: show ? "translateY(0)" : "translateY(-16px)",
+      transition: "opacity .5s ease, transform .5s cubic-bezier(0.22,1,0.36,1)",
+      fontFamily: "'Inter','Segoe UI',Arial,sans-serif",
     }}>
+      {/* Main equation display */}
       <div style={{
+        background: "rgba(15,23,42,0.9)",
+        border: "1px solid rgba(99,102,241,0.2)",
+        borderRadius: 20, padding: "32px 36px",
+        textAlign: "center",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        boxShadow: "0 0 60px rgba(99,102,241,0.06), inset 0 1px 0 rgba(255,255,255,0.04)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        gap: 8, flexWrap: "wrap", background: C.card, border: `1px solid ${C.border}`,
-        borderRadius: 24, padding: "32px 40px", textAlign: "center", position: "relative",
-        boxShadow: "0 10px 30px rgba(37, 99, 235, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02)",
+        gap: 6, flexWrap: "wrap",
+        position: "relative", overflow: "hidden",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 0, flexDirection: "column", marginRight: 6 }}>
-          {lo || hi ? (
-            <>
-              <span style={{ fontSize: 13, color: C.muted2, fontWeight: "bold", marginBottom: -4 }}>{hi || "?"}</span>
-              <span style={{ 
-                fontSize: 72, 
-                fontWeight: 300,
-                lineHeight: 1, 
-                background: "linear-gradient(135deg, #2563eb 20%, #7c3aed)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontFamily: "serif",
-                fontStyle: "italic"
-              }}>∫</span>
-              <span style={{ fontSize: 13, color: C.muted2, fontWeight: "bold", marginTop: -4 }}>{lo || "?"}</span>
-            </>
-          ) : (
-            <span style={{ 
-              fontSize: 72, 
-              fontWeight: 300,
-              lineHeight: 1, 
-              background: "linear-gradient(135deg, #2563eb 20%, #7c3aed)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              fontFamily: "serif",
-              fontStyle: "italic"
-            }}>∫</span>
+        {/* Subtle gradient corner */}
+        <div style={{
+          position: "absolute", top: -40, left: -40, width: 200, height: 200,
+          background: "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }} />
+
+        {/* Integral sign + limits */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginRight: 2 }}>
+          {(lo || hi) && (
+            <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 600, marginBottom: -6 }}>
+              {hi || "?"}
+            </span>
+          )}
+          <span style={{
+            fontSize: 76, fontWeight: 200, lineHeight: 0.9,
+            background: "linear-gradient(160deg, #6366f1, #06b6d4)",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            filter: "drop-shadow(0 0 16px rgba(99,102,241,0.4))",
+            fontFamily: "serif", fontStyle: "italic",
+          }}>∫</span>
+          {(lo || hi) && (
+            <span style={{ fontSize: 13, color: "#94a3b8", fontWeight: 600, marginTop: -6 }}>
+              {lo || "?"}
+            </span>
           )}
         </div>
-        
-        {/* Math expression wrapper */}
-        <span style={{ fontSize: 32, color: C.text, fontWeight: 800, letterSpacing: "-0.5px" }}>{expr}</span>
-        <span style={{ fontSize: 24, color: C.blue, fontWeight: 800, fontStyle: "italic" }}> d{dv}</span>
-        <span style={{ fontSize: 28, color: C.muted, margin: "0 12px", fontWeight: 300 }}>=</span>
-        <span style={{ 
-          fontSize: 32, 
-          color: C.blue, 
-          fontWeight: 900,
-          background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}>{result}</span>
+
+        <span style={{
+          fontSize: 28, fontWeight: 700, color: "#e2e8f0",
+          letterSpacing: "-0.5px", padding: "0 4px",
+        }}>
+          {expr}
+        </span>
+
+        <span style={{
+          fontSize: 22, fontWeight: 700, color: "#818cf8",
+          fontStyle: "italic",
+        }}>
+          {" "}d{dv}
+        </span>
+
+        <span style={{ fontSize: 26, color: "rgba(148,163,184,0.4)", margin: "0 12px", fontWeight: 300 }}>
+          =
+        </span>
+
+        <span style={{
+          fontSize: 30, fontWeight: 900,
+          background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+          filter: "drop-shadow(0 0 12px rgba(99,102,241,0.3))",
+          letterSpacing: "-0.5px",
+        }}>
+          {result}
+        </span>
       </div>
 
+      {/* Numeric value badge */}
       {definite_value != null && lo && hi && (
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
-          <div style={{ 
-            display: "inline-flex", 
-            alignItems: "center", 
-            gap: 12, 
-            background: C.greenDim, 
-            border: `1px solid #a7f3d0`, 
-            borderRadius: 100, 
-            padding: "8px 24px",
-            boxShadow: "0 4px 12px rgba(16, 185, 129, 0.08)"
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 14 }}>
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 10,
+            background: "rgba(5,150,105,0.1)",
+            border: "1px solid rgba(52,211,153,0.25)",
+            borderRadius: 99, padding: "8px 22px",
+            backdropFilter: "blur(12px)",
           }}>
-            <span style={{ color: C.muted2, fontSize: 13, fontWeight: 700 }}>Giá trị xấp xỉ số:</span>
-            <span style={{ color: C.green, fontSize: 20, fontWeight: 800 }}>≈ {definite_value}</span>
+            <span style={{ color: "rgba(148,163,184,0.6)", fontSize: 12, fontWeight: 600 }}>
+              Giá trị xấp xỉ:
+            </span>
+            <span style={{
+              fontSize: 20, fontWeight: 800,
+              background: "linear-gradient(135deg, #34d399, #6ee7b7)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              ≈ {definite_value}
+            </span>
           </div>
         </div>
       )}

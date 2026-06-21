@@ -24,6 +24,7 @@ from ai.utils.expr.Power.expr_sqrt      import SqrtExprNode
 from ai.utils.expr.operation.expr_frac  import FracExprNode
 from ai.utils.expr.expr_log             import LogExprNode
 from ai.utils.expr.expr_exp             import ExpExprNode
+from ai.utils.expr.Power.expr_power     import PowerExprNode
 
 
 def apply_basic_rule(expr: ExprNode, dee: str) -> ExprNode:
@@ -41,6 +42,7 @@ def apply_basic_rule(expr: ExprNode, dee: str) -> ExprNode:
     from ai.utils.antiderivative_rule.rule_exp    import rule_exp
     from ai.utils.antiderivative_rule.rule_log    import rule_log
     from ai.utils.antiderivative_rule.rule_sqrt   import rule_sqrt
+    from ai.utils.antiderivative_rule.rule_power  import rule_power
 
     if isinstance(expr, ConstExprNode):
         return rule_const(expr, dee)
@@ -48,6 +50,8 @@ def apply_basic_rule(expr: ExprNode, dee: str) -> ExprNode:
         return rule_var(expr, dee)
     if isinstance(expr, MonoExprNode):
         return rule_mono(expr, dee)
+    if isinstance(expr, PowerExprNode):
+        return rule_power(expr, dee)
     if isinstance(expr, FracExprNode):
         return rule_frac(expr, dee)
     if isinstance(expr, SinExprNode):

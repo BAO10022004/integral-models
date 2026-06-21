@@ -1,81 +1,112 @@
-import React from 'react';
-
-const C = {
-  bg: "#f8fafc",
-  card: "#ffffff",
-  border: "#e2e8f0",
-  text: "#1e293b",
-  blue: "#2563eb",
-  blueDim: "#eff6ff",
-  blueBorder: "#bfdbfe",
-  green: "#10b981",
-  greenDim: "#ecfdf5",
-  greenBorder: "#a7f3d0",
-};
+import React from "react";
 
 const SolutionStep = ({ step, index, total, isVisible }) => {
   const isLast = index === total - 1;
-  let title = null, body = step;
-  const colonIdx = step.indexOf(":");
-  if (colonIdx > 0 && colonIdx < 60) {
-    title = step.slice(0, colonIdx).trim();
-    body = step.slice(colonIdx + 1).trim();
-  }
+  const data = typeof step === "string" ? { description: step } : step;
+  
+  const kind = data.kind || data.explanation || "step";
+  const desc = data.description || data.action || "";
+  const formula = data.formula || data.expression;
+  const integral = data.integral || (data.formula ? undefined : data.expression); // If formula is missing, expression was the integral
+  const value = data.value;
+  const depth = data.depth || 0;
+
+  const accent = isLast ? "#059669" : (kind === "error" ? "#dc2626" : "#4f46e5");
+  const accentDim = isLast ? "rgba(16,185,129,0.15)" : (kind === "error" ? "rgba(239,68,68,0.15)" : "rgba(99,102,241,0.12)");
+  const accentBorder = isLast ? "rgba(16,185,129,0.3)" : (kind === "error" ? "rgba(239,68,68,0.3)" : "rgba(99,102,241,0.25)");
+  const trackColor = isLast ? "rgba(16,185,129,0.4)" : (kind === "error" ? "rgba(239,68,68,0.4)" : "rgba(99,102,241,0.3)");
 
   return (
     <div style={{
       opacity: isVisible ? 1 : 0,
-      transform: isVisible ? "translateY(0)" : "translateY(32px)",
-      transition: `opacity .55s ease ${index * 140}ms, transform .55s cubic-bezier(0.22,1,0.36,1) ${index * 140}ms`,
-      fontFamily: "Arial, Helvetica, sans-serif"
+      transform: isVisible ? "translateY(0)" : "translateY(24px)",
+      transition: `opacity .45s ease ${index * 120}ms, transform .45s cubic-bezier(0.22,1,0.36,1) ${index * 120}ms`,
+      fontFamily: "'Inter','Segoe UI',Arial,sans-serif",
     }}>
-      <div style={{ display: "flex", gap: 20, position: "relative" }}>
+      <div style={{ display: "flex", gap: 16, position: "relative" }}>
+        {/* Timeline column */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-          {/* Step Number Circle */}
+          {/* Step circle */}
           <div style={{
-            width: 36, height: 36, borderRadius: "50%",
-            background: isLast ? C.green : C.blue,
-            border: `2px solid ${isLast ? C.greenBorder : C.blueBorder}`,
-            color: "#ffffff",
-            fontSize: 14, fontWeight: 800,
+            width: 34, height: 34, borderRadius: "50%",
+            background: accentDim,
+            border: `1.5px solid ${accentBorder}`,
+            color: accent,
+            fontSize: 13, fontWeight: 800,
             display: "flex", alignItems: "center", justifyContent: "center",
             flexShrink: 0, zIndex: 1, position: "relative",
-            boxShadow: isLast ? `0 4px 12px rgba(16, 185, 129, 0.2)` : `0 4px 12px rgba(37, 99, 235, 0.15)`,
+            boxShadow: `0 0 16px ${accent}20`,
           }}>
-            {isLast ? "✓" : index + 1}
+            {kind === "error" ? "!" : (isLast ? "✓" : index + 1)}
           </div>
-          {/* Symmetrical Timeline Connector Track */}
+          {/* Connector */}
           {!isLast && (
             <div style={{
-              width: 3, flex: 1, minHeight: 36,
-              background: `linear-gradient(to bottom, ${C.blue}50, ${C.border} 100%)`,
-              marginTop: 4,
-              borderRadius: 99
+              width: 2, flex: 1, minHeight: 32,
+              background: `linear-gradient(to bottom, ${trackColor}, rgba(0,0,0,0.04))`,
+              marginTop: 4, borderRadius: 99,
             }} />
           )}
         </div>
 
-        <div style={{ flex: 1, paddingBottom: isLast ? 0 : 28 }}>
-          {title && (
+        {/* Content */}
+        <div style={{ flex: 1, paddingBottom: isLast ? 0 : 32 }}>
+          
+
+
+          {/* Đề (Sub-problem) if depth > 0 */}
+          {integral && depth > 0 && (
             <div style={{
-              fontSize: 11, fontWeight: 800, letterSpacing: ".1em",
-              color: isLast ? C.green : C.blue,
-              textTransform: "uppercase", marginBottom: 8,
-            }}>{title}</div>
+              fontSize: 15, color: "#475569", fontWeight: 600,
+              fontFamily: "'Cambria Math', 'Times New Roman', serif",
+              marginBottom: 12, marginTop: 4,
+              padding: "6px 12px", background: "rgba(0,0,0,0.03)",
+              borderRadius: 8, display: "inline-block",
+              border: "1px solid rgba(0,0,0,0.05)"
+            }}>
+              Sub-problem: {integral}
+            </div>
           )}
 
-          {/* Beautiful visual card with left border highlight */}
-          <div style={{
-            background: isLast ? C.greenDim : C.card,
-            border: `1px solid ${isLast ? C.greenBorder : C.border}`,
-            borderLeft: `4px solid ${isLast ? C.green : C.blue}`,
-            borderRadius: 14, padding: "18px 24px", position: "relative", overflow: "hidden",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.02)"
-          }}>
-            <div style={{ fontSize: 16, lineHeight: 1.8, color: C.text, fontWeight: 500 }}>
-              {body}
+          {/* Thông báo (Message/Description) */}
+          {desc && (
+            <div style={{
+              fontSize: 14, color: kind === "error" ? "#ef4444" : "#475569", 
+              fontWeight: 500, lineHeight: 1.6,
+              marginBottom: (formula || (value !== undefined && value !== null)) ? 12 : 0,
+              marginTop: (integral && depth > 0) ? 0 : 6,
+            }}>
+              <span style={{ 
+                color: accent, fontWeight: 700, marginRight: 8,
+                textTransform: "uppercase", fontSize: 11, letterSpacing: "1px",
+                background: accentDim, padding: "3px 8px", borderRadius: 6,
+                border: `1px solid ${accentBorder}`
+              }}>
+                {kind}
+              </span>
+              <span dangerouslySetInnerHTML={{ __html: desc.replace(/\n/g, "<br/>") }} />
             </div>
-          </div>
+          )}
+
+          {/* Kết quả (Result/Formula) */}
+          {(formula || (value !== undefined && value !== null)) && (
+            <div style={{
+              background: accentDim,
+              border: `1px solid ${accentBorder}`,
+              borderLeft: `3px solid ${accent}`,
+              borderRadius: 12, padding: "16px 20px",
+              boxShadow: `0 0 24px ${accent}08`,
+              backdropFilter: "blur(8px)",
+              fontSize: 17, lineHeight: 1.6,
+              color: isLast ? "#059669" : "#0f172a",
+              fontWeight: 600,
+              fontFamily: "'Cambria Math', 'Times New Roman', serif",
+              overflowX: "auto",
+              whiteSpace: "pre-wrap",
+            }}>
+              = {(value !== undefined && value !== null) ? value : formula}
+            </div>
+          )}
         </div>
       </div>
     </div>
