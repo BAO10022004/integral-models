@@ -69,6 +69,11 @@ class MulExprNode(ExprNode):
         if isinstance(left_simplified, ConstExprNode) and isinstance(right_simplified, ConstExprNode):
             message.append("Áp dụng quy tắc nhân hai hằng số")
             return message, integral, ConstExprNode(left=left_simplified.left * right_simplified.left)
+        if isinstance(left_simplified, ConstExprNode) and isinstance(right_simplified, MulExprNode):
+            if isinstance(right_simplified.left, ConstExprNode):
+                new_const = left_simplified.left * right_simplified.left.left
+                message.append("Áp dụng quy tắc kết hợp nhân hằng số")
+                return message, integral, MulExprNode(left=ConstExprNode(left=new_const), right=right_simplified.right, var=self.var)
         if isinstance(left_simplified, ConstExprNode) and left_simplified.left == 0:
             message.append("Áp dụng quy tắc nhân với 0")
             return message, integral, ConstExprNode(left=0)

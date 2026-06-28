@@ -1,4 +1,4 @@
-integrand,action
+ ,action
 \int_{0}^{1}\frac{2*x}{2*x}+{x}^{4}dx,1
 \int_{0}^{1}(x+1)*(x+2)+xdx,1
 \int_{0}^{1}2*xdx,1

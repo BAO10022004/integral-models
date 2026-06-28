@@ -5,49 +5,49 @@ import BeamGridBackground from "../lightswind/BeamGridBackground";
 const ERAS_APPLICATIONS = [
   {
     id: "1687",
-    title: "Celestial Mechanics & Astronomy",
-    subtitle: "Classical Era (1687 - 1800)",
+    title: "Cơ học thiên thể & Thiên văn học",
+    subtitle: "Kỷ nguyên cổ điển (1687 - 1800)",
     pioneer: "Sir Isaac Newton & Johannes Kepler",
-    impact: "Calculated planetary orbits around the Sun, determined celestial periods, and formulated the law of universal gravitation.",
+    impact: "Tính toán quỹ đạo của các hành tinh quanh Mặt Trời, xác định chu kỳ thiên thể và thiết lập định luật vạn vật hấp dẫn.",
     equation: "A = \\int_{t_0}^{t_1} \\frac{1}{2} r^2 \\frac{d\\theta}{dt} dt",
-    equationDesc: "Area swept integration of elliptical orbits over time (Kepler's Second Law).",
-    techBadge: "Newtonian Physics",
+    equationDesc: "Tích phân diện tích quét của quỹ đạo hình elip theo thời gian (Định luật Kepler thứ hai).",
+    techBadge: "Vật lý Newton",
     simulationType: "orbit",
-    description: "With the invention of integration, Newton proved that the inverse-square law of gravity mathematically leads to elliptical orbits. Swept-area integration allowed perfect prediction of planetary positions at any future point in time."
+    description: "Với sự ra đời của phép tích phân, Newton đã chứng minh rằng định luật vạn vật hấp dẫn dạng nghịch đảo bình phương dẫn đến quỹ đạo hình elip một cách toán học. Việc tích phân diện tích quét cho phép dự đoán hoàn hảo vị trí hành tinh tại bất kỳ thời điểm nào trong tương lai."
   },
   {
     id: "1865",
-    title: "Electrodynamics & Alternating Current",
-    subtitle: "Industrial Era (1865 - 1950)",
+    title: "Điện động lực học & Dòng điện xoay chiều",
+    subtitle: "Kỷ nguyên công nghiệp (1865 - 1950)",
     pioneer: "James Clerk Maxwell & Nikola Tesla",
-    impact: "Invented alternating current (AC) grids, designed induction electric motors, and transmitted wireless electromagnetic waves.",
+    impact: "Phát minh mạng lưới dòng điện xoay chiều (AC), thiết kế động cơ điện cảm ứng và truyền tải sóng điện từ không dây.",
     equation: "\\Phi_B = \\iint_S \\mathbf{B} \\cdot d\\mathbf{a}",
-    equationDesc: "Surface integration of magnetic flux generating induced electromotive force (Faraday-Maxwell Induction Law).",
-    techBadge: "Maxwell Equations",
+    equationDesc: "Tích phân mặt của từ thông tạo ra lực điện động cảm ứng (Định luật cảm ứng Faraday-Maxwell).",
+    techBadge: "Phương trình Maxwell",
     simulationType: "electromagnetic",
-    description: "Integrating magnetic field density over a surface area (magnetic flux) allowed Faraday and Maxwell to formulate electromagnetic induction. This became the core engineering principle Tesla used to build AC power generators, lighting up the globe."
+    description: "Tích phân mật độ từ trường trên một diện tích bề mặt (từ thông) cho phép Faraday và Maxwell thiết lập định luật cảm ứng điện từ. Đây trở thành nguyên lý kỹ thuật cốt lõi mà Tesla sử dụng để chế tạo máy phát điện xoay chiều, thắp sáng toàn cầu."
   },
   {
     id: "1969",
-    title: "Aerospace & Rocket Guidance Control",
-    subtitle: "Space Age (1969 - 2000)",
-    pioneer: "NASA Apollo Software Team & Rudolf E. Kálmán",
-    impact: "Guided humans to land on the Moon (Apollo 11), steered real-time cruise missiles, and powered GPS satellite tracking.",
+    title: "Hàng không vũ trụ & Điều khiển dẫn đường tên lửa",
+    subtitle: "Thời đại vũ trụ (1969 - 2000)",
+    pioneer: "Đội ngũ phần mềm Apollo của NASA & Rudolf E. Kálmán",
+    impact: "Dẫn đường đưa con người đáp xuống Mặt Trăng (Apollo 11), điều khiển tên lửa hành trình thời gian thực và định vị vệ tinh GPS.",
     equation: "\\mathbf{v}(t) = \\mathbf{v}_0 + \\int_{0}^{t} \\left( \\frac{\\mathbf{F}_{thrust}(\\tau) - \\mathbf{F}_{drag}(\\tau)}{m(\\tau)} + \\mathbf{g}(\\tau) \\right) d\\tau",
-    equationDesc: "Vector integration of variable thrust and drag to calculate spacecraft velocity and flight trajectory.",
-    techBadge: "Space Guidance",
+    equationDesc: "Tích phân vectơ của lực đẩy và lực cản biến thiên để tính toán vận tốc tàu vũ trụ và quỹ đạo bay.",
+    techBadge: "Dẫn đường vũ trụ",
     simulationType: "rocket",
-    description: "To guide Apollo astronauts safely to the lunar surface, the Apollo Guidance Computer (AGC) continuously integrated accelerometer readings from the IMU. Real-time double integration converted variable acceleration to velocity and pinpoint spatial coordinates."
+    description: "Để đưa các phi hành gia Apollo hạ cánh an toàn xuống bề mặt Mặt Trăng, Máy tính Dẫn đường Apollo (AGC) liên tục thực hiện tích phân các số đọc gia tốc từ thiết bị IMU. Tích phân hai lớp thời gian thực chuyển đổi gia tốc biến thiên thành vận tốc và tọa độ không gian chính xác."
   },
   {
     id: "2026",
-    title: "Artificial Intelligence & Quantum Physics",
-    subtitle: "AI & Quantum Frontier (2000 - 2026+)",
-    pioneer: "Deep Learning Pioneers & Erwin Schrödinger",
-    impact: "Trained deep neural networks to solve complex analytical calculus, simulated quantum mechanics, and optimized autonomous robotic trajectories.",
+    title: "Trí tuệ nhân tạo & Vật lý lượng tử",
+    subtitle: "Ranh giới AI & Lượng tử (2000 - 2026+)",
+    pioneer: "Các nhà tiên phong về Học sâu & Erwin Schrödinger",
+    impact: "Huấn luyện mạng nơ-ron sâu để giải các hệ tích phân giải tích phức tạp, mô phỏng cơ học lượng tử và tối ưu hóa quỹ đạo robot tự hành.",
     equation: "P(a \\le x \\le b) = \\int_{a}^{b} |\\Psi(x, t)|^2 dx",
-    equationDesc: "Probability density integration of the Schrödinger wave function to calculate quantum particle location.",
-    techBadge: "Quantum & Neural AI",
+    equationDesc: "Tích phân mật độ xác suất của hàm sóng Schrödinger để tính toán vị trí hạt lượng tử.",
+    techBadge: "Trí tuệ lượng tử & Nơ-ron",
     simulationType: "quantum",
     description: "In quantum physics, integrating the squared amplitude of the wave function is the only way to calculate particle presence probability. Today, Deep Learning AI models utilize multi-dimensional integration optimizations (gradient descent backpropagation) to solve complex symbolic systems in microseconds."
   }
@@ -122,13 +122,14 @@ export default function HistoryApplicationsSection() {
         asBackground={true}
         showFade={true}
         fadeIntensity={15}
+        fadeColor="#000000"
       />
 
       <div className="apps-wrapper">
 
         {/* Header */}
         <div className="apps-header">
-          <h2 className="apps-title">How Integration Shaped the Modern World</h2>
+          <h2 className="apps-title">Cách Tích Phân Định Hình Thế Giới Hiện Đại</h2>
         </div>
 
         {/* Body: Info card (left) + Simulator background + Timeline rail (right) */}
@@ -146,17 +147,17 @@ export default function HistoryApplicationsSection() {
               <h3 className="era-title-text">{activeEra.title}</h3>
 
               <div className="info-row">
-                <span className="row-label">Pioneers:</span>
+                <span className="row-label">Nhà tiên phong:</span>
                 <span className="row-val highlight-pioneer">{activeEra.pioneer}</span>
               </div>
 
               <div className="info-row">
-                <span className="row-label">Impact:</span>
+                <span className="row-label">Tác động:</span>
                 <span className="row-val era-impact-short">{activeEra.impact}</span>
               </div>
 
               <div className="formula-glass-board">
-                <div className="formula-board-header">CORE EQUATION</div>
+                <div className="formula-board-header">PHƯƠNG TRÌNH CỐT LÕI</div>
                 <div className="formula-latex">
                   <span className="latex-expression">
                     {activeEra.id === "1687" && "A = ∫ [t₀ → t₁] ½ r² (dθ/dt) dt"}
@@ -172,11 +173,11 @@ export default function HistoryApplicationsSection() {
                   className={`sim-play-btn ${isPlaying ? "playing" : ""}`}
                   onClick={() => setIsPlaying(!isPlaying)}
                 >
-                  {isPlaying ? "Pause Simulation ⏸" : "Resume Simulation ▶"}
+                  {isPlaying ? "Tạm dừng mô phỏng ⏸" : "Tiếp tục mô phỏng ▶"}
                 </button>
                 {activeEra.id === "1969" && (
                   <button className="sim-action-btn rocket-ignite" onClick={handleIgniteThrust}>
-                    Ignite 🚀
+                    Phóng kích đẩy 🚀
                   </button>
                 )}
               </div>
@@ -185,7 +186,7 @@ export default function HistoryApplicationsSection() {
                 className="era-detail-btn"
                 onClick={() => setDetailModal(activeEra)}
               >
-                <span>View Full Details</span>
+                <span>Xem chi tiết đầy đủ</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
@@ -216,9 +217,9 @@ export default function HistoryApplicationsSection() {
                     <text x={planetX - 10} y={planetY - 15} className="orbit-text planet-label">EARTH (PLANET)</text>
                     <line x1={-focusX} y1="0" x2={planetX} y2={planetY} className="orbit-radius-line" />
                     <g transform="translate(-180, 95)" className="sim-meta-text">
-                      <text x="0" y="0">Orbit: Ellipse (e = {e.toFixed(3)})</text>
-                      <text x="0" y="12">Sweep Angle: {orbitAngle.toFixed(1)}°</text>
-                      <text x="0" y="24">Area Integration dA/dt = Constant (Kepler II)</text>
+                      <text x="0" y="0">Quỹ đạo: Elip (e = {e.toFixed(3)})</text>
+                      <text x="0" y="12">Góc quét: {orbitAngle.toFixed(1)}°</text>
+                      <text x="0" y="24">Tích phân diện tích dA/dt = Hằng số (Kepler II)</text>
                     </g>
                   </svg>
                 </div>
@@ -233,14 +234,14 @@ export default function HistoryApplicationsSection() {
                     <g transform="translate(100, 205)" className="osc-coil-graphics">
                       <rect x="0" y="0" width="200" height="20" rx="5" className="coil-iron-core" />
                       {Array.from({ length: 8 }).map((_, i) => (<path key={i} d={`M ${15 + i * 24} -5 C ${15 + i * 24} 25, ${25 + i * 24} 25, ${25 + i * 24} -5`} className="coil-copper-turns" />))}
-                      <text x="100" y="32" className="osc-text coil-label" textAnchor="middle">induction coil (AC motor stator)</text>
+                      <text x="100" y="32" className="osc-text coil-label" textAnchor="middle">cuộn cảm ứng (stator động cơ AC)</text>
                     </g>
                     <g transform="translate(25, 30)" className="sim-meta-text">
                       <rect x="-5" y="-5" width="230" height="40" rx="4" className="legend-bg" />
                       <line x1="0" y1="10" x2="30" y2="10" className="osc-legend-sine" />
-                      <text x="35" y="14">Magnetic Flux B(t) [Sin]</text>
+                      <text x="35" y="14">Từ thông B(t) [Sin]</text>
                       <line x1="0" y1="24" x2="30" y2="24" className="osc-legend-cosine" />
-                      <text x="35" y="28">Induced Current I(t) = ∫ B dA [Cos]</text>
+                      <text x="35" y="28">Dòng điện cảm ứng I(t) = ∫ B dA [Cos]</text>
                     </g>
                   </svg>
                 </div>
@@ -251,7 +252,7 @@ export default function HistoryApplicationsSection() {
                   <svg className="sim-svg" viewBox="0 0 400 240">
                     <path d="M 0 210 Q 100 190 200 215 T 400 205 L 400 240 L 0 240 Z" className="moon-ground" />
                     <rect x="160" y="200" width="80" height="6" className="landing-pad" />
-                    <text x="200" y="222" className="osc-text lander-pad-text" textAnchor="middle">target pad (tranquility base)</text>
+                    <text x="200" y="222" className="osc-text lander-pad-text" textAnchor="middle">điểm đáp mục tiêu (căn cứ Tĩnh Lặng)</text>
                     <line x1="200" y1="20" x2="200" y2="200" className="rocket-projection-line" />
                     <line x1="120" y1={rocketY + 20} x2="200" y2={rocketY + 20} className="rocket-altitude-indicator" />
                     <g transform={`translate(200, ${rocketY})`}>
@@ -264,11 +265,11 @@ export default function HistoryApplicationsSection() {
                       <circle cx="25" cy="24" r="4" className="apollo-footpad" />
                     </g>
                     <g transform="translate(18, 30)" className="sim-telemetry-text">
-                      <text x="0" y="0">APOLLO DSKY MONITOR (AGC)</text>
-                      <text x="0" y="16">ALTITUDE: {((200 - rocketY) * 23.4).toFixed(1)} METERS</text>
-                      <text x="0" y="28">VERTICAL VEL: {(-(rocketTargetY - rocketY) * 6.2).toFixed(2)} M/S</text>
-                      <text x="0" y="40">INTEGRAL ACCEL: v(t) = ∫ a(t) dt</text>
-                      <text x="0" y="52" className="telemetry-status">STATUS: STEADY DESCENT PROFILE</text>
+                      <text x="0" y="0">MÀN HÌNH THEO DÕI APOLLO DSKY (AGC)</text>
+                      <text x="0" y="16">ĐỘ CAO: {((200 - rocketY) * 23.4).toFixed(1)} MÉT</text>
+                      <text x="0" y="28">VẬN TỐC THẲNG ĐỨNG: {(-(rocketTargetY - rocketY) * 6.2).toFixed(2)} M/S</text>
+                      <text x="0" y="40">TÍCH PHÂN GIA TỐC: v(t) = ∫ a(t) dt</text>
+                      <text x="0" y="52" className="telemetry-status">TRẠNG THÁI: HẠ CÁNH ỔN ĐỊNH</text>
                     </g>
                   </svg>
                 </div>
@@ -292,10 +293,10 @@ export default function HistoryApplicationsSection() {
                       <path d="M 120 150 L 160 70 M 160 70 L 200 120 M 200 120 L 240 170 M 240 170 L 280 90" className="neural-connection-lines" />
                     </g>
                     <g transform="translate(18, 30)" className="sim-meta-text">
-                      <text x="0" y="0" className="quantum-text-title">QUANTUM PROBABILITY INTEGRATOR</text>
-                      <text x="0" y="14">Model: Gaussian Schrodinger Wavefunction Integration</text>
-                      <text x="0" y="26">Probability of finding particle in [a, b]: P = 0.8427</text>
-                      <text x="0" y="38" className="neural-compute-tag">AI DEEP GRADIENT INFERENCE: COMPLETE (12ms)</text>
+                      <text x="0" y="0" className="quantum-text-title">BỘ TÍCH PHÂN XÁC SUẤT LƯỢNG TỬ</text>
+                      <text x="0" y="14">Mô hình: Tích phân hàm sóng Schrödinger Gaussian</text>
+                      <text x="0" y="26">Xác suất tìm thấy hạt trong khoảng [a, b]: P = 0.8427</text>
+                      <text x="0" y="38" className="neural-compute-tag">SUY LUẬN GIẢM ĐỘ DỐC AI SÂU: HOÀN THÀNH (12ms)</text>
                     </g>
                   </svg>
                 </div>
@@ -352,13 +353,13 @@ export default function HistoryApplicationsSection() {
 
             {/* Pioneers row */}
             <div className="era-modal-row">
-              <span className="era-modal-label">Pioneers</span>
+              <span className="era-modal-label">Nhà tiên phong</span>
               <span className="era-modal-val highlight-pioneer">{detailModal.pioneer}</span>
             </div>
 
             {/* Formula */}
             <div className="formula-glass-board era-modal-formula">
-              <div className="formula-board-header">CORE EQUATION</div>
+              <div className="formula-board-header">PHƯƠNG TRÌNH CỐT LÕI</div>
               <div className="formula-latex">
                 <span className="latex-expression" style={{ fontSize: "clamp(1rem,1.6vw,1.35rem)" }}>
                   {detailModal.id === "1687" && "A = ∫ [t₀ → t₁] ½ r² (dθ/dt) dt"}
@@ -372,7 +373,7 @@ export default function HistoryApplicationsSection() {
 
             {/* Impact */}
             <div className="era-modal-row">
-              <span className="era-modal-label">Real-World Impact</span>
+              <span className="era-modal-label">Tác động thực tế</span>
               <span className="era-modal-val">{detailModal.impact}</span>
             </div>
 

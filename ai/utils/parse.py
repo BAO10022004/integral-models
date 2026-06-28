@@ -54,6 +54,12 @@ class Parse :
     @staticmethod
     def parse_latex(latex: str, dee: str):
         latex = latex.strip()
+        latex = re.sub(r'\\?(sin|cos|tan|cot)\^[\{((]?(\d+)[\})]?([{(].+?[})])', r'(\1\3)^\2', latex)
+        # Thêm dấu nhân cho nhân ẩn: )cos(x) -> )*cos(x)
+        latex = re.sub(r'([)}])(\\?(sin|cos|tan|cot|ln|sqrt|exp|frac|[a-zA-Z0-9(]))', r'\1*\2', latex)
+        # Thêm dấu nhân giữa biến đơn và hàm: x sin(x) -> x*sin(x)
+        latex = re.sub(r'\b([a-zA-Z])\s*(\\?(sin|cos|tan|cot|ln|sqrt|exp|frac))', r'\1*\2', latex)
+        # Thêm dấu nhân giữa số và chữ/ngoặc
         latex = re.sub(r'(\d+)([a-zA-Z\\(])', r'\1*\2', latex)
         latex = Parse.strip_outer_brackets(latex)
         var = dee[1:]
@@ -215,8 +221,8 @@ class Parse :
             return None
         base_str, exp_str = power
         # Strip outer braces from base and exp
-        base_str = base_str.strip().strip('{}')
-        exp_str = exp_str.strip().strip('{}')
+        base_str = Parse.strip_outer_brackets(base_str.strip())
+        exp_str = Parse.strip_outer_brackets(exp_str.strip())
         
         base = Parse.parse_latex(base_str, dee)
         exp = Parse.parse_latex(exp_str, dee)
@@ -248,7 +254,7 @@ class Parse :
         )
     @staticmethod
     def parse_ln(latex, dee, var):
-        """Parse \ln{...}, \ln(...), ln{...}, ln(...) → LogExprNode."""
+        r"""Parse \ln{...}, \ln(...), ln{...}, ln(...) → LogExprNode."""
         ln_match = re.fullmatch(r'\\?ln[{(](.+)[})]', latex)
         if not ln_match:
             return None

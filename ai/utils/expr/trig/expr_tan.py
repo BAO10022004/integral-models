@@ -22,7 +22,7 @@ class TanExprNode(ExprNode):
     def simplify(self,message = [], integral = []):
         if self.left is None:
             return message, integral, self
-        left_simplified = self.left.simplify()
+        message, integral, left_simplified = self.left.simplify(message, integral)
         return message, integral, TanExprNode(left=left_simplified, var=self.var)
     def has_function(self, func_name):
         l = False

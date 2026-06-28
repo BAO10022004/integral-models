@@ -20,10 +20,10 @@
   scroll-behavior: smooth;
 }
 
-/* Individual section maintaining perfect 1920x1080 (16:9) aspect ratio */
+/* Individual section occupying full viewport height */
 .history-snap-section {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100vh;
   scroll-snap-align: start;
   position: relative;
   display: flex;
@@ -358,6 +358,7 @@
   z-index: 10;
   box-sizing: border-box;
   scroll-snap-align: none !important;
+  margin-top: 0 !important;
 }
 
 /* Footer không dùng hệ thống in-view → luôn hiển thị rõ */
@@ -381,7 +382,7 @@
 .hof-split-container {
   opacity: 0;
   transform: translateY(40px);
-  transition: opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1), transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
 }
 

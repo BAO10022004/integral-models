@@ -21,8 +21,8 @@ export default function HistoryPage({ onNavigate }) {
   const [config, setConfig] = useState({
     heroImgUrl: "",
     showcaseImgUrl: "",
-    headline: "The Journey of AI Innovation",
-    introText: "The intelligent calculus solver system was born from a desire to bridge the gap between complex mathematical theories and real-world digital applications.\n\nThrough numerous cycles of research and algorithmic optimization, we developed a state-of-the-art action classification model powered by Deep Learning. Today, any integral problem—from fundamental concepts to highly complex derivations—is processed in the blink of an eye with absolute precision."
+    headline: "Hành Trình Đổi Mới Của Trí Tuệ Nhân Tạo",
+    introText: "Hệ thống giải tích phân thông minh ra đời từ khát vọng rút ngắn khoảng cách giữa các học thuyết toán học phức tạp và ứng dụng thực tế trong thời đại số.\n\nTrải qua vô số chu trình nghiên cứu và tối ưu hóa thuật toán chuyên sâu, chúng tôi đã phát triển thành công mô hình học máy phân loại hành động tiên tiến được vận hành bởi Học Sâu. Ngày nay, mọi bài toán tích phân—từ những khái niệm cơ bản nhất cho đến các hệ thức suy dẫn cực kỳ phức tạp—đều được phân tích và giải quyết chỉ trong nháy mắt với độ chính xác tuyệt đối."
   });
 
   const timelineRef = useRef(null);
@@ -199,10 +199,10 @@ export default function HistoryPage({ onNavigate }) {
           onMouseEnter={e => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
           onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,0.6)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)"; e.currentTarget.style.background = "rgba(255,255,255,0.01)"; }}
         >
-          ← Go Back
+          ← Quay lại
         </button>
         <span style={{ fontSize: 11, letterSpacing: "0.2em", fontWeight: 800, color: "rgba(255,255,255,0.4)" }}>
-          SYSTEM EVOLUTION
+          LỊCH SỬ PHÁT TRIỂN HỆ THỐNG
         </span>
       </div>
 
@@ -240,11 +240,11 @@ export default function HistoryPage({ onNavigate }) {
       {/* ================= SECTION 4: INTEGRAL APPLICATIONS SHOWCASE ================= */}
       <HistoryApplicationsSection />
 
-      {/* ================= SECTION 5: HALL OF FAME ================= */}
-      <HistoryHallOfFameSection />
-
-      {/* ================= HISTORY FOOTER ================= */}
-      <Footer onNavigate={onNavigate} />
+      {/* ================= SECTION 5: HALL OF FAME & FOOTER WRAPPER ================= */}
+      <div className="history-hof-footer-wrap">
+        <HistoryHallOfFameSection />
+        <Footer onNavigate={onNavigate} />
+      </div>
     </div>
   );
 }

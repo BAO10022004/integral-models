@@ -14,7 +14,6 @@ import 'lenis/dist/lenis.css';
 import { motion } from "framer-motion";
 import BeamCircle from "@/components/ui/beam-circle";
 import { Button } from "@/components/ui/button";
-import AnimatedBubbleParticles from "@/components/lightswind/animated-bubble-particles";
 import AuroraShader from "@/components/lightswind/aurora-shader";
 import GoBackButton from "@/components/common/GoBackButton";
 
@@ -288,11 +287,9 @@ export default function ModelTester({ user, onNavigate }) {
         </section>
       </div>
 
-      <AnimatedBubbleParticles
+      <div
         className="sticky top-0 z-10 bg-[#f8fafc] w-full min-h-screen rounded-t-[40px] shadow-[0_-30px_60px_rgba(0,0,0,0.6)] border-t border-white/10"
-        height="auto"
-        particleColor="rgba(6, 182, 212, 0.4)" // cyan color to match the theme
-        spawnInterval={300}
+        style={{ height: "auto" }}
       >
         <section id="model" style={{ position: "relative", maxWidth: 1400, margin: "0 auto", padding: "64px 24px 100px" }}>
 
@@ -405,7 +402,7 @@ export default function ModelTester({ user, onNavigate }) {
             </div>
           </div>
         </section>
-      </AnimatedBubbleParticles>
+      </div>
 
       {/* History Session (3rd Layer) */}
       <div className="relative z-20 bg-[#0f172a] w-full min-h-screen rounded-t-[40px] shadow-[0_-30px_60px_rgba(0,0,0,0.6)] border-t border-white/10 flex flex-col overflow-hidden">

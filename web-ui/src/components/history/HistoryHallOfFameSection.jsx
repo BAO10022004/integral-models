@@ -4,57 +4,57 @@ import "../../styles/HistoryHallOfFameSection.css";
 const GIANTS_DATA = [
   {
     id: "archimedes",
-    name: "Archimedes of Syracuse",
-    period: "c. 287 BC – c. 212 BC",
-    title: "PIONEER OF INFINITESIMALS",
-    bio: "The legendary Greek polymath who laid the foundation for modern calculus over two millennia ago. Using the 'Method of Exhaustion'—inscribing and circumscribing regular polygons with increasing sides—he computed the area of circles, parabolas, and calculated a highly accurate approximation of Pi. He was the first to implement the core philosophy of integral limits to solve geometric volume problems.",
-    achievement: "Created the Method of Exhaustion, precursor to the Riemann Sum, to compute parabolic areas and spherical volumes.",
-    discoveryTitle: "Method of Exhaustion",
-    quote: "There are things which seem incredible to most men who have not studied Mathematics.",
+    name: "Archimedes thành Syracuse",
+    period: "Khoảng 287 TCN – Khoảng 212 TCN",
+    title: "TIÊN PHONG VỀ VÔ CÙNG BÉ",
+    bio: "Nhà đa bác người Hy Lạp huyền thoại, người đã đặt nền móng cho phép tính vi tích phân hiện đại từ hơn hai thiên niên kỷ trước. Bằng 'Phương pháp kiệt quệ'—nội tiếp và ngoại tiếp các đa giác đều với số cạnh tăng dần—ông đã tính được diện tích hình tròn, parabol và tính toán xấp xỉ số Pi với độ chính xác cao. Ông là người đầu tiên áp dụng triết lý cốt lõi của giới hạn tích phân để giải quyết các bài toán thể tích hình học.",
+    achievement: "Sáng tạo ra Phương pháp kiệt quệ, tiền thân của Tổng Riemann, để tính diện tích parabol và thể tích hình cầu.",
+    discoveryTitle: "Phương pháp kiệt quệ",
+    quote: "Có những điều dường như không thể tin được đối với hầu hết những người chưa từng nghiên cứu Toán học.",
     avatar: "📐"
   },
   {
     id: "newton",
     name: "Sir Isaac Newton",
     period: "1642 – 1727",
-    title: "CO-INVENTOR OF CALCULUS",
-    bio: "The English scientific titan who synthesized the 'Method of Fluxions' (differential calculus) and inverse fluxions (integral calculus). By linking rates of change with accumulated areas, Newton discovered the Fundamental Theorem of Calculus. He applied this math to define classical mechanics and celestial gravity, proving that nature's laws are written in the language of calculus.",
-    achievement: "Synthesized the Fundamental Theorem of Calculus, uniting integration and differentiation as inverse operations.",
-    discoveryTitle: "Method of Fluxions",
-    quote: "If I have seen further it is by standing on the shoulders of Giants.",
+    title: "ĐỒNG SÁNG LẬP GIẢI TÍCH",
+    bio: "Nhà khoa học vĩ đại người Anh, người đã tổng hợp 'Phương pháp Fluxions' (phép tính vi phân) và ngược lại (phép tích phân). Bằng cách liên kết tốc độ thay đổi với diện tích tích lũy, Newton đã phát hiện ra Định lý cơ bản của Giải tích. Ông áp dụng toán học này để định nghĩa cơ học cổ điển và lực hấp dẫn thiên thể, chứng minh rằng các định luật của tự nhiên được viết bằng ngôn ngữ của phép tính vi tích phân.",
+    achievement: "Tổng hợp Định lý cơ bản của Giải tích, thống nhất tích phân và vi phân thành hai phép toán nghịch đảo.",
+    discoveryTitle: "Phương pháp Fluxions",
+    quote: "Nếu tôi nhìn được xa hơn, đó là nhờ đứng trên vai những người khổng lồ.",
     avatar: "🍎"
   },
   {
     id: "leibniz",
     name: "Gottfried Wilhelm Leibniz",
     period: "1646 – 1716",
-    title: "MASTER OF MATHEMATICAL NOTATION",
-    bio: "The brilliant German philosopher and mathematician who independently co-invented calculus. Leibniz recognized the immense power of notation, introducing the elongated 'S' (\u222B for 'summa') as the integral sign and 'd' for differentials. His elegant dx/dy notation, product rule, and systemic integration rules formed the universal standard utilized by all scientists today.",
-    achievement: "Developed modern integral (\u222B) and differential (dx) notation, and formulated the product & chain rules.",
-    discoveryTitle: "Leibniz Integral Calculus",
-    quote: "It is unworthy of excellent men to lose hours like slaves in the labor of calculation.",
+    title: "BẬC THẦY KÝ HIỆU TOÁN HỌC",
+    bio: "Nhà triết học và toán học thiên tài người Đức, người đã độc lập đồng sáng lập ra phép tính giải tích. Leibniz nhận ra sức mạnh to lớn của ký hiệu, đưa vào sử dụng chữ 'S' kéo dài (kí hiệu ∫ từ chữ 'summa') làm dấu tích phân và chữ 'd' cho vi phân. Ký hiệu dx/dy thanh nhã của ông, quy tắc tích và quy tắc chuỗi đã tạo nên tiêu chuẩn chung được tất cả các nhà khoa học sử dụng ngày nay.",
+    achievement: "Phát triển ký hiệu tích phân (∫) và vi phân (dx) hiện đại, đồng thời thiết lập quy tắc nhân & quy tắc chuỗi.",
+    discoveryTitle: "Phép tích phân Leibniz",
+    quote: "Thật không xứng đáng khi những người xuất chúng phải lãng phí hàng giờ như nô lệ cho công việc tính toán cơ học.",
     avatar: "✍️"
   },
   {
     id: "riemann",
     name: "Bernhard Riemann",
     period: "1826 – 1866",
-    title: "FOUNDER OF RIGOROUS INTEGRATION",
-    bio: "The revolutionary German mathematician who provided the first rigorous definition of the integral of a function on an interval. By introducing the 'Riemann Sum'—dividing areas into rectangular partitions and taking the limit as width approaches zero—he established calculus on absolute mathematical rigor. His geometric breakthroughs later enabled Einstein's General Relativity.",
-    achievement: "Defined the Riemann Integral rigorously using finite rectangular partitions (Riemann Sums).",
-    discoveryTitle: "Riemann Partitioning Sums",
-    quote: "If only I had the theorems! Then I should find the proofs easily enough.",
+    title: "NGƯỜI SÁNG LẬP TÍCH PHÂN CHẶT CHẼ",
+    bio: "Nhà toán học mang tính cách mạng người Đức, người đã đưa ra định nghĩa chặt chẽ đầu tiên về tích phân của một hàm số trên một khoảng. Bằng cách giới thiệu 'Tổng Riemann'—chia nhỏ các diện tích thành các phần hình chữ nhật và lấy giới hạn khi chiều rộng tiến về không—ông đã thiết lập phép tính giải tích trên sự chặt chẽ toán học tuyệt đối. Những đột phá hình học của ông sau đó đã giúp Einstein xây dựng thuyết Tương đối tổng quát.",
+    achievement: "Định nghĩa Tích phân Riemann một cách chặt chẽ bằng cách sử dụng các phân hoạch hình chữ nhật hữu hạn (Tổng Riemann).",
+    discoveryTitle: "Tổng phân hoạch Riemann",
+    quote: "Giá như tôi có được các định lý! Khi đó tôi sẽ tìm ra các chứng minh đủ dễ dàng.",
     avatar: "📊"
   },
   {
     id: "lebesgue",
     name: "Henri Lebesgue",
     period: "1875 – 1941",
-    title: "PIONEER OF MODERN MEASURE THEORY",
-    bio: "The visionary French mathematician who revolutionized integration at the dawn of the 20th century. Pointing out the limitations of Riemann's approach on highly discontinuous functions, he introduced Measure Theory and the 'Lebesgue Integral'. By partitioning the range (y-axis) instead of the domain (x-axis), Lebesgue built an incredibly powerful integration theory that supports modern probability and advanced analysis.",
-    achievement: "Formulated the Lebesgue Integral based on Measure Theory, allowing integration of chaotic/fractal functions.",
-    discoveryTitle: "Lebesgue Range Partitioning",
-    quote: "In my opinion, a mathematical theory can only be considered complete if it has been made accessible to all.",
+    title: "TIÊN PHONG THUYẾT ĐO HIỆN ĐẠI",
+    bio: "Nhà toán học người Pháp có tầm nhìn xa trông rộng, người đã cách mạng hóa phép tích phân vào đầu thế kỷ 20. Chỉ ra những hạn chế của phương pháp Riemann đối với các hàm số gián đoạn mạnh, ông đã đưa vào Thuyết Đo và 'Tích phân Lebesgue'. Bằng cách phân hoạch dải giá trị (trục y) thay vì tập xác định (trục x), Lebesgue đã xây dựng một lý thuyết tích phân vô cùng mạnh mẽ làm cơ sở cho xác suất hiện đại và giải tích nâng cao.",
+    achievement: "Thiết lập Tích phân Lebesgue dựa trên Thuyết Đo, cho phép tích phân các hàm số hỗn loạn/fractal.",
+    discoveryTitle: "Phân hoạch dải Lebesgue",
+    quote: "Theo tôi, một lý thuyết toán học chỉ có thể được coi là hoàn thiện nếu nó được phổ biến đến tất cả mọi người.",
     avatar: "🧬"
   }
 ];
@@ -97,7 +97,7 @@ export default function HistoryHallOfFameSection() {
               return <circle key={idx} cx={x} cy={y} r="2.5" className="hof-dot" />;
             })}
             <text x="0" y="90" className="hof-svg-text" textAnchor="middle">
-              Polygons: {numSides} sides (\u03C0 \u2248 {(numSides * Math.sin(Math.PI / numSides)).toFixed(5)})
+              Đa giác: {numSides} cạnh (\u03C0 \u2248 {(numSides * Math.sin(Math.PI / numSides)).toFixed(5)})
             </text>
           </svg>
         );
@@ -129,7 +129,7 @@ export default function HistoryHallOfFameSection() {
             <circle cx={x1} cy={y1} r="4" className="hof-dot-static" />
             <circle cx={x2} cy={y2} r="4" className="hof-dot-moving" />
             <text x="0" y="90" className="hof-svg-text" textAnchor="middle">
-              {t > 0.9 ? "Limit reached: Tangent dy/dx" : "Secant interval \u0394x \u2192 0"}
+              {t > 0.9 ? "Đạt giới hạn: Tiếp tuyến dy/dx" : "Khoảng cát tuyến \u0394x \u2192 0"}
             </text>
           </svg>
         );
@@ -162,7 +162,7 @@ export default function HistoryHallOfFameSection() {
             <line x1={currentX} y1="60" x2={currentX} y2={30 * Math.sin(currentX / 20) - 10} className="hof-dx-slice" />
             <text x={currentX} y="-45" className="hof-leibniz-symbol" textAnchor="middle">\u222B</text>
             <text x="0" y="90" className="hof-svg-text" textAnchor="middle">
-              \u222B f(x) dx accumulated: {(t * 100).toFixed(0)}%
+              Tích lũy \u222B f(x) dx: {(t * 100).toFixed(0)}%
             </text>
           </svg>
         );
@@ -206,7 +206,7 @@ export default function HistoryHallOfFameSection() {
             {rects}
             <polyline points={curvePath} className="hof-curve-line" />
             <text x="0" y="90" className="hof-svg-text" textAnchor="middle">
-              Rectangles (n): {rectCount} (Error \u2192 0)
+              Số hình chữ nhật (n): {rectCount} (Sai số \u2192 0)
             </text>
           </svg>
         );
@@ -249,7 +249,7 @@ export default function HistoryHallOfFameSection() {
             {lines}
             <polyline points={curvePath} className="hof-curve-line" />
             <text x="0" y="90" className="hof-svg-text" textAnchor="middle">
-              Lebesgue Slices: {numLevels} (\u03BC Measure Partition)
+              Phân hoạch Lebesgue: {numLevels} (Phân hoạch Độ đo \u03BC)
             </text>
           </svg>
         );
@@ -264,10 +264,10 @@ export default function HistoryHallOfFameSection() {
       <div className="hof-wrapper">
         {/* Header Title */}
         <div className="hof-header">
-          <span className="hof-badge">HALL OF FAME</span>
-          <h2 className="hof-title">The Giants of Calculus</h2>
+          <span className="hof-badge">NHỮNG VĨ NHÂN TOÁN HỌC</span>
+          <h2 className="hof-title">Các Bậc Vĩ Nhân Của Giải Tích</h2>
           <p className="hof-subtitle">
-            Exploring the visionary minds who unlocked the infinite mysteries of integration.
+            Khám phá những trí tuệ kiệt xuất đã mở khóa những bí ẩn vô tận của phép tích phân.
           </p>
         </div>
 
@@ -306,7 +306,7 @@ export default function HistoryHallOfFameSection() {
                 <span className="profile-period">{selectedGiant.period}</span>
                 <p className="profile-bio">{selectedGiant.bio}</p>
                 <div className="profile-achievement">
-                  <strong>Discovery:</strong> {selectedGiant.achievement}
+                  <strong>Khám phá:</strong> {selectedGiant.achievement}
                 </div>
               </div>
 
@@ -314,7 +314,7 @@ export default function HistoryHallOfFameSection() {
               <div className="display-visual-section">
                 <div className="visual-graphic-screen">
                   <div className="visual-graphic-title">
-                    SIMULATING: {selectedGiant.discoveryTitle}
+                    MÔ PHỎNG: {selectedGiant.discoveryTitle}
                   </div>
                   {renderInteractiveFormula()}
                 </div>

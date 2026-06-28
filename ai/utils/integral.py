@@ -19,7 +19,12 @@ from ai.utils.antiderivative_rule.rule_linear import apply_basic_rule
 
 class Integral:
     def __init__(self, latex: str):
-            self.latex = latex.strip()
+            if not isinstance(latex, str):
+                latex = str(latex)
+            latex = latex.strip()
+            # Clean trailing commas and digits (like ,11 or ,action)
+            latex = re.sub(r',\d+$', '', latex)
+            self.latex = latex
 
             self.left = None
             self.right = None
@@ -64,7 +69,13 @@ class Integral:
                 self.right = upper
             
             rest = latex[idx:]
-            body, dee = re.split(r'(d[a-zA-Z])$', rest)[0:2]
+            parts = re.split(r'(d(?:\\?[a-zA-Z]+|[a-zA-Z]))$', rest)
+            if len(parts) >= 2:
+                body = parts[0]
+                dee = parts[1]
+            else:
+                body = rest
+                dee = "dx"
             self.integrand = Parse.parse_latex(body, dee)
             self.dee = dee[1:]
     

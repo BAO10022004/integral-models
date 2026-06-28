@@ -14,7 +14,7 @@ export default function HistoryTimelineSection({
       <ScrollTimeline
         events={milestones}
         title="LỊCH SỬ PHÁT TRIỂN VI TÍCH PHÂN"
-        subtitle="Cuộn chuột để khám phá hành trình vĩ đại của toán học và AI"
+        subtitle=""
         onOpenArticleModal={onOpenArticleModal}
         onImageClick={onImageClick}
         slideImgDefault={slideImgDefault}

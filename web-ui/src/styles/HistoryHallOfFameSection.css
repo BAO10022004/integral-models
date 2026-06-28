@@ -9,9 +9,8 @@
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
-  height: 100%;
+  height: 100vh;
   width: 100%;
-  aspect-ratio: 16 / 9;
   scroll-snap-align: start;
   border-top: 1px dashed rgba(140, 127, 104, 0.3);
 }

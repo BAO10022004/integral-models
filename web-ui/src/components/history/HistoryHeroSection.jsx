@@ -33,7 +33,7 @@ export default function HistoryHeroSection({ heroImgSrc, onScrollToNext }) {
       </div>
 
       <div className="history-scroll-indicator" onClick={onScrollToNext}>
-        <span className="history-scroll-text">Scroll Down to Explore</span>
+        <span className="history-scroll-text">Cuộn xuống để khám phá</span>
         <div className="history-scroll-mouse">
           <div className="history-scroll-wheel" />
         </div>

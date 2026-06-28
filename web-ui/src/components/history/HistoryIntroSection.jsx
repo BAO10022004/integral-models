@@ -41,7 +41,6 @@ export default function HistoryIntroSection({
         {/* Left half: Full Height Image Column */}
         <div className="intro-image-column">
           <img src={showcaseImgSrc} alt="Showcase" className="intro-mockup-img" />
-          <div className="intro-image-overlay-text">TRUE</div>
         </div>
 
         {/* Right half: Content Column */}
@@ -49,14 +48,14 @@ export default function HistoryIntroSection({
           {/* Top navigation header */}
 
           {/* Main big headline */}
-          <h2 className="intro-mockup-title">About us.</h2>
+          <h2 className="intro-mockup-title">ABOUT US.</h2>
 
-          {/* Two-column text block */}
-          <div className="intro-text-row">
-            <div className="intro-text-left">
+          {/* Single-column stacked text layout */}
+          <div className="intro-text-block">
+            <h3 className="intro-text-headline">
               {headlineText}
-            </div>
-            <div className="intro-text-right">
+            </h3>
+            <div className="intro-text-content">
               {introductionText.split('\n\n').map((para, i) => (
                 <p key={i} className="intro-para">{para}</p>
               ))}
@@ -64,9 +63,7 @@ export default function HistoryIntroSection({
           </div>
 
           {/* Bottom decorative banner */}
-          <div className="intro-bottom-banner">
-            <img src={showcaseImgSrc} alt="Bottom Banner" className="intro-banner-img" />
-          </div>
+
         </div>
       </div>
     </section>

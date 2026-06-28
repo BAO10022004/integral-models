@@ -26,6 +26,7 @@ from ai.model.features.ibp import detect_integration_by_parts
 from ai.model.features.usub import detect_u_sub_linear
 from ai.model.features.inner_type import detect_inner_type_precise
 from ai.model.features.action_signals import detect_action_signals
+from ai.model.features.trig import detect_trig_features
 from ai.model.features.utils import _has_mono_add_inner, _check_trig_nontrivial, _check_sqrt_nontrivial, is_linear_expr
 
 
@@ -120,6 +121,9 @@ def extract_features(latex_str):
 
     # ══ NHÓM 8: Tín hiệu phân loại action (knowledge-based) ══
     feats.update(detect_action_signals(body))
+
+    # ══ NHÓM 9: Đặc trưng lượng giác nâng cao (trig features) ══
+    feats.update(detect_trig_features(body))
 
     # ══ H. Frac rule (action 4) ══
     feats["frac_linear_over_linear"] = 0

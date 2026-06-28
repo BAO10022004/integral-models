@@ -23,7 +23,7 @@ export default function AdminSettingsTab() {
     const storedTitle = localStorage.getItem("website_title") || "Integral.AI — High-Performance AI Calculus Solver";
     setWebsiteTitle(storedTitle);
 
-    const storedFavicon = localStorage.getItem("website_favicon") || "";
+    const storedFavicon = localStorage.getItem("website_favicon") || "/favicon.svg";
     setFaviconUrl(storedFavicon);
 
     // Fetch Gemini config status from backend
@@ -91,14 +91,27 @@ export default function AdminSettingsTab() {
     setFaviconUrl(val);
   };
 
-  const handleFaviconUpload = (e) => {
+  const handleFaviconUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFaviconUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        setSaveStatus("Tải ảnh lên server...");
+        const res = await fetch(`${DOTNET_API_URL}/upload`, {
+          method: "POST",
+          body: formData
+        });
+        if (!res.ok) throw new Error("Upload failed");
+        const data = await res.json();
+        setFaviconUrl(data.url);
+        setSaveStatus("Tải ảnh lên thành công!");
+        setTimeout(() => setSaveStatus(""), 2000);
+      } catch (err) {
+        console.error(err);
+        setSaveStatus("Lỗi tải ảnh lên server!");
+        setTimeout(() => setSaveStatus(""), 2000);
+      }
     }
   };
 

@@ -47,6 +47,7 @@ app.UseSwaggerUI(c =>
 });
 
 
+app.UseStaticFiles();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();

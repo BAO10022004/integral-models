@@ -58,7 +58,7 @@ def expr_to_latex(expr: ExprNode, dee: str = "x") -> str:
         return "e"
 
     if isinstance(e, VarExprNode):
-        return dee
+        return str(e.left)
 
     # ── Lũy thừa ────────────────────────────────────────────────────────────
     if isinstance(e, MonoExprNode):

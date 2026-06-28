@@ -4,6 +4,7 @@ from ai.utils.expr.value.expr_const         import ConstExprNode
 from ai.utils.expr.operation.expr_add       import AddExprNode
 from ai.utils.expr.operation.expr_sub       import SubExprNode
 from ai.utils.expr.operation.expr_mul       import MulExprNode
+from ai.utils.expr.operation.expr_frac      import FracExprNode
 
 from ai.utils.antiderivative_rule.rule_linear import apply_basic_rule
 from ai.utils.antiderivative_rule.rule_usub   import rule_usub
@@ -67,26 +68,32 @@ class ActionsMixin:
     def _apply_const(self, integral: Integral, steps: list, depth: int) -> float | None:
         expr = integral.integrand
         dee  = integral.dee
-
-        if not isinstance(expr, MulExprNode):
-            return self._apply_direct(integral, steps, depth)
-
-        L, R = expr.left, expr.right
-
-        if isinstance(L, ConstExprNode) and not isinstance(R, ConstExprNode):
-            const_val, func_expr = L.left, R
-        elif isinstance(R, ConstExprNode) and not isinstance(L, ConstExprNode):
-            const_val, func_expr = R.left, L
+        if isinstance(expr, FracExprNode):
+            if isinstance(expr.right, ConstExprNode):
+                const_val = 1.0 / expr.right.left
+                func_expr = expr.left
+                func_s = expr_str(func_expr)
+                desc_str = f"Rút hằng số: ∫ ({func_s}) / {expr.right.left} d{dee} = (1 / {expr.right.left}) · ∫ ({func_s}) d{dee}"
+                formula_str = f"(1 / {expr.right.left}) · ∫ ({func_s}) d{dee}"
+            else:
+                return self._apply_direct(integral, steps, depth)
+        elif isinstance(expr, MulExprNode):
+            L, R = expr.left, expr.right
+            if isinstance(L, ConstExprNode) and not isinstance(R, ConstExprNode):
+                const_val, func_expr = L.left, R
+            elif isinstance(R, ConstExprNode) and not isinstance(L, ConstExprNode):
+                const_val, func_expr = R.left, L
+            else:
+                return self._apply_direct(integral, steps, depth)
+            func_s = expr_str(func_expr)
+            desc_str = f"Rút hằng số: ∫ {const_val} · ({func_s}) d{dee} = {const_val} · ∫ ({func_s}) d{dee}"
+            formula_str = f"{const_val} · ∫ ({func_s}) d{dee}"
         else:
             return self._apply_direct(integral, steps, depth)
 
-        func_s = expr_str(func_expr)
         steps.append(make_step("transform", depth,
-            description=(
-                f"Rút hằng số: ∫ {const_val} · ({func_s}) d{dee}"
-                f" = {const_val} · ∫ ({func_s}) d{dee}"
-            ),
-            formula=f"{const_val} · ∫ ({func_s}) d{dee}"))
+            description=desc_str,
+            formula=formula_str))
 
         sub_integral = self._clone_integral(integral, func_expr)
         sub_result   = self._solve_integral(sub_integral, steps, depth + 1)
@@ -154,20 +161,17 @@ class ActionsMixin:
 
     def _apply_special(self, integral: Integral, steps: list, depth: int) -> float | None:
         from ai.utils.rules.rule_special import SpecialFormulaRegistry
-        
         expr = integral.integrand
         new_expr, rule_name = SpecialFormulaRegistry.apply_first_match(expr, integral.dee)
-        
         if new_expr is not None:
-            # Nếu có công thức khớp và áp dụng thành công
+            # Tối giản hóa biểu thức mới
+            _, _, simplified_expr = new_expr.simplify([], [])
             old_s = expr_str(expr)
-            new_s = expr_str(new_expr)
+            new_s = expr_str(simplified_expr)
             steps.append(make_step("transform", depth,
                 description=f"Áp dụng {rule_name}",
                 formula=f"{old_s} = {new_s}"))
-            
-            # Giải tiếp tích phân với biểu thức mới
-            sub_integral = self._clone_integral(integral, new_expr)
+            sub_integral = self._clone_integral(integral, simplified_expr)
             return self._solve_integral(sub_integral, steps, depth + 1)
         else:
             steps.append(make_step("info", depth,

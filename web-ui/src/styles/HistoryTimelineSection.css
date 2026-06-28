@@ -13,7 +13,6 @@
   overflow: hidden;
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
   scroll-snap-align: start;
 }
 
@@ -162,8 +161,8 @@
 .timeline-glowing-year {
   font-size: clamp(3.5rem, 5.5vw, 5.5rem);
   font-weight: 900;
-  color: #00f2ff;
-  text-shadow: 0 0 25px rgba(0, 242, 255, 0.3);
+  color: #0066ff;
+  text-shadow: 0 0 25px rgba(0, 102, 255, 0.3);
   letter-spacing: -2px;
   line-height: 1;
   display: inline-block;
@@ -177,7 +176,7 @@
   top: 50%;
   transform: translateY(-50%);
   height: 2px;
-  background: linear-gradient(90deg, #00f2ff 0%, rgba(255, 255, 255, 0.06) 100%);
+  background: linear-gradient(90deg, #0066ff 0%, rgba(255, 255, 255, 0.06) 100%);
   z-index: 1; /* Sits underneath the image column */
 }
 
@@ -199,8 +198,8 @@
   top: 0;
   height: 100%;
   width: 100vw; /* cover entire viewport width */
-  background: linear-gradient(90deg, rgba(0, 242, 255, 0) 0%, rgba(0, 242, 255, 0.4) 30%, #00f2ff 100%);
-  border-bottom: 2px dashed rgba(0, 242, 255, 0.25);
+  background: linear-gradient(90deg, rgba(0, 102, 255, 0) 0%, rgba(0, 102, 255, 0.4) 30%, #0066ff 100%);
+  border-bottom: 2px dashed rgba(0, 102, 255, 0.25);
 }
 
 /* Extend line infinitely off-screen to the right if there's a future event */
@@ -225,16 +224,16 @@
   height: 14px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 0 12px #00f2ff, 0 0 25px #00f2ff;
-  border: 2.5px solid #00f2ff;
+  box-shadow: 0 0 12px #0066ff, 0 0 25px #0066ff;
+  border: 2.5px solid #0066ff;
   transition: transform 0.4s ease;
   z-index: 3; /* Sits on top of the dividing line */
 }
 
 .timeline-card-item:hover .timeline-divide-dot {
   transform: translate(-50%, -50%) scale(1.3);
-  background: #00f2ff;
-  box-shadow: 0 0 20px #00f2ff, 0 0 40px #00f2ff;
+  background: #0066ff;
+  box-shadow: 0 0 20px #0066ff, 0 0 40px #0066ff;
 }
 
 /* Below the line: Title & description */
@@ -369,9 +368,9 @@
 /* Sleek cyber View Details Button */
 .timeline-detail-btn {
   margin-top: 24px;
-  background: rgba(0, 242, 255, 0.03);
-  border: 1px solid rgba(0, 242, 255, 0.25);
-  color: #00f2ff;
+  background: rgba(0, 102, 255, 0.03);
+  border: 1px solid rgba(0, 102, 255, 0.25);
+  color: #0066ff;
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   font-size: clamp(0.85rem, 1.1vw, 0.95rem);
   font-weight: 700;
@@ -384,15 +383,15 @@
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  box-shadow: 0 0 15px rgba(0, 242, 255, 0.02);
+  box-shadow: 0 0 15px rgba(0, 102, 255, 0.02);
 }
 
 .timeline-detail-btn:hover {
-  background: #00f2ff;
+  background: #0066ff;
   color: #020205;
-  box-shadow: 0 0 25px rgba(0, 242, 255, 0.35);
+  box-shadow: 0 0 25px rgba(0, 102, 255, 0.35);
   transform: translateY(-2px);
-  border-color: #00f2ff;
+  border-color: #0066ff;
 }
 
 .timeline-detail-btn:active {
@@ -402,11 +401,11 @@
 /* Cyber Neon active milestone highlights */
 .timeline-card-item.active .timeline-image-frame {
   transform: scale(1.03) translateX(-5px);
-  border-color: #00f2ff;
+  border-color: #0066ff;
   box-shadow: 
     0 40px 95px rgba(0, 0, 0, 0.6), 
-    0 0 55px rgba(0, 242, 255, 0.15), 
-    inset 0 1px 0 rgba(0, 242, 255, 0.2);
+    0 0 55px rgba(0, 102, 255, 0.15), 
+    inset 0 1px 0 rgba(0, 102, 255, 0.2);
 }
 
 .timeline-card-item.active .timeline-image-el {
@@ -414,12 +413,12 @@
 }
 
 .timeline-card-item.active .timeline-glowing-year {
-  color: #00f2ff;
-  text-shadow: 0 0 25px rgba(0, 242, 255, 0.6);
+  color: #0066ff;
+  text-shadow: 0 0 25px rgba(0, 102, 255, 0.6);
 }
 
 .timeline-card-item.active .timeline-divide-dot {
-  background: #00f2ff;
-  box-shadow: 0 0 15px #00f2ff;
+  background: #0066ff;
+  box-shadow: 0 0 15px #0066ff;
   transform: translate(-50%, -50%) scale(1.3);
 }

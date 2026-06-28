@@ -25,7 +25,6 @@ class SolveRequest(BaseModel):
     )
 
 
-# ─── Step Models ──────────────────────────────────────────────────────────────
 
 class SolveStep(BaseModel):
     kind: str = Field(..., description="Loại bước: predict | transform | antiderivative | result | info | error")

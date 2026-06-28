@@ -73,7 +73,7 @@ public class AccountController : ControllerBase
     {
         try
         {
-            var account = await _accountService.RegisterWithEmailAsync(request.Email, request.Password, request.DisplayName);
+            var account = await _accountService.RegisterWithEmailAsync(request.Email, request.Password, request.DisplayName, request.Role);
             return Ok(account);
         }
         catch (Exception ex)
@@ -101,7 +101,7 @@ public class AccountController : ControllerBase
     {
         try
         {
-            var account = await _accountService.UpdateAccountAsync(uid, request.DisplayName, request.PhotoUrl);
+            var account = await _accountService.UpdateAccountAsync(uid, request.DisplayName, request.PhotoUrl, request.Phone);
             return Ok(account);
         }
         catch (Exception ex)
@@ -164,6 +164,76 @@ public class AccountController : ControllerBase
         catch (Exception ex)
         {
             return BadRequest(new { Error = "Xác thực OTP thất bại", Message = ex.Message });
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllAccounts()
+    {
+        try
+        {
+            var accounts = await _accountService.GetAllAccountsAsync();
+            return Ok(accounts);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = "Failed to fetch accounts", Message = ex.Message });
+        }
+    }
+
+    [HttpDelete("{uid}")]
+    public async Task<IActionResult> DeleteAccount(string uid)
+    {
+        try
+        {
+            await _accountService.DeleteAccountAsync(uid);
+            return Ok(new { Message = "Account deleted successfully" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = "Failed to delete account", Message = ex.Message });
+        }
+    }
+
+    [HttpPut("{uid}/role")]
+    public async Task<IActionResult> UpdateRole(string uid, [FromBody] UpdateRoleRequest request)
+    {
+        try
+        {
+            var account = await _accountService.UpdateRoleAsync(uid, request.Role);
+            return Ok(account);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = "Failed to update role", Message = ex.Message });
+        }
+    }
+
+    [HttpPut("{uid}/status")]
+    public async Task<IActionResult> UpdateStatus(string uid, [FromBody] UpdateStatusRequest request)
+    {
+        try
+        {
+            var account = await _accountService.UpdateStatusAsync(uid, request.Status);
+            return Ok(account);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = "Failed to update status", Message = ex.Message });
+        }
+    }
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        try
+        {
+            await _accountService.ChangePasswordAsync(request.Uid, request.NewPassword);
+            return Ok(new { Message = "Password changed successfully" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = "Failed to change password", Message = ex.Message });
         }
     }
 }

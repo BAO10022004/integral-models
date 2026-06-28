@@ -42,10 +42,10 @@ class LogExprNode(ExprNode):
             return None
         return math.log(float(left_value))
 
-    def simplify(self):
+    def simplify(self, message = [], integral = []):
         if self.left is None:
-            return self
-        left_simplified = self.left.simplify()
+            return message, integral, self
+        message, integral, left_simplified = self.left.simplify(message, integral)
         if isinstance(left_simplified, LogExprNode):
-            return left_simplified.left
-        return LogExprNode(left=left_simplified, var=self.var)
+            return message, integral, left_simplified.left
+        return message, integral, LogExprNode(left=left_simplified, var=self.var)

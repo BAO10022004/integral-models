@@ -1,15 +1,8 @@
-
-
 import pandas as pd
-
 from ai.utils.integral import Integral
 from ai.utils.printer  import Printer
 from ai.utils.expr.expr_node import ExprNode
 from ai.model.feature_extractor import extract_features
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-
 def expr_str(expr) -> str:
     return Printer.expr_to_str(expr)
 
@@ -44,14 +37,17 @@ def is_action_implementable(action: int, expr: ExprNode, dee: str) -> bool:
     if expr is None:
         return False
         
-    if action == 0:   # Rút hằng số: c * f(x)
+    if action == 0:   # Rút hằng số: c * f(x) hoặc f(x) / c
         from ai.utils.expr.operation.expr_mul import MulExprNode
+        from ai.utils.expr.operation.expr_frac import FracExprNode
         from ai.utils.expr.value.expr_const import ConstExprNode
-        if not isinstance(expr, MulExprNode):
-            return False
-        L, R = expr.left, expr.right
-        return (isinstance(L, ConstExprNode) and not isinstance(R, ConstExprNode)) or \
-               (isinstance(R, ConstExprNode) and not isinstance(L, ConstExprNode))
+        if isinstance(expr, MulExprNode):
+            L, R = expr.left, expr.right
+            return (isinstance(L, ConstExprNode) and not isinstance(R, ConstExprNode)) or \
+                   (isinstance(R, ConstExprNode) and not isinstance(L, ConstExprNode))
+        if isinstance(expr, FracExprNode):
+            return not isinstance(expr.left, ConstExprNode) and isinstance(expr.right, ConstExprNode)
+        return False
 
     elif action == 1: # Tách tổng/hiệu: f(x) +/- g(x)
         from ai.utils.expr.operation.expr_add import AddExprNode
@@ -131,6 +127,9 @@ def predict_action(model, latex: str) -> tuple[int, dict]:
             print(f"[Error] Sklearn predict failed: {e}")
 
     if not probs_gnn and not probs_sklearn:
+        for act in [0, 1, 2, 3, 4]:
+            if is_action_implementable(act, expr, dee):
+                return act, {act: 100.0}
         return -1, {}
 
     def apply_strict_rules(probs: dict) -> int:
@@ -145,6 +144,7 @@ def predict_action(model, latex: str) -> tuple[int, dict]:
         if implementable_actions:
             return implementable_actions[0]    
         return sorted_classes[0][0]
+
     final_gnn_action = apply_strict_rules(probs_gnn)
     final_sk_action = apply_strict_rules(probs_sklearn)
 
@@ -156,6 +156,9 @@ def predict_action(model, latex: str) -> tuple[int, dict]:
     elif sk_ok:
         return final_sk_action, probs_sklearn
     else:
+        for act in [0, 1, 2, 3, 4]:
+            if is_action_implementable(act, expr, dee):
+                return act, {act: 100.0}
         if final_gnn_action != -1:
             return final_gnn_action, probs_gnn
         return final_sk_action, probs_sklearn

@@ -1,0 +1,164 @@
+Tài liệu mô tả chi tiết các hàm trong file expr_utils.py
+================================================================================
+
+File: expr_utils.py (Đường dẫn: ai/utils/expr_utils.py)
+Dự án: Integral Models
+
+Danh sách và mô tả chi tiết tính năng của từng hàm (function) trong file:
+
+1. is_pure_var_or_const(node)
+   - Kiểm tra xem node hiện tại có phải là biến thuần túy (VarExprNode) hoặc hằng số (ConstExprNode) hay không.
+   - Trả về: True nếu đúng, ngược lại trả về False.
+
+2. is_linear_expr(node)
+   - Kiểm tra xem node có phải là biểu thức tuyến tính (bậc nhất) hay không (ví dụ: x, hằng số, c * x, hoặc tổng/hiệu của các biểu thức tuyến tính).
+   - Trả về: True nếu là biểu thức tuyến tính, ngược lại trả về False.
+
+3. is_monomial(node)
+   - Kiểm tra xem node có phải đơn thức hay không (ví dụ: x^n hoặc c * x^n).
+   - Trả về: True nếu đúng, ngược lại trả về False.
+
+4. has_non_trivial_inner(node)
+   - Kiểm tra xem biểu thức con bên trong (đối số) của một hàm/phép toán có phức tạp hay không (tức là không phải chỉ là biến đơn x).
+   - Trả về: True nếu đối số bên trong không phải là VarExprNode, ngược lại trả về False.
+
+5. count_nodes(node)
+   - Đếm tổng số lượng node trong cây biểu thức (expression tree) một cách đệ quy.
+   - Trả về: Số nguyên là số lượng node.
+
+6. get_depth(node, d=0)
+   - Tính toán độ sâu lớn nhất (chiều cao) của cây biểu thức một cách đệ quy.
+   - Trả về: Độ sâu lớn nhất của cây dưới dạng số nguyên.
+
+7. _has_mono_add_inner(node)
+   - (Hàm nội bộ) Kiểm tra xem trong cây biểu thức có đơn thức hoặc lũy thừa nào chứa biểu thức con bên trong là phép cộng hoặc phép trừ hay không.
+   - Trả về: True nếu tìm thấy biểu thức cộng/trừ bên trong lũy thừa, ngược lại là False.
+
+8. _check_trig_nontrivial(node)
+   - (Hàm nội bộ) Kiểm tra xem có hàm lượng giác nào (sin, cos, tan) trong cây biểu thức chứa đối số phức tạp (không phải biến đơn x) hay không.
+   - Trả về: True nếu tồn tại hàm lượng giác với đối số phức tạp, ngược lại là False.
+
+9. _check_sqrt_nontrivial(node)
+   - (Hàm nội bộ) Kiểm tra xem có hàm căn bậc hai (SqrtExprNode) nào trong cây biểu thức chứa đối số phức tạp (không phải biến đơn x) hay không.
+   - Trả về: True nếu tồn tại căn bậc hai với đối số phức tạp, ngược lại là False.
+
+10. _is_ax_plus_b(node)
+    - (Hàm nội bộ) Kiểm tra xem biểu thức có cấu trúc tuyến tính dạng ax + b (hoặc tương đương) hay không.
+    - Trả về: True nếu đúng cấu trúc ax + b, ngược lại trả về False.
+
+11. _is_nonlinear_inner(node)
+    - (Hàm nội bộ) Kiểm tra xem biểu thức con bên trong có phải là phi tuyến tính (đơn thức bậc cao hoặc lũy thừa) hay không.
+    - Trả về: True nếu đúng, ngược lại là False.
+
+12. _is_pure_x(node)
+    - (Hàm nội bộ) Kiểm tra xem node có phải chính xác là biến x (VarExprNode) hay không.
+    - Trả về: True nếu là biến x, ngược lại là False.
+
+13. _inner_has_offset(node)
+    - (Hàm nội bộ) Kiểm tra xem biểu thức con có chứa độ lệch dạng x + c hoặc ax + c hay không (trong đó c là hằng số).
+    - Trả về: True nếu có dạng x + c hoặc ax + c, ngược lại là False.
+
+14. _inner_has_coeff_only(node)
+    - (Hàm nội bộ) Kiểm tra xem biểu thức con có chỉ chứa hệ số nhân dạng ax hay không (trong đó a là hằng số, x là biến).
+    - Trả về: True nếu có dạng ax, ngược lại là False.
+
+15. _is_polynomial_sum(node)
+    - Kiểm tra xem biểu thức có phải là tổng các đa thức hay không (chỉ chứa phép cộng, trừ, nhân, lũy thừa với số mũ tự nhiên của biến hoặc hằng số).
+    - Trả về: True nếu đúng là tổng đa thức, ngược lại là False.
+
+16. _get_poly_degree(node)
+    - (Hàm nội bộ) Lấy bậc cao nhất của đa thức.
+    - Trả về: Bậc của đa thức dưới dạng số nguyên. Trả về 0 cho hằng số, 1 cho biến đơn, số mũ đối với lũy thừa, tổng bậc đối với phép nhân, hoặc bậc lớn nhất đối với phép cộng/trừ. Trả về -1 nếu không phải đa thức.
+
+17. _func_category(node)
+    - (Hàm nội bộ) Xác định phân loại của biểu thức.
+    - Trả về: Chuỗi mô tả phân loại như 'trig' (lượng giác), 'sqrt' (căn bậc hai), 'exp' (mũ), 'log' (logarit), 'frac' (phân số), 'const' (hằng số), 'var' (biến), 'poly' (đa thức), 'mul' (phép nhân), hoặc 'unknown' (không xác định).
+
+18. _is_const_node(node)
+    - (Hàm nội bộ) Kiểm tra xem node có phải là hằng số (ConstExprNode) hay không.
+    - Trả về: True nếu đúng, ngược lại là False.
+
+19. _could_be_derivative(f_node, g_node)
+    - (Hàm nội bộ) Kiểm tra xem f_node có khả năng là đạo hàm của g_node hay không (dùng trong heuristic tìm nguyên hàm hoặc tích phân từng phần).
+    - Trả về: True nếu f_node có thể là đạo hàm của g_node, ngược lại là False.
+
+20. _extract_a(inner: ExprNode, dee: str)
+    - (Hàm nội bộ) Trích xuất hệ số 'a' của biến tích phân 'dee' trong một biểu thức tuyến tính dạng ax + b.
+    - Trả về: Giá trị số thực (float) của hệ số a, hoặc None nếu không trích xuất được.
+
+21. _scale(coeff: float, node: ExprNode, dee: str) -> ExprNode
+    - (Hàm nội bộ) Tạo biểu thức nhân hệ số với một node (tương ứng phép toán coeff * node). Nếu hệ số coeff bằng 1.0, trả về chính node đó.
+    - Trả về: Node biểu thức mới đại diện cho tích số.
+
+22. get_liate_score(node: ExprNode) -> int
+    - Trả về điểm ưu tiên theo quy tắc LIATE (Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential) phục vụ cho thuật toán tích phân từng phần.
+    - Điểm trả về: 1 (Log), 2 (Đại số: biến, đơn thức, hằng, phân số...), 3 (Lượng giác), 4 (Mũ), 5 (Các loại khác).
+
+23. solve_quadratic(a: float, b: float, c: float) -> list[float]
+    - Giải phương trình bậc hai ax^2 + bx + c = 0.
+    - Trả về: Danh sách chứa các nghiệm thực (0, 1 hoặc 2 nghiệm thực).
+
+24. count_quadratic_roots(a: float, b: float, c: float) -> int
+    - Đếm số lượng nghiệm thực của phương trình bậc hai ax^2 + bx + c = 0.
+    - Trả về: Số nguyên (0, 1 hoặc 2).
+
+25. factor_quadratic(a: float, b: float, c: float) -> tuple[tuple[float, float], tuple[float, float]] | None
+    - Phân tích đa thức bậc hai ax^2 + bx + c thành nhân tử dưới dạng hai biểu thức bậc nhất: (a1*x + b1)(a2*x + b2).
+    - Trả về: Tuple chứa các hệ số của hai nhân tử ((a1, b1), (a2, b2)) hoặc None nếu không phân tích được (vô nghiệm).
+
+26. get_poly_coeffs(node: ExprNode, dee: str = 'x') -> dict
+    - Phân tích cây biểu thức đa thức và trích xuất các hệ số tương ứng với từng bậc của biến 'dee'.
+    - Trả về: Một dictionary ánh xạ từ bậc sang hệ số. Ví dụ: {2: 1.0, 1: -3.0, 0: 2.0} tương ứng x^2 - 3x + 2.
+
+27. factor_quadratic_expr(node: ExprNode, dee: str = 'x') -> ExprNode | None
+    - Phân tích một node đa thức bậc hai thành tích của hai node đa thức bậc nhất dạng (a1*x + b1)*(a2*x + b2).
+    - Trả về: Một node MulExprNode đại diện cho phép tích của hai nhân tử tuyến tính, hoặc None nếu thất bại.
+
+28. create_linear_expr(a: float, b: float, dee: str = 'x') -> ExprNode
+    - Khởi tạo cây biểu thức cho một hàm tuyến tính ax + b với biến 'dee'. Tự động tối giản hóa nếu a = 0, a = 1, b = 0 hoặc b < 0.
+    - Trả về: Node biểu thức tương ứng.
+
+29. check_linear_basic(node : ExprNode)
+    - Kiểm tra xem node có phải dạng tuyến tính cơ bản chỉ chứa hệ số nhân ax (hoặc xa) hay không.
+    - Trả về: True nếu đúng cấu trúc, ngược lại là False.
+
+30. check_linear(node: ExprNode, dee: str = 'x') -> bool
+    - Kiểm tra xem biểu thức có phải là biểu thức tuyến tính ax + b bất kỳ hay không.
+    - Trả về: True nếu là đa thức bậc nhất, ngược lại là False.
+
+31. get_coef_linear(node: ExprNode, dee: str = 'x')
+    - Trích xuất hệ số a và b của biểu thức tuyến tính ax + b.
+    - Trả về: Tuple (a, b) dưới dạng số thực float, hoặc None nếu biểu thức không phải tuyến tính.
+
+32. check_double_linner(node: ExprNode)
+    - Kiểm tra xem biểu thức có phải tích của hai biểu thức tuyến tính hay không.
+    - Trả về: True nếu đúng, ngược lại là False.
+
+33. check_parabola(node: ExprNode, dee: str = 'x') -> bool
+    - Kiểm tra xem biểu thức có phải là một parabol (đa thức bậc hai ax^2 + bx + c với a khác 0) hay không.
+    - Trả về: True nếu đúng, ngược lại là False.
+
+34. get_coef_parabola(node: ExprNode, dee: str = 'x')
+    - Trích xuất các hệ số a, b, c của parabol ax^2 + bx + c.
+    - Trả về: Tuple (a, b, c) dưới dạng số thực float, hoặc None nếu không phải parabol.
+
+35. count_parabola_roots(node: ExprNode, dee: str = 'x') -> int
+    - Đếm số nghiệm thực của biểu thức parabol đại diện.
+    - Trả về: Số lượng nghiệm thực (0, 1 hoặc 2) hoặc -1 nếu biểu thức không phải parabol.
+
+36. get_parabola_roots(node: ExprNode, dee: str = 'x')
+    - Tìm các nghiệm thực của parabol biểu diễn bởi node.
+    - Trả về: Tuple chứa các nghiệm thực (ví dụ: (x1, x2) hoặc (x0,)), hoặc None nếu vô nghiệm hoặc không phải parabol.
+
+37. sort_poly_descending(node: ExprNode, dee: str = 'x') -> ExprNode
+    - Sắp xếp và tái cấu trúc cây biểu thức đa thức theo thứ tự bậc giảm dần (ví dụ: chuyển 3x + x^2 - 1 thành x^2 + 3x - 1).
+    - Trả về: Node biểu thức đa thức đã được sắp xếp.
+
+38. coeffs_to_poly_expr(coeffs: dict, dee: str = 'x') -> ExprNode
+    - Chuyển đổi một dictionary chứa các hệ số bậc đa thức thành một cây biểu thức đa thức tương ứng.
+    - Trả về: Node biểu thức tương ứng.
+
+39. polynomial_division(node: ExprNode, dee: str)
+    - Thực hiện phép chia đa thức tử số cho mẫu số từ biểu thức phân số (FracExprNode) (phép chia Euclid cho đa thức).
+    - Điều kiện: Bậc của đa thức tử số phải lớn hơn hoặc bằng mẫu số.
+    - Trả về: Tuple chứa hai node (quotient_node, remainder_node) lần lượt là đa thức thương và đa thức dư của phép chia.

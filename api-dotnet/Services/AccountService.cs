@@ -10,14 +10,18 @@ namespace IntegralApi.Services;
 
 public interface IAccountService
 {
-    Task<Account> RegisterWithEmailAsync(string email, string password, string displayName);
+    Task<Account> RegisterWithEmailAsync(string email, string password, string displayName, string role = "user");
     Task<Account> LoginWithEmailAsync(string email, string password);
     Task<Account> GetAccountAsync(string uid);
-    Task<Account> UpdateAccountAsync(string uid, string displayName, string photoUrl);
+    Task<Account> UpdateAccountAsync(string uid, string displayName, string photoUrl, string phone);
     Task DeleteAccountAsync(string uid);
     Task<string> CreateCustomTokenAsync(string uid);
     Task SendOtpAsync(string email);
     Task<Account> VerifyOtpAsync(string email, string code);
+    Task<List<Account>> GetAllAccountsAsync();
+    Task<Account> UpdateRoleAsync(string uid, string role);
+    Task<Account> UpdateStatusAsync(string uid, string status);
+    Task ChangePasswordAsync(string uid, string newPassword);
 }
 
 public class AccountService : IAccountService
@@ -35,7 +39,7 @@ public class AccountService : IAccountService
     #endregion
 
     #region Registration & Standard Login
-    public async Task<Account> RegisterWithEmailAsync(string email, string password, string displayName)
+    public async Task<Account> RegisterWithEmailAsync(string email, string password, string displayName, string role = "user")
     {
         var userArgs = new UserRecordArgs
         {
@@ -51,7 +55,9 @@ public class AccountService : IAccountService
         {
             Uid = userRecord.Uid,
             Email = userRecord.Email,
-            DisplayName = userRecord.DisplayName,
+            DisplayName = userRecord.DisplayName ?? "",
+            Role = role,
+            Status = "Hoạt động",
             ProviderId = "password",
             CreatedAt = DateTime.UtcNow,
             LastLoginAt = DateTime.UtcNow
@@ -108,7 +114,7 @@ public class AccountService : IAccountService
         return account;
     }
 
-    public async Task<Account> UpdateAccountAsync(string uid, string displayName, string photoUrl)
+    public async Task<Account> UpdateAccountAsync(string uid, string displayName, string photoUrl, string phone)
     {
         var userArgs = new UserRecordArgs
         {
@@ -117,11 +123,19 @@ public class AccountService : IAccountService
             PhotoUrl = photoUrl
         };
 
-        await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+        try
+        {
+            await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Firebase Auth update profile exception ignored: {ex.Message}");
+        }
         
         var account = await GetAccountAsync(uid);
         account.DisplayName = displayName;
         account.PhotoUrl = photoUrl;
+        account.Phone = phone;
         
         await _firestoreService.SaveAccountAsync(account);
         return account;
@@ -293,6 +307,55 @@ public class AccountService : IAccountService
         return account;
     }
     #endregion
+
+    public async Task<List<Account>> GetAllAccountsAsync()
+    {
+        return await _firestoreService.GetAllAccountsAsync();
+    }
+
+    public async Task<Account> UpdateRoleAsync(string uid, string role)
+    {
+        var account = await GetAccountAsync(uid);
+        account.Role = role;
+        await _firestoreService.SaveAccountAsync(account);
+        return account;
+    }
+
+    public async Task<Account> UpdateStatusAsync(string uid, string status)
+    {
+        var account = await GetAccountAsync(uid);
+        account.Status = status;
+        await _firestoreService.SaveAccountAsync(account);
+
+        // Also update Firebase Auth User disabled state:
+        // If status is "Bị khóa", disable user in Firebase Auth.
+        var userArgs = new UserRecordArgs
+        {
+            Uid = uid,
+            Disabled = status == "Bị khóa"
+        };
+
+        try
+        {
+            await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Firebase Auth disable status exception ignored: {ex.Message}");
+        }
+
+        return account;
+    }
+
+    public async Task ChangePasswordAsync(string uid, string newPassword)
+    {
+        var userArgs = new UserRecordArgs
+        {
+            Uid = uid,
+            Password = newPassword
+        };
+        await FirebaseAuth.DefaultInstance.UpdateUserAsync(userArgs);
+    }
 }
 
 public class OtpSession

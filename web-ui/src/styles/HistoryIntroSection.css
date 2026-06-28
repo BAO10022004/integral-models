@@ -1,7 +1,8 @@
 /* ================= SECTION 2: INTRODUCTION SPLIT (MOCKUP DESIGN) ================= */
 .history-intro-section {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100vh;
+  min-height: 600px;
   scroll-snap-align: start;
   position: relative;
   display: flex;
@@ -10,14 +11,16 @@
   align-items: center;
   overflow: hidden;
   box-sizing: border-box;
-  background: #D1CAB1; /* Keeps original brown background */
+  background: #D1CAB1;
+  /* Keeps original brown background */
   color: #1c1a17;
 }
 
 /* Custom Mockup Layout for Section 2 */
 .intro-mockup-layout {
   display: grid;
-  grid-template-columns: 45% 55%; /* Split 45% image, 55% content */
+  grid-template-columns: 45% 55%;
+  /* Split 45% image, 55% content */
   width: 100%;
   height: 100%;
   position: relative;
@@ -56,7 +59,8 @@
 .intro-content-column {
   width: 100%;
   height: 100%;
-  background: #D1CAB1; /* Keeps the original brown background */
+  background: #D1CAB1;
+  /* Keeps the original brown background */
   padding: 60px 8%;
   box-sizing: border-box;
   display: flex;
@@ -135,31 +139,32 @@
   letter-spacing: -2px;
 }
 
-/* Two column text row */
-.intro-text-row {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: 40px;
+/* Single column text block styling */
+.intro-text-block {
   width: 100%;
-  margin-bottom: 30px;
-}
-
-.intro-text-left {
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(1rem, 1.4vw, 1.35rem);
-  font-weight: 700;
-  line-height: 1.45;
-  color: #1c1a17;
-}
-
-.intro-text-right {
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(0.8rem, 1vw, 0.95rem);
-  color: rgba(28, 26, 23, 0.65);
-  line-height: 1.6;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.intro-text-headline {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.2rem, 1.8vw, 1.8rem);
+  font-weight: 750;
+  line-height: 1.35;
+  color: #1c1a17 !important;
+  margin: 0;
+}
+
+.intro-text-content {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.85rem, 1vw, 1.05rem);
+  color: #1c1a17;
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .intro-para {
@@ -173,7 +178,7 @@
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(28, 26, 23, 0.1);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 .intro-banner-img {
@@ -215,17 +220,12 @@
     margin: 10px 0;
   }
 
-  .intro-text-row {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .intro-text-left {
+  .intro-text-headline {
     text-align: center;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
-  .intro-text-right {
+  .intro-text-content {
     text-align: justify;
   }
 

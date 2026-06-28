@@ -24,7 +24,7 @@ def load_resources() -> None:
             _META = json.load(f)
     try:
         from ai.model.predict_gnn import IntegralGNNPredictor
-        gnn_path = os.path.join(_ROOT, "saved_models", "best_gnn_model.pth")
+        gnn_path = os.path.join(_ROOT, "saved_models", "best_gnn_model_smote.pth")
         _MODEL = IntegralGNNPredictor(model_path=gnn_path)
         print(f"GNN Model loaded: {gnn_path}")
     except Exception as e:

@@ -594,9 +594,6 @@ def sort_poly_descending(node: ExprNode, dee: str = 'x') -> ExprNode:
                 
     return result
 
-
-
-
 def coeffs_to_poly_expr(coeffs: dict, dee: str = 'x') -> ExprNode:
     sorted_degrees = sorted([d for d, c in coeffs.items() if c is not None and abs(c) > 1e-9], reverse=True)
     if not sorted_degrees:
@@ -637,9 +634,7 @@ def polynomial_division(node: ExprNode, dee:str):
     n = max(coeffs1.keys(), default=0)
     m = max(coeffs2.keys(), default=0)
     d = n - m 
-    # Term to subtract from numerator
     result = {}  
-    # lead_coeff
     for i in range(0, d+1):
         result[i] = None
     if n < m:

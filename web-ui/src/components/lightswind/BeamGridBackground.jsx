@@ -19,6 +19,7 @@ const BeamGridBackground = ({
   asBackground = true,
   showFade = true,
   fadeIntensity = 20,
+  fadeColor = null,
   className,
   children,
   style,
@@ -283,8 +284,9 @@ const BeamGridBackground = ({
       />
       {showFade && (
         <div
-          className="pointer-events-none absolute inset-0 bg-white dark:bg-black"
+          className="pointer-events-none absolute inset-0"
           style={{
+            backgroundColor: fadeColor || (isDarkMode ? "#000000" : "#ffffff"),
             maskImage: `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`,
             WebkitMaskImage: `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`,
           }}

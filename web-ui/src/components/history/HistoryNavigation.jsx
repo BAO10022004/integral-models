@@ -2,11 +2,11 @@ import React from "react";
 import "../../styles/HistoryNavigation.css";
 
 const SECTIONS = [
-  { id: "home", label: "Home", className: "history-hero-section" },
-  { id: "intro", label: "Intro", className: "history-intro-section" },
-  { id: "evolution", label: "Evolution", className: "history-timeline-section" },
-  { id: "application", label: "Application", className: "history-apps-section" },
-  { id: "halloffame", label: "HALL OF FAME", className: "history-hof-section" }
+  { id: "home", label: "Trang chủ", className: "history-hero-section" },
+  { id: "intro", label: "Giới thiệu", className: "history-intro-section" },
+  { id: "evolution", label: "Tiến trình", className: "history-timeline-section" },
+  { id: "application", label: "Ứng dụng thực tế", className: "history-apps-section" },
+  { id: "halloffame", label: "Bảng danh vọng", className: "history-hof-section" }
 ];
 
 export default function HistoryNavigation({ activeSection, onSectionClick }) {

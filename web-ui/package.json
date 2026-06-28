@@ -1,8 +1,8 @@
 {
-  "name": "callox-integral-solver",
+  "name": "integral-models",
   "version": "1.0.0",
   "type": "module",
-  "description": "Callox landing page + Integral Solver powered by Claude AI",
+  "description": "Integral Solver ",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

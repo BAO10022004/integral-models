@@ -82,7 +82,7 @@ export default function HistoryArticlePage({ articleData, onNavigate }) {
                 rel="noopener noreferrer"
                 className="article-page-hero-link-btn"
               >
-                Nguồn tham khảo gốc ↗
+                Nguồn tham khảo gốc
               </a>
             )}
           </div>

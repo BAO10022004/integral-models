@@ -153,12 +153,30 @@ def detect_action_signals(body):
 
     feats['sig_action2_split'] = feats['sig_action1_split']  
 
+    # Check for trigonometric squared (e.g. sin(x)^2, cos(x)^2)
+    sig_trig_squared = 0
+    if isinstance(body, (MonoExprNode, PowerExprNode)):
+        base, exponent = body.left, body.right
+        if isinstance(base, (SinExprNode, CosExprNode)) and isinstance(exponent, ConstExprNode) and abs(exponent.left - 2) < 1e-9:
+            sig_trig_squared = 1
+
+    # Check for trigonometric double angle product (e.g. sin(x)*cos(x))
+    sig_trig_double_angle_product = 0
+    if isinstance(body, MulExprNode) and body.left is not None and body.right is not None:
+        L, R = body.left, body.right
+        if isinstance(L, SinExprNode) and isinstance(R, CosExprNode) and L.left._equals(R.left):
+            sig_trig_double_angle_product = 1
+        elif isinstance(L, CosExprNode) and isinstance(R, SinExprNode) and L.left._equals(R.left):
+            sig_trig_double_angle_product = 1
+
     feats['sig_action3_special'] = 1 if any([
         feats['sig_mul_same_category'],
         feats['sig_frac_den_poly_degN'],
         feats['sig_frac_both_poly'],
         feats['sig_sqrt_g_is_exp'],
         feats['sig_sqrt_g_is_monom'],
+        sig_trig_squared,
+        sig_trig_double_angle_product,
     ]) else 0
 
     feats['sig_action4_usub'] = 1 if any([

@@ -9,85 +9,211 @@ import { cn } from "../lib/utils";
 import { Card, CardContent } from "../ui/card";
 import { Calendar } from "lucide-react";
 
-const DEFAULT_EVENTS = [
-  {
-    year: "2023",
-    title: "Major Achievement",
-    subtitle: "Organization Name",
-    description:
-      "Description of the achievement or milestone reached during this time period.",
-  },
-  {
-    year: "2022",
-    title: "Important Milestone",
-    subtitle: "Organization Name",
-    description: "Details about this significant milestone and its impact.",
-  },
-  {
-    year: "2021",
-    title: "Key Event",
-    subtitle: "Organization Name",
-    description: "Information about this key event in the timeline.",
-  },
-];
-
-export const ScrollTimeline = ({
-  events = DEFAULT_EVENTS,
-  title = "Timeline",
-  subtitle = "Scroll to explore the journey",
-  animationOrder = "sequential",
-  cardAlignment = "alternating",
-  lineColor = "bg-cyan-500/30",
-  activeColor = "bg-cyan-400",
-  progressIndicator = true,
-  cardVariant = "outlined",
-  cardEffect = "glow",
-  parallaxIntensity = 0.15,
-  progressLineWidth = 3,
-  progressLineCap = "round",
-  dateFormat = "badge",
-  revealAnimation = "slide",
-  className = "",
-  connectorStyle = "line",
-  perspective = true,
-  darkMode = true,
-  smoothScroll = true,
+// Standalone component to satisfy the Rules of Hooks
+const StackingCard = ({
+  event,
+  index,
+  total,
+  progress,
   onOpenArticleModal,
   onImageClick,
   slideImgDefault,
-  introImgDefault
+  introImgDefault,
+}) => {
+  const step = total > 0 ? 1 / total : 1;
+  const activePoint = index * step;
+
+  const points = [];
+  const yValues = [];
+  const scaleValues = [];
+  const opacityValues = [];
+
+  // 1. Off-screen (below)
+  if (index > 0) {
+    points.push(0);
+    yValues.push(1000); // Start way below screen
+    scaleValues.push(1);
+    opacityValues.push(0);
+
+    // Point right before entering
+    const startEnter = Math.max(0, (index - 0.9) * step);
+    points.push(startEnter);
+    yValues.push(1000);
+    scaleValues.push(1);
+    opacityValues.push(0);
+  } else {
+    points.push(0);
+    yValues.push(0);
+    scaleValues.push(1);
+    opacityValues.push(1);
+  }
+
+  // 2. Fully active
+  if (!points.includes(activePoint)) {
+    points.push(activePoint);
+    yValues.push(0);
+    scaleValues.push(1);
+    opacityValues.push(1);
+  }
+
+  // 3. Stacked underneath subsequent cards
+  for (let k = 1; k <= 4; k++) {
+    const postPoint = (index + k) * step;
+    if (postPoint <= 1) {
+      if (!points.includes(postPoint)) {
+        points.push(postPoint);
+        yValues.push(-12 * k); // stack offset up
+        scaleValues.push(1 - 0.04 * k); // scale down slightly
+        opacityValues.push(Math.max(0.15, 1 - 0.25 * k)); // fade out partially
+      }
+    }
+  }
+
+  // 4. End point
+  if (!points.includes(1)) {
+    points.push(1);
+    const k = (1 - activePoint) / step;
+    yValues.push(-12 * k);
+    scaleValues.push(Math.max(0.8, 1 - 0.04 * k));
+    opacityValues.push(Math.max(0.15, 1 - 0.25 * k));
+  }
+
+  // Sort and deduplicate
+  const zipped = points.map((p, idx) => ({
+    p,
+    y: yValues[idx],
+    scale: scaleValues[idx],
+    opacity: opacityValues[idx],
+  }));
+  zipped.sort((a, b) => a.p - b.p);
+
+  const uniqueZipped = [];
+  zipped.forEach((item) => {
+    if (
+      uniqueZipped.length === 0 ||
+      uniqueZipped[uniqueZipped.length - 1].p !== item.p
+    ) {
+      uniqueZipped.push(item);
+    }
+  });
+
+  const finalPoints = uniqueZipped.map((item) => item.p);
+  const finalY = uniqueZipped.map((item) => item.y);
+  const finalScale = uniqueZipped.map((item) => item.scale);
+  const finalOpacity = uniqueZipped.map((item) => item.opacity);
+
+  const y = useTransform(progress, finalPoints, finalY);
+  const scale = useTransform(progress, finalPoints, finalScale);
+  const opacity = useTransform(progress, finalPoints, finalOpacity);
+
+  const milestoneImg =
+    event.image || (index % 2 === 0 ? slideImgDefault : introImgDefault);
+
+  return (
+    <motion.div
+      style={{
+        y,
+        scale,
+        opacity,
+        zIndex: index,
+      }}
+      className="absolute w-full max-w-4xl pointer-events-auto"
+    >
+      <Card className="bg-[#090b18]/85 border border-[#0066FF]/20 hover:border-[#0066FF]/40 transition-all rounded-3xl overflow-hidden backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <CardContent className="p-6 lg:p-10 flex flex-col lg:flex-row gap-8 items-center">
+          {/* Left: Image if exists */}
+          {milestoneImg && (
+            <div
+              className="w-full lg:w-80 h-48 lg:h-56 overflow-hidden rounded-2xl cursor-zoom-in group active:scale-95 transition-transform flex-shrink-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onImageClick) onImageClick(milestoneImg, event.title);
+              }}
+            >
+              <img
+                src={milestoneImg}
+                alt={event.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                draggable="false"
+              />
+            </div>
+          )}
+
+          {/* Right: Info */}
+          <div className="flex-grow w-full">
+            <div className="flex items-center mb-2">
+              <Calendar className="h-4 w-4 mr-2 text-[#0066FF]" />
+              <span className="text-sm font-black tracking-wider text-[#0066FF]">
+                {event.year}
+              </span>
+            </div>
+
+            <h3 className="text-xl lg:text-2xl font-black mb-2 text-slate-100 tracking-tight">
+              {event.title}
+            </h3>
+
+            {event.subtitle && (
+              <p className="text-[#0066FF]/80 font-bold text-xs mb-3 uppercase tracking-wide">
+                {event.subtitle}
+              </p>
+            )}
+
+            <p className="text-slate-400 text-sm leading-relaxed mb-4">
+              {event.description || event.desc}
+            </p>
+
+            {onOpenArticleModal && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenArticleModal(event);
+                }}
+                className="detail-koa-btn mt-4 self-start"
+              >
+                Xem chi tiết
+              </button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+};
+
+export const ScrollTimeline = ({
+  events = [],
+  title = "Timeline",
+  subtitle = "",
+  onOpenArticleModal,
+  onImageClick,
+  slideImgDefault,
+  introImgDefault,
+  className = "",
+  darkMode = true,
 }) => {
   const scrollRef = useRef(null);
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const timelineRefs = useRef([]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
+  // Measure scroll progress over the entire section
   const { scrollYProgress } = useScroll({
     target: scrollRef,
     offset: ["start start", "end end"],
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 90,
+    damping: 25,
     restDelta: 0.001,
   });
 
-  const progressHeight = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
-
-  const yOffset = useTransform(
-    smoothProgress,
-    [0, 1],
-    [parallaxIntensity * 120, -parallaxIntensity * 120]
-  );
-
   useEffect(() => {
     const handler = (v) => {
-      const newIndex = Math.floor(v * events.length);
-      if (
-        newIndex !== activeIndex &&
-        newIndex >= 0 &&
-        newIndex < events.length
-      ) {
+      if (events.length === 0) return;
+      const newIndex = Math.min(
+        events.length - 1,
+        Math.max(0, Math.floor(v * events.length))
+      );
+      if (newIndex !== activeIndex) {
         setActiveIndex(newIndex);
       }
     };
@@ -104,321 +230,141 @@ export const ScrollTimeline = ({
     };
   }, [scrollYProgress, events.length, activeIndex]);
 
-  const getCardVariants = (index) => {
-    const baseDelay =
-      animationOrder === "simultaneous"
-        ? 0
-        : animationOrder === "staggered"
-        ? index * 0.05
-        : index * 0.08;
+  const handleDotClick = (index) => {
+    if (!scrollRef.current || events.length <= 1) return;
+    const element = scrollRef.current;
+    const totalHeight = element.scrollHeight - window.innerHeight;
+    const targetScroll = (index * totalHeight) / (events.length - 1);
 
-    const initialStates = {
-      fade: { opacity: 0, y: 20 },
-      slide: {
-        x:
-          cardAlignment === "left"
-            ? -60
-            : cardAlignment === "right"
-            ? 60
-            : index % 2 === 0
-            ? -60
-            : 60,
-        opacity: 0,
-        y: 15
-      },
-      scale: { scale: 0.9, opacity: 0 },
-      flip: { rotateY: 30, opacity: 0 },
-      none: { opacity: 1 },
-    };
-
-    return {
-      initial: initialStates[revealAnimation],
-      whileInView: {
-        opacity: 1,
-        y: 0,
-        x: 0,
-        scale: 1,
-        rotateY: 0,
-        transition: {
-          duration: 0.35,
-          delay: baseDelay,
-          ease: "easeOut",
-        },
-      },
-      viewport: { once: false, margin: "-60px" },
-    };
-  };
-
-  const getConnectorClasses = () => {
-    const baseClasses = cn(
-      "absolute left-1/2 transform -translate-x-1/2",
-      lineColor
-    );
-    switch (connectorStyle) {
-      case "dots":
-        return cn(baseClasses, "w-1 rounded-full");
-      case "dashed":
-        return cn(
-          baseClasses,
-          "w-[2px] [mask-image:linear-gradient(to_bottom,black_33%,transparent_33%,transparent_66%,black_66%)] [mask-size:1px_12px]"
-        );
-      case "line":
-      default:
-        return cn(baseClasses, "w-[2px]");
-    }
-  };
-
-  const getCardClasses = (index) => {
-    const baseClasses = "relative z-30 rounded-xl transition-all duration-300";
-    const variantClasses = {
-      default: "bg-[#0f1124] border border-slate-800 shadow-sm",
-      elevated: "bg-[#0f1124] border border-slate-700/50 shadow-md",
-      outlined: "bg-[#090b18]/85 backdrop-blur border border-cyan-500/20",
-      filled: "bg-cyan-500/5 border border-cyan-500/20",
-    };
-    const effectClasses = {
-      none: "",
-      glow: "hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] hover:border-cyan-500/40",
-      shadow: "hover:shadow-lg hover:-translate-y-1",
-      bounce: "hover:scale-[1.02] hover:shadow-md active:scale-[0.98]",
-    };
-    const alignmentClassesDesktop =
-      cardAlignment === "alternating"
-        ? index % 2 === 0
-          ? "lg:mr-[calc(50%+30px)]"
-          : "lg:ml-[calc(50%+30px)]"
-        : cardAlignment === "left"
-        ? "lg:mr-auto lg:ml-0"
-        : "lg:ml-auto lg:mr-0";
-    const perspectiveClass = perspective
-      ? "transform transition-transform hover:rotate-y-1 hover:rotate-x-1"
-      : "";
-
-    return cn(
-      baseClasses,
-      variantClasses[cardVariant],
-      effectClasses[cardEffect],
-      alignmentClassesDesktop,
-      perspectiveClass,
-      "w-full lg:w-[calc(50%-50px)]"
-    );
+    // Smooth scroll page to target position
+    const rect = element.getBoundingClientRect();
+    const absoluteTop = rect.top + window.scrollY;
+    window.scrollTo({
+      top: absoluteTop + targetScroll,
+      behavior: "smooth",
+    });
   };
 
   return (
     <div
       ref={scrollRef}
       className={cn(
-        "relative w-full overflow-hidden py-16",
-        darkMode ? "bg-[#030307] text-slate-100" : "bg-white text-slate-900",
+        "relative w-full bg-transparent",
+        darkMode ? "text-slate-100" : "text-slate-900",
         className
       )}
+      style={{ height: `${Math.max(1, events.length) * 100}vh` }}
     >
-      <div className="text-center py-10 px-4">
-        <h2 className="text-3xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">
-          {title}
-        </h2>
-        <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto">
-          {subtitle}
-        </p>
-      </div>
-
-      <div className="relative max-w-6xl mx-auto px-4 pb-24">
-        <div className="relative mx-auto">
-          {/* Main timeline track line */}
-          <div
-            className={cn(getConnectorClasses(), "h-full absolute top-0 z-10")}
-            style={{ width: `${progressLineWidth}px` }}
-          />
-
-          {/* Enhanced Progress Indicator with Traveling Glow */}
-          {progressIndicator && (
-            <>
-              {/* The main filled progress line */}
-              <motion.div
-                className="absolute top-0 z-10"
-                style={{
-                  height: progressHeight,
-                  width: progressLineWidth,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  borderRadius:
-                    progressLineCap === "round" ? "9999px" : "0px",
-                  background: `linear-gradient(to bottom, #22d3ee, #6366f1, #a855f7)`,
-                  boxShadow: `
-                    0 0 15px rgba(99,102,241,0.5),
-                    0 0 25px rgba(168,85,247,0.3)
-                  `,
-                }}
-              />
-              {/* The traveling glow "comet" at the head of the line */}
-              <motion.div
-                className="absolute z-20"
-                style={{
-                  top: progressHeight,
-                  left: "50%",
-                  translateX: "-50%",
-                  translateY: "-50%", // Center the comet on the line's end point
-                }}
-              >
-                <motion.div
-                  className="w-5 h-5 rounded-full" // Size of the comet core
-                  style={{
-                    background:
-                      "radial-gradient(circle, rgba(168,85,247,0.8) 0%, rgba(99,102,241,0.5) 40%, rgba(34,211,238,0) 70%)",
-                    boxShadow: `
-                      0 0 15px 4px rgba(168, 85, 247, 0.6),
-                      0 0 25px 8px rgba(99, 102, 241, 0.4),
-                      0 0 40px 15px rgba(34, 211, 238, 0.2)
-                    `,
-                  }}
-                  animate={{
-                    scale: [1, 1.25, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                />
-              </motion.div>
-            </>
-          )}
-
-          <div className="relative z-20">
-            {events.map((event, index) => {
-              const milestoneImg = event.image || (index % 2 === 0 ? slideImgDefault : introImgDefault);
-
-              return (
-                <div
-                  key={event.id || index}
-                  ref={(el) => {
-                    timelineRefs.current[index] = el;
-                  }}
-                  className={cn(
-                    "relative flex items-center mb-24 py-4",
-                    "flex-col lg:flex-row",
-                    cardAlignment === "alternating"
-                      ? index % 2 === 0
-                        ? "lg:justify-start"
-                        : "lg:flex-row-reverse lg:justify-start"
-                      : cardAlignment === "left"
-                      ? "lg:justify-start"
-                      : "lg:flex-row-reverse lg:justify-start"
-                  )}
-                >
-                  {/* Central Node Indicator */}
-                  <div
-                    className={cn(
-                      "absolute top-1/2 transform -translate-y-1/2 z-30",
-                      "left-1/2 -translate-x-1/2"
-                    )}
-                  >
-                    <motion.div
-                      className={cn(
-                        "w-5 h-5 rounded-full border-4 bg-slate-900 flex items-center justify-center transition-colors duration-300",
-                        index <= activeIndex
-                          ? "border-cyan-400"
-                          : "border-slate-800"
-                      )}
-                      animate={
-                        index <= activeIndex
-                          ? {
-                              scale: [1, 1.2, 1],
-                              boxShadow: [
-                                "0 0 0px rgba(34,211,238,0)",
-                                "0 0 12px rgba(34,211,238,0.5)",
-                                "0 0 0px rgba(34,211,238,0)",
-                              ],
-                            }
-                          : {}
-                      }
-                      transition={{
-                        duration: 0.8,
-                        repeat: Infinity,
-                        repeatDelay: 3,
-                        ease: "easeInOut",
-                      }}
-                    />
-                  </div>
-
-                  {/* Milestone Card */}
-                  <motion.div
-                    className={cn(
-                      getCardClasses(index),
-                      "mt-12 lg:mt-0"
-                    )}
-                    variants={getCardVariants(index)}
-                    initial="initial"
-                    whileInView="whileInView"
-                    viewport={{ once: false, margin: "-120px" }}
-                    style={parallaxIntensity > 0 ? { y: yOffset } : undefined}
-                  >
-                    <Card className="bg-[#090b18]/80 border border-slate-800/80 hover:border-cyan-500/30 transition-all rounded-2xl overflow-hidden backdrop-blur-md">
-                      <CardContent className="p-6">
-                        {/* Event Image */}
-                        {milestoneImg && (
-                          <div
-                            className="mb-4 overflow-hidden rounded-xl cursor-zoom-in group active:scale-95 transition-transform"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (onImageClick) onImageClick(milestoneImg, event.title);
-                            }}
-                          >
-                            <img
-                              src={milestoneImg}
-                              alt={event.title}
-                              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
-                              draggable="false"
-                            />
-                          </div>
-                        )}
-
-                        {dateFormat === "badge" ? (
-                          <div className="flex items-center mb-3">
-                            <Calendar className="h-4 w-4 mr-2 text-cyan-400" />
-                            <span className="text-sm font-black tracking-wider text-cyan-400">
-                              {event.year}
-                            </span>
-                          </div>
-                        ) : (
-                          <p className="text-lg font-black text-cyan-400 mb-2 tracking-wider">
-                            {event.year}
-                          </p>
-                        )}
-
-                        <h3 className="text-xl font-extrabold mb-2 text-slate-100 tracking-tight">
-                          {event.title}
-                        </h3>
-
-                        {event.subtitle && (
-                          <p className="text-cyan-300/80 font-semibold text-xs mb-3 uppercase tracking-wide">
-                            {event.subtitle}
-                          </p>
-                        )}
-
-                        <p className="text-slate-400 text-sm leading-relaxed mb-5">
-                          {event.description || event.desc}
-                        </p>
-
-                        {onOpenArticleModal && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onOpenArticleModal(event);
-                            }}
-                            className="text-xs font-black text-cyan-400 hover:text-cyan-300 hover:underline transition-colors uppercase tracking-wider flex items-center gap-1.5 border-none bg-transparent cursor-pointer p-0"
-                          >
-                            Xem chi tiết ↗
-                          </button>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </div>
-              );
-            })}
-          </div>
+      {/* Sticky Viewport Container */}
+      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden z-20">
+        {/* Glowing cyber background accents */}
+        <div className="absolute inset-0 pointer-events-none opacity-40">
+          <div className="absolute top-[20%] left-[10%] w-[30vw] h-[30vw] rounded-full bg-[#0066FF]/5 blur-[120px]" />
+          <div className="absolute bottom-[20%] right-[10%] w-[30vw] h-[30vw] rounded-full bg-purple-500/5 blur-[120px]" />
         </div>
+
+        {/* Section Header */}
+        <div className="relative text-center mb-12 px-4 select-none z-30">
+          <h2 className="text-3xl lg:text-4xl font-extrabold tracking-widest text-slate-100 uppercase drop-shadow-[0_2px_10px_rgba(0,102,255,0.1)]">
+            {title}
+          </h2>
+          {subtitle && (
+            <p className="text-slate-400 mt-2 text-sm lg:text-base max-w-xl mx-auto">
+              {subtitle}
+            </p>
+          )}
+        </div>
+
+        {/* Stacking Card Deck Container */}
+        <div
+          className="relative w-full max-w-4xl px-4 flex items-center justify-center"
+          style={{ height: "520px" }}
+        >
+          {events.map((event, index) => (
+            <StackingCard
+              key={event.id || index}
+              event={event}
+              index={index}
+              total={events.length}
+              progress={smoothProgress}
+              onOpenArticleModal={onOpenArticleModal}
+              onImageClick={onImageClick}
+              slideImgDefault={slideImgDefault}
+              introImgDefault={introImgDefault}
+            />
+          ))}
+        </div>
+
+        {/* Interactive Side Dots Indicators */}
+        {events.length > 0 && (
+          <div className="absolute right-6 lg:right-12 top-1/2 transform -translate-y-1/2 flex flex-col gap-4 z-40 select-none">
+            {events.map((event, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleDotClick(idx)}
+                className="group relative flex items-center justify-end border-none bg-transparent p-0 cursor-pointer"
+              >
+                {/* Tooltip on hover */}
+                <span className="absolute right-8 text-xs font-bold text-[#0066FF] opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900/90 border border-[#0066FF]/20 px-2.5 py-1 rounded-lg pointer-events-none backdrop-blur uppercase tracking-wider whitespace-nowrap">
+                  {event.year} - {event.title}
+                </span>
+
+                {/* Dot visual */}
+                <div
+                  className={cn(
+                    "w-3 h-3 rounded-full transition-all duration-300",
+                    idx <= activeIndex
+                      ? "bg-[#0066FF] scale-125 shadow-[0_0_12px_#0066FF]"
+                      : "bg-slate-700/60 hover:bg-slate-400"
+                  )}
+                />
+              </button>
+            ))}
+          </div>
+        )}
+
+        <style>{`
+          .detail-koa-btn {
+            display: inline-block;
+            padding: 10px 24px;
+            border: 1px solid #0066FF;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 800;
+            background: transparent;
+            color: #0066FF;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            transition: color 0.4s, border-color 0.4s, transform 0.3s, box-shadow 0.3s;
+          }
+
+          .detail-koa-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: #0066FF;
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: -1;
+          }
+
+          .detail-koa-btn:hover::before {
+            transform: scaleX(1);
+          }
+
+          .detail-koa-btn:hover {
+            color: #ffffff !important;
+            border-color: #0066FF;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.4);
+          }
+        `}</style>
       </div>
     </div>
   );

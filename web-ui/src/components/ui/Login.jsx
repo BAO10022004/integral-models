@@ -21,7 +21,7 @@ const Login = ({ user, onSetUser, onNavigate }) => {
     const [error, setError] = useState(null);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    
+
     // OTP States
     const [loginMethod, setLoginMethod] = useState('password'); // 'password' | 'otp'
     const [otpSent, setOtpSent] = useState(false);
@@ -415,7 +415,7 @@ const Login = ({ user, onSetUser, onNavigate }) => {
                                             onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
                                             required
                                         />
-                                        
+
                                         <div className="login-otp-meta">
                                             <button
                                                 type="button"

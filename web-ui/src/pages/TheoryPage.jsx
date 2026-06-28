@@ -3,13 +3,19 @@ import Footer from "../components/common/Footer";
 import LatexRenderer from "../components/ui/LatexRenderer";
 import MenuOverlay from "../components/common/MenuOverlay";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
+import {
   BookOpen, Search, Compass, HelpCircle,
-  Award, Copy, Check, Layers, Hash, Calculator 
+  Award, Copy, Check, Layers, Hash, Calculator
 } from "lucide-react";
 import "katex/dist/katex.min.css";
 import "../styles/KoaDesign.css";
-
+import "../styles/TheoryPage.css";
+import theoryHeroImg from "../assets/theory_hero.png";
+import logoDefault from "../assets/logo.png";
+import { DEFAULT_CONCEPTS, DEFAULT_DEFINITIONS, DEFAULT_PAGE_CONFIG, DEFAULT_THEOREMS, DEFAULT_PROPERTIES, DEFAULT_PROPERTY_GROUPS } from "../constants/theoryData";
+import defGeometricImg from "../assets/def_geometric_area.png";
+import defRiemannImg from "../assets/def_riemann_sum.png";
+import conceptIndefiniteImg from "../assets/concept_indefinite_integral.png";
 
 
 export default function TheoryPage({ onNavigate, user, onLogout }) {
@@ -19,6 +25,16 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
   const [copiedId, setCopiedId] = useState(null);
   const [activeSection, setActiveSection] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedPropertyGroup, setSelectedPropertyGroup] = useState(() => {
+    const stored = localStorage.getItem("theory_property_groups_data");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.length > 0) return parsed[0].id;
+      } catch (e) { }
+    }
+    return "algebraic";
+  });
 
   const containerRef = useRef(null);
 
@@ -64,114 +80,110 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
   };
 
   // 1. Concept Data (Khái niệm)
-  const concepts = [
-    {
-      title: "Khái niệm Nguyên hàm",
-      desc: "Cho hàm số f(x) xác định trên tập K. Hàm số F(x) được gọi là nguyên hàm của f(x) trên K nếu đạo hàm của F(x) bằng f(x) với mọi x thuộc K.",
-      formula: "F'(x) = f(x) \\quad \\forall x \\in K",
-      tagColor: "#2ed6ff", // Neon Cyan
-      badge: "Cơ sở"
-    },
-    {
-      title: "Họ Nguyên hàm & Tích phân bất định",
-      desc: "Nếu F(x) là một nguyên hàm của f(x) trên K thì mọi nguyên hàm của f(x) đều có dạng F(x) + C. Tập hợp các nguyên hàm này được gọi là tích phân bất định.",
-      formula: "\\int f(x) dx = F(x) + C",
-      tagColor: "#f843c2", // Magenta Pulse
-      badge: "Lý thuyết"
+  const concepts = useMemo(() => {
+    const stored = localStorage.getItem("theory_concepts_data");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return parsed.map((item, idx) => ({
+          ...item,
+          image: item.image || (DEFAULT_CONCEPTS[idx] ? DEFAULT_CONCEPTS[idx].image : "")
+        }));
+      } catch (e) {
+        console.error(e);
+      }
     }
-  ];
+    return DEFAULT_CONCEPTS;
+  }, []);
 
-  // 2. Definition Data (Định nghĩa)
-  const definitions = [
-    {
-      title: "Ý nghĩa Hình học (Hình thang cong)",
-      desc: "Cho hàm số f(x) liên tục và không âm trên đoạn [a, b]. Tích phân xác định biểu diễn diện tích S của hình thang cong giới hạn bởi đồ thị y=f(x), trục hoành y=0 và hai đường biên x=a, x=b.",
-      formula: "S = \\int_{a}^{b} f(x) dx",
-      tagColor: "#a2ea13", // Lime Pop
-      badge: "Hình học"
-    },
-    {
-      title: "Định nghĩa Giới hạn Tổng Riemann",
-      desc: "Tích phân xác định của hàm số f(x) trên đoạn [a, b] được định nghĩa bằng giới hạn của tổng diện tích các cột hình chữ nhật chia nhỏ khi số phân hoạch tiến ra vô hạn.",
-      formula: "\\int_{a}^{b} f(x) dx = \\lim_{n \\to \\infty} \\sum_{i=1}^{n} f(x_i^*) \\Delta x_i",
-      tagColor: "#2ed6ff", // Neon Cyan
-      badge: "Giới hạn"
+  const definitions = useMemo(() => {
+    const stored = localStorage.getItem("theory_definitions_data");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return parsed.map((item, idx) => ({
+          ...item,
+          image: item.image || (DEFAULT_DEFINITIONS[idx] ? DEFAULT_DEFINITIONS[idx].image : "")
+        }));
+      } catch (e) {
+        console.error(e);
+      }
     }
-  ];
+    return DEFAULT_DEFINITIONS;
+  }, []);
+
+  const pageConfig = useMemo(() => {
+    const stored = localStorage.getItem("theory_page_config");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return DEFAULT_PAGE_CONFIG;
+  }, []);
 
   // 3. Theorems Data (Định lý)
-  const theoremsData = [
-    {
-      title: "Định lý Newton-Leibniz",
-      desc: "Định lý cơ bản nhất của Giải tích liên kết đạo hàm và tích phân, cho phép tính nhanh tích phân bằng cách lấy hiệu giá trị nguyên hàm tại hai đầu mút cận.",
-      formula: "\\int_{a}^{b} f(x) dx = F(b) - F(a) = F(x) \\Big|_{a}^{b}",
-      tagColor: "#f843c2", // Magenta Pulse
-      badge: "Quan trọng"
-    },
-    {
-      title: "Định lý Giá trị Trung bình Tích phân",
-      desc: "Nếu f(x) liên tục trên đoạn [a, b], tồn tại một điểm c thuộc (a, b) sao cho diện tích dưới đồ thị f(x) bằng diện tích hình chữ nhật có chiều rộng (b-a) và chiều cao f(c).",
-      formula: "\\int_{a}^{b} f(x) dx = f(c)(b-a) \\quad \\text{với } c \\in (a, b)",
-      tagColor: "#a2ea13", // Lime Pop
-      badge: "Định lý phụ"
+  const theoremsData = useMemo(() => {
+    const stored = localStorage.getItem("theory_theorems_data");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error(e);
+      }
     }
-  ];
+    return DEFAULT_THEOREMS;
+  }, []);
+
+  // 4a. Property Groups (Level 1 Categories)
+  const propertyGroups = useMemo(() => {
+    const stored = localStorage.getItem("theory_property_groups_data");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return DEFAULT_PROPERTY_GROUPS;
+  }, []);
 
   // 4. Properties Grouped (Tính chất)
-  const propertiesGrouped = {
-    algebraic: {
-      title: "Nhóm Tính Chất Đại Số (Algebraic)",
-      items: [
-        {
-          name: "Tính Tuyến Tính (Linearity)",
-          formula: "\\int [k \\cdot f(x) + l \\cdot g(x)] dx = k \\int f(x) dx + l \\int g(x) dx",
-          desc: "Tách tổng/hiệu nguyên hàm và đưa hằng số nhân tử ra ngoài dấu tích phân."
-        },
-        {
-          name: "Đổi Cận Tích Phân (Bounds Swap)",
-          formula: "\\int_{a}^{b} f(x) dx = -\\int_{b}^{a} f(x) dx",
-          desc: "Đảo ngược vị trí cận trên và cận dưới sẽ đảo ngược dấu số học của tích phân."
-        },
-        {
-          name: "Cận Trùng Nhau (Zero Width)",
-          formula: "\\int_{a}^{a} f(x) dx = 0",
-          desc: "Tích phân trên khoảng rộng bằng 0 luôn cho kết quả bằng 0."
-        }
-      ]
-    },
-    geometric: {
-      title: "Nhóm Tính Chất Phân Đoạn & So Sánh",
-      items: [
-        {
-          name: "Cộng Tính Đoạn (Interval Split)",
-          formula: "\\int_{a}^{b} f(x) dx = \\int_{a}^{c} f(x) dx + \\int_{c}^{b} f(x) dx",
-          desc: "Tách khoảng tích phân [a, b] thành các đoạn nhỏ nối tiếp nhau (hữu ích cho hàm trị tuyệt đối)."
-        },
-        {
-          name: "Tính So Sánh (Inequality)",
-          formula: "f(x) \\ge g(x) \\implies \\int_{a}^{b} f(x) dx \\ge \\int_{a}^{b} g(x) dx",
-          desc: "Nếu hàm số f luôn lớn hơn g trên [a, b] thì diện tích hình giới hạn bởi f cũng lớn hơn g."
-        }
-      ]
-    },
-    symmetry: {
-      title: "Nhóm Tính Chất Đối Xứng (Symmetry)",
-      items: [
-        {
-          name: "Tích Phân Hàm Số Lẻ",
-          formula: "\\int_{-a}^{a} f(x) dx = 0 \\quad (\\text{nếu } f(-x) = -f(x))",
-          desc: "Tích phân trên đoạn đối xứng quanh gốc tọa độ của hàm lẻ luôn bằng 0."
-        },
-        {
-          name: "Tích Phân Hàm Số Chẵn",
-          formula: "\\int_{-a}^{a} f(x) dx = 2 \\int_{0}^{a} f(x) dx \\quad (\\text{nếu } f(-x) = f(x))",
-          desc: "Tích phân đoạn đối xứng của hàm chẵn bằng 2 lần tích phân trên nửa khoảng dương."
-        }
-      ]
+  const propertiesGrouped = useMemo(() => {
+    const stored = localStorage.getItem("theory_properties_data");
+    let list = [];
+    if (stored) {
+      try {
+        list = JSON.parse(stored);
+      } catch (e) {
+        list = [...DEFAULT_PROPERTIES];
+      }
+    } else {
+      list = [...DEFAULT_PROPERTIES];
     }
-  };
 
-  // 5. Basic Formulas (Công thức cơ bản)
+    // Build groups dynamically from propertyGroups list
+    const groups = {};
+    propertyGroups.forEach(g => {
+      groups[g.id] = { title: g.title, items: [] };
+    });
+
+    list.forEach((item) => {
+      if (groups[item.group]) {
+        let fallbackImg = defGeometricImg;
+        if (item.group === "algebraic") fallbackImg = conceptIndefiniteImg;
+        else if (item.group === "symmetry") fallbackImg = defRiemannImg;
+
+        groups[item.group].items.push({
+          ...item,
+          image: item.image || fallbackImg
+        });
+      }
+    });
+    return groups;
+  }, [propertyGroups]);
   const cheatSheetFormulas = [
     { category: "basic", name: "Nguyên hàm hằng số", integral: "\\int k \\, dx", result: "kx + C", badge: "Cơ bản", color: "#2ed6ff" },
     { category: "basic", name: "Hàm lũy thừa", integral: "\\int x^n \\, dx", result: "\\frac{x^{n+1}}{n+1} + C \\quad (n \\neq -1)", badge: "Cơ bản", color: "#2ed6ff" },
@@ -366,23 +378,67 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
           background: linear-gradient(135deg, #eef0ff 0%, #fce4f7 35%, #e0f9ff 70%, #f0ffe0 100%);
           z-index: 0;
         }
+        @keyframes heroFloat {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-15px);
+          }
+        }
+        .detail-koa-btn {
+          display: inline-block;
+          padding: 12px 32px;
+          border: 1.5px solid #592eff;
+          border-radius: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+          text-decoration: none;
+          font-size: 0.8rem;
+          font-weight: 800;
+          background: transparent;
+          color: #592eff;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+          transition: color 0.4s, border-color 0.4s, transform 0.3s, box-shadow 0.3s;
+        }
+        .detail-koa-btn::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: #592eff;
+          transform: scaleX(0);
+          transform-origin: left center;
+          transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: -1;
+        }
+        .detail-koa-btn:hover::before {
+          transform: scaleX(1);
+        }
+        .detail-koa-btn:hover {
+          color: #ffffff !important;
+          border-color: #592eff;
+          transform: translateY(-2px);
+          box-shadow: 0 0 20px rgba(89, 46, 255, 0.3);
+        }
       `}</style>
 
-      {/* Navigation Menu (Intro style) */}
       <nav className="koa-nav" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <button 
+          <button
             onClick={() => onNavigate("intro")}
-            style={{ 
-              background: "transparent", 
-              border: "none", 
-              color: "inherit", 
-              fontSize: "13px", 
-              fontWeight: 700, 
-              display: "flex", 
-              alignItems: "center", 
-              gap: "6px", 
-              cursor: "pointer", 
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "inherit",
+              fontSize: "13px",
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              cursor: "pointer",
               transition: "0.3s",
               opacity: 0.8,
               padding: 0
@@ -391,9 +447,7 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
           >
             ← Quay lại
           </button>
-          <span style={{ fontSize: '0.7rem', letterSpacing: '0.3em', fontWeight: 800, opacity: 0.6 }} className="uppercase">
-            Thư Viện Kiến Thức
-          </span>
+
         </div>
         <button className="koa-menu-btn" onClick={() => setMenuOpen(true)}>
           <span className="koa-menu-line"></span>
@@ -401,126 +455,135 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
         </button>
       </nav>
 
-      {/* Menu Overlay */}
-      <MenuOverlay menuOpen={menuOpen} setMenuOpen={setMenuOpen} onNavigate={onNavigate} user={user} onLogout={onLogout} />
 
-      {/* Impressionist Painterly Wash Backdrop for Hero */}
-      <div className="absolute top-0 left-0 w-full h-[100vh] overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[10%] left-[10%] w-[450px] h-[450px] rounded-full bg-[#bcf2ff]/30 blur-[110px]" />
-        <div className="absolute top-[35%] right-[5%] w-[500px] h-[500px] rounded-full bg-[#ffaae6]/35 blur-[120px]" />
-        <div className="absolute bottom-[10%] left-[25%] w-[400px] h-[400px] rounded-full bg-[#dfff9d]/25 blur-[100px]" />
-      </div>
 
-      {/* Sticky Table of Contents Floating Nav Pill */}
-      <div className="relative z-40 max-w-4xl mx-auto my-6 sticky top-[24px] px-6">
-        <div className="adora-nav-pill flex items-center justify-center gap-1.5 md:gap-4 flex-wrap">
-          {[
-            { id: "home", label: "Trang chủ" },
-            { id: "concept", label: "Khái niệm" },
-            { id: "definition", label: "Định nghĩa" },
-            { id: "theorem", label: "Định lý" },
-            { id: "properties", label: "Tính chất" },
-            { id: "formulas", label: "Công thức" },
-            { id: "methods", label: "Phương pháp" }
-          ].map((sec) => (
-            <a
-              key={sec.id}
-              href={`#${sec.id}`}
-              onClick={(e) => handleAnchorClick(e, sec.id)}
-              className={`px-4 py-2 rounded-[40px] text-[15px] font-medium transition-all no-underline tracking-[-0.02em] ${
-                activeSection === sec.id
-                  ? "text-white bg-[#592eff] font-bold"
-                  : "text-[#353241] hover:text-[#21164c] hover:bg-[#eeeeee]"
-              }`}
-            >
-              {sec.label}
-            </a>
-          ))}
-        </div>
-      </div>
 
       {/* ================= SESSION 1: TRANG CHỦ ================= */}
-      <section 
-        id="home" 
-        className="relative w-full overflow-hidden flex items-center justify-center text-center scroll-mt-36 z-10 px-6"
-        style={{ width: "100%", height: "100vh", margin: "0 auto" }}
+      <section
+        id="home"
+        className="relative w-full h-screen overflow-hidden scroll-mt-36 z-10 flex items-center justify-center lg:block"
       >
         {/* CSS Gradient Background */}
         <div className="theory-hero-bg" />
         <div className="absolute inset-0 math-blueprint-grid opacity-30 pointer-events-none z-10" />
 
-        {/* Floating color orbs */}
-        <div className="absolute top-[10%] left-[8%] w-[420px] h-[420px] rounded-full bg-[#bcf2ff]/40 blur-[110px] pointer-events-none z-[1]" />
-        <div className="absolute top-[30%] right-[5%] w-[480px] h-[480px] rounded-full bg-[#ffaae6]/35 blur-[120px] pointer-events-none z-[1]" />
-        <div className="absolute bottom-[8%] left-[22%] w-[380px] h-[380px] rounded-full bg-[#dfff9d]/25 blur-[100px] pointer-events-none z-[1]" />
-
-        {/* Content container */}
-        <div className="relative z-20 max-w-4xl w-full mx-auto px-8 py-10 md:py-16 bg-white/80 backdrop-blur-md border border-[#e0e0db] rounded-[64px] shadow-[0_24px_60px_rgba(33,22,76,0.07)] flex flex-col items-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[200px] border border-[#592eff]/30 text-[#592eff] text-xs font-semibold mb-6 md:mb-8 uppercase tracking-wider bg-[#592eff]/5"
+        {/* Slanted Sidebar SVGs and Dividers (Desktop only) */}
+        <div className="hidden lg:block absolute inset-0 w-full h-full z-10">
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
           >
-            <span>✦</span>
-            <span>Thư viện Học tập tích phân chuẩn hóa</span>
-          </motion.div>
+            <defs>
+              <linearGradient id="sidebarGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#120c2b" stopOpacity="0.96" />
+                <stop offset="100%" stopColor="#2e1a8a" stopOpacity="0.9" />
+              </linearGradient>
+            </defs>
+            <polygon points="0,0 26,0 42,100 0,100" fill="url(#sidebarGrad)" />
+            <line x1="26" y1="0" x2="42" y2="100" stroke="#592eff" strokeWidth="0.3" opacity="0.8" />
+          </svg>
+          {[
+            { id: "home", label: "Trang chủ", y: 15 },
+            { id: "concept", label: "Khái niệm", y: 28 },
+            { id: "definition", label: "Định nghĩa", y: 41 },
+            { id: "theorem", label: "Định lý", y: 54 },
+            { id: "properties", label: "Tính chất", y: 67 },
+            { id: "formulas", label: "Công thức", y: 80 },
+            { id: "methods", label: "Phương pháp", y: 93 }
+          ].map((item) => {
+            const isSelected = activeSection === item.id;
+            const xPercent = 26 + 0.16 * item.y;
+            const handleNavClick = (e) => {
+              if (item.id === "concept") {
+                onNavigate("theory-concepts");
+              } else if (item.id === "definition") {
+                onNavigate("theory-definitions");
+              } else if (item.id === "properties") {
+                onNavigate("theory-properties");
+              } else {
+                handleAnchorClick(e, item.id);
+              }
+            };
+            return (
+              <React.Fragment key={item.id}>
+                {/* Dot */}
+                <div
+                  className={`absolute rounded-full z-20 transition-all duration-300 ${isSelected
+                    ? "w-4 h-4 bg-[#592eff] shadow-[0_0_15px_#592eff] border-2 border-white scale-125"
+                    : "w-3.5 h-3.5 bg-[#120c2b] border-2 border-white/50 hover:bg-[#592eff] hover:border-white"
+                    }`}
+                  style={{
+                    top: `${item.y}%`,
+                    left: `${xPercent}%`,
+                    transform: "translate(-50%, -50%)",
+                    cursor: "pointer"
+                  }}
+                  onClick={handleNavClick}
+                />
+                {/* Text Button */}
+                <button
+                  className={`absolute border-none bg-transparent font-sans text-right transition-all duration-300 font-extrabold uppercase tracking-widest cursor-pointer z-20 ${isSelected
+                    ? "text-[#ffaae6] scale-105"
+                    : "text-white/60 hover:text-white"
+                    }`}
+                  style={{
+                    top: `${item.y}%`,
+                    left: `${xPercent - 2.5}%`,
+                    transform: "translate(-100%, -50%)",
+                    fontSize: "12px",
+                    fontWeight: 900
+                  }}
+                  onClick={handleNavClick}
+                >
+                  {item.label}
+                </button>
+              </React.Fragment>
+            );
+          })}
+        </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-[36px] md:text-[56px] font-bold tracking-[-0.02em] leading-[1.1] mb-6 md:mb-8 text-[#21164c] font-sans"
-          >
-            Thư Viện Kiến Thức <br />
-            <span style={{ color: "#592eff" }}>Giải Tích Phân</span>
-          </motion.h1>
+        <div className="absolute top-[6%] lg:top-[8%] left-1/2 lg:left-[63%] transform -translate-x-1/2 flex flex-col items-center gap-2 z-20 select-none">
+          <img src={logoDefault} alt="logo" className="h-[80px] lg:h-[120px] w-auto object-contain" />
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="adora-body text-sm md:text-base leading-[1.6] mb-8 md:mb-10 max-w-xl mx-auto text-[#5f5f69]"
-          >
-            Nơi tổng hợp toàn bộ tri thức toán học từ định lý nguyên hàm nền tảng, định nghĩa Riemann, tính chất đại số đến các phương pháp giải tích phân nâng cao do AI mô hình hóa.
-          </motion.p>
+        </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex items-center justify-center gap-4 flex-wrap"
-          >
+        <div className="relative z-20 max-w-xl mx-auto px-6 py-12 text-center flex flex-col items-center lg:absolute lg:top-[33%] lg:left-[45%] lg:translate-x-0 lg:max-w-xl lg:text-left lg:items-start lg:py-0">
+          <h2 className="text-[24px] md:text-[28px] lg:text-[34px] font-black tracking-widest text-[#21164c] uppercase mb-2 leading-none">
+            {pageConfig.subtitle}
+          </h2>
+          <h1 className="text-[44px] md:text-[52px] lg:text-[64px] font-black tracking-wider text-[#592eff] uppercase leading-none mb-6">
+            {pageConfig.headline}
+          </h1>
+          <p className="adora-body text-sm md:text-base leading-[1.6] mb-8 text-[#5f5f69] max-w-md">
+            {pageConfig.desc}
+          </p>
+          <div className="flex gap-4">
             <a
               href="#concept"
               onClick={(e) => handleAnchorClick(e, "concept")}
-              className="px-6 py-3 bg-[#592eff] text-white hover:bg-[#4b24e6] text-base font-bold rounded-lg transition-all cursor-pointer text-center no-underline hover:-translate-y-0.5 shadow-sm"
+              className="detail-koa-btn hover:-translate-y-0.5 shadow-sm text-center no-underline inline-block"
             >
-              Bắt đầu học
+              Khám phá ngay
             </a>
-            <a
-              href="#formulas"
-              onClick={(e) => handleAnchorClick(e, "formulas")}
-              className="px-6 py-3 bg-transparent hover:bg-[#eeeeee] border border-[#e0e0db] text-[#353241] text-base font-bold rounded-lg transition-all cursor-pointer text-center no-underline hover:-translate-y-0.5"
-            >
-              Tra công thức nhanh
-            </a>
-          </motion.div>
+          </div>
         </div>
-      </section>
 
+      </section>
       <main className="relative z-10 max-w-[1200px] mx-auto px-6 py-12 flex flex-col gap-[80px]">
-        
+
         {/* ================= SESSION 2: KHÁI NIỆM ================= */}
         <section id="concept" className="scroll-mt-36">
           <div className="flex flex-col items-center mb-12">
             <div className="flex items-center gap-2 mb-2">
-              <BookOpen className="text-[#592eff] h-6 w-6" />
-              <h2 className="adora-heading text-[32px] md:text-[38px] leading-[1.1] uppercase tracking-[-0.02em] m-0">
-                2. Khái Niệm Nguyên Hàm & Tích Phân
+              <h2
+                className="adora-heading text-[32px] md:text-[38px] leading-[1.1] uppercase tracking-[-0.02em] m-0 cursor-pointer transition-colors"
+
+              >
+                KHÁI NIỆM
               </h2>
             </div>
-            <p className="text-[#5f5f69] text-sm m-0">Định nghĩa nguyên hàm nền tảng làm tiền đề cho phép tính giải tích</p>
+
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -531,25 +594,37 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-[#ffffff] border border-[#e0e0db] p-8 rounded-[40px] flex flex-col justify-between hover:border-[#592eff]/30 transition-all relative overflow-hidden shadow-[0_4px_30px_rgba(53,50,65,0.02)]"
+                className="group relative rounded-[28px] overflow-hidden cursor-pointer theory-card-landscape"
+                onClick={() => onNavigate("theory-article", item)}
+                whileHover={{ scale: 1.02 }}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span 
-                      className="px-3 py-1 rounded-[200px] text-xs font-semibold uppercase tracking-wider border"
-                      style={{ borderColor: item.tagColor, color: item.tagColor }}
-                    >
-                      {item.badge}
-                    </span>
-                  </div>
-                  <h3 className="adora-heading text-xl mb-4">{item.title}</h3>
-                  <p className="adora-body text-base leading-[1.6] mb-6 text-[#5f5f69]">{item.desc}</p>
-                </div>
-                <div className="bg-[#eeeeee]/60 border border-[#e0e0db]/50 p-4 rounded-2xl text-center text-[#21164c] font-mono text-base font-bold">
-                  <LatexRenderer latex={item.formula} displayMode={true} />
+                {/* Background Image */}
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="theory-card-img group-hover:scale-105"
+                />
+
+                {/* Gradient Overlay – dark at bottom */}
+                <div className="theory-card-overlay" />
+
+                {/* Bottom Text */}
+                <div className="theory-card-content">
+                  <h3 className="theory-card-title">
+                    {item.title}
+                  </h3>
+
                 </div>
               </motion.div>
             ))}
+          </div>
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => onNavigate("theory-concepts")}
+              className="px-8 py-3 rounded-[200px] text-sm font-black uppercase tracking-wider border border-[#e0e0db] bg-white text-[#21164c] hover:border-[#592eff] hover:bg-[#592eff] hover:text-white transition-all cursor-pointer"
+            >
+              Xem tất cả khái niệm →
+            </button>
           </div>
         </section>
 
@@ -557,12 +632,10 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
         <section id="definition" className="scroll-mt-36">
           <div className="flex flex-col items-center mb-12">
             <div className="flex items-center gap-2 mb-2">
-              <Compass className="text-[#592eff] h-6 w-6" />
               <h2 className="adora-heading text-[32px] md:text-[38px] leading-[1.1] uppercase tracking-[-0.02em] m-0">
-                3. Định Nghĩa Tích Phân Xác Định
+                Định Nghĩa Tích Phân Xác Định
               </h2>
             </div>
-            <p className="text-[#5f5f69] text-sm m-0">Bản chất hình học và các định nghĩa toán học cốt lõi</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -573,25 +646,37 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-[#ffffff] border border-[#e0e0db] p-8 rounded-[40px] flex flex-col justify-between hover:border-[#592eff]/30 transition-all relative overflow-hidden shadow-[0_4px_30px_rgba(53,50,65,0.02)]"
+                className="group relative rounded-[28px] overflow-hidden cursor-pointer theory-card-landscape"
+                onClick={() => onNavigate("theory-article", item)}
+                whileHover={{ scale: 1.02 }}
               >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span 
-                      className="px-3 py-1 rounded-[200px] text-xs font-semibold uppercase tracking-wider border"
-                      style={{ borderColor: item.tagColor, color: item.tagColor }}
-                    >
-                      {item.badge}
-                    </span>
-                  </div>
-                  <h3 className="adora-heading text-xl mb-4">{item.title}</h3>
-                  <p className="adora-body text-base leading-[1.6] mb-6 text-[#5f5f69]">{item.desc}</p>
-                </div>
-                <div className="bg-[#eeeeee]/60 border border-[#e0e0db]/50 p-4 rounded-2xl text-center text-[#21164c] font-mono text-base font-bold">
-                  <LatexRenderer latex={item.formula} displayMode={true} />
+                {/* Background Image */}
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="theory-card-img group-hover:scale-105"
+                />
+
+                {/* Gradient Overlay – dark at bottom */}
+                <div className="theory-card-overlay" />
+
+                {/* Bottom Text */}
+                <div className="theory-card-content">
+                  <h3 className="theory-card-title">
+                    {item.title}
+                  </h3>
+
                 </div>
               </motion.div>
             ))}
+          </div>
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => onNavigate("theory-definitions")}
+              className="px-8 py-3 rounded-[200px] text-sm font-black uppercase tracking-wider border border-[#e0e0db] bg-white text-[#21164c] hover:border-[#592eff] hover:bg-[#592eff] hover:text-white transition-all cursor-pointer"
+            >
+              Xem tất cả định nghĩa →
+            </button>
           </div>
         </section>
 
@@ -599,12 +684,10 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
         <section id="theorem" className="scroll-mt-36">
           <div className="flex flex-col items-center mb-12">
             <div className="flex items-center gap-2 mb-2">
-              <Award className="text-[#592eff] h-6 w-6" />
               <h2 className="adora-heading text-[32px] md:text-[38px] leading-[1.1] uppercase tracking-[-0.02em] m-0">
-                4. Các Định Lý Cơ Bản
+                Các Định Lý Cơ Bản
               </h2>
             </div>
-            <p className="text-[#5f5f69] text-sm m-0">Những định lý trụ cột làm cơ sở tính toán và chứng minh giải tích</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -618,14 +701,7 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
                 className="bg-[#ffffff] border border-[#e0e0db] p-8 rounded-[40px] flex flex-col justify-between hover:border-[#592eff]/30 transition-all relative overflow-hidden shadow-[0_4px_30px_rgba(53,50,65,0.02)]"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span 
-                      className="px-3 py-1 rounded-[200px] text-xs font-semibold uppercase tracking-wider border"
-                      style={{ borderColor: item.tagColor, color: item.tagColor }}
-                    >
-                      {item.badge}
-                    </span>
-                  </div>
+
                   <h3 className="adora-heading text-xl mb-4">{item.title}</h3>
                   <p className="adora-body text-base leading-[1.6] mb-6 text-[#5f5f69]">{item.desc}</p>
                 </div>
@@ -637,46 +713,87 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
           </div>
         </section>
 
-        {/* ================= SESSION 5: TÍNH CHẤT ================= */}
         <section id="properties" className="scroll-mt-36">
           <div className="flex flex-col items-center mb-12">
             <div className="flex items-center gap-2 mb-2">
-              <Layers className="text-[#592eff] h-6 w-6" />
-              <h2 className="adora-heading text-[32px] md:text-[38px] leading-[1.1] uppercase tracking-[-0.02em] m-0">
-                5. Tính Chất Của Tích Phân
+              <h2 className="adora-heading text-[32px] md:text-[38px] leading-[1.1] uppercase tracking-[-0.02em] m-0 text-center">
+                Tính Chất Của Tích Phân
               </h2>
             </div>
-            <p className="text-[#5f5f69] text-sm m-0">Quy tắc biến đổi để tối giản biểu thức tích phân phức tạp</p>
+
           </div>
 
-          <div className="flex flex-col gap-10">
-            {Object.keys(propertiesGrouped).map((groupKey) => {
-              const group = propertiesGrouped[groupKey];
+          {/* Level 1 Category Tabs - Filter design */}
+          <div className="flex flex-wrap justify-center gap-3 mb-10">
+            {propertyGroups.map((group) => {
+              const isSelected = selectedPropertyGroup === group.id;
+              // Clean subtitle inside parentheses for button text
+              const cleanTitle = (group.title || "").replace(/\s*\(.*\)/, "");
               return (
-                <div key={groupKey} className="border border-[#e0e0db] bg-[#eeeeee]/20 rounded-[40px] p-8 md:p-10">
-                  <h3 className="adora-heading text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
-                    <span className="w-2 h-4 bg-[#592eff] rounded-full" />
-                    {group.title}
-                  </h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {group.items.map((prop, idx) => (
-                      <motion.div
-                        key={idx}
-                        className="bg-[#ffffff] border border-[#e0e0db] p-6 rounded-[40px] flex flex-col justify-between hover:border-[#592eff]/20 transition-all shadow-[0_4px_30px_rgba(53,50,65,0.01)]"
-                      >
-                        <div>
-                          <h4 className="adora-heading text-base mb-2">{prop.name}</h4>
-                          <p className="adora-body text-[15px] leading-[1.6] mb-4 text-[#5f5f69]">{prop.desc}</p>
-                        </div>
-                        <div className="bg-[#eeeeee]/60 p-3 rounded-xl text-center text-[#21164c] font-mono text-sm border border-[#e0e0db]/50">
-                          <LatexRenderer latex={prop.formula} displayMode={true} />
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
+                <button
+                  key={group.id}
+                  onClick={() => setSelectedPropertyGroup(group.id)}
+                  className={`px-6 py-3 rounded-[200px] text-xs font-black uppercase tracking-wider border transition-all cursor-pointer ${isSelected
+                    ? "bg-[#592eff] text-white border-transparent shadow-[0_6px_20px_rgba(89,46,255,0.25)]"
+                    : "bg-[#ffffff] text-[#21164c] border-[#e0e0db] hover:border-[#592eff] hover:bg-[#592eff]/5"
+                    }`}
+                >
+                  {cleanTitle}
+                </button>
               );
             })}
+          </div>
+
+          {/* Level 2 Sub-list grid items inside selected group */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedPropertyGroup}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+            >
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {propertiesGrouped[selectedPropertyGroup] && propertiesGrouped[selectedPropertyGroup].items.map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="group relative rounded-[28px] overflow-hidden cursor-pointer theory-card-portrait"
+                    onClick={() => onNavigate("theory-article", item)}
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    {/* Background Image */}
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="theory-card-img group-hover:scale-105"
+                    />
+
+                    {/* Gradient Overlay – dark at bottom */}
+                    <div className="theory-card-overlay" />
+
+                    {/* Bottom Text */}
+                    <div className="theory-card-content">
+                      <h3 className="theory-card-title">
+                        {item.title}
+                      </h3>
+
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => onNavigate("theory-properties")}
+              className="px-8 py-3 rounded-[200px] text-sm font-black uppercase tracking-wider border border-[#e0e0db] bg-white text-[#21164c] hover:border-[#592eff] hover:bg-[#592eff] hover:text-white transition-all cursor-pointer"
+            >
+              Xem tất cả tính chất →
+            </button>
           </div>
         </section>
 
@@ -684,12 +801,10 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
         <section id="formulas" className="scroll-mt-36">
           <div className="flex flex-col items-center mb-12">
             <div className="flex items-center gap-2 mb-2">
-              <Hash className="text-[#592eff] h-6 w-6" />
               <h2 className="adora-heading text-[32px] md:text-[38px] leading-[1.1] uppercase tracking-[-0.02em] m-0">
-                6. Bảng Công Thức Cơ Bản
+                Bảng Công Thức Cơ Bản
               </h2>
             </div>
-            <p className="text-[#5f5f69] text-sm m-0">Bộ quy tắc tra cứu tích phân cơ bản đến nâng cao</p>
           </div>
 
           <div className="bg-[#ffffff] border border-[#e0e0db] p-8 md:p-10 rounded-[40px] shadow-[0_4px_30px_rgba(53,50,65,0.02)]">
@@ -719,11 +834,10 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
                   return (
                     <button
                       key={cat}
-                      className={`px-4 py-2 rounded-[200px] text-xs font-bold border transition-all cursor-pointer ${
-                        selectedCategory === cat
-                          ? "bg-[#592eff] text-white border-transparent shadow-sm"
-                          : "bg-transparent text-[#5f5f69] border-[#e0e0db] hover:text-[#21164c] hover:bg-[#eeeeee]"
-                      }`}
+                      className={`px-4 py-2 rounded-[200px] text-xs font-bold border transition-all cursor-pointer ${selectedCategory === cat
+                        ? "bg-[#592eff] text-white border-transparent shadow-sm"
+                        : "bg-transparent text-[#5f5f69] border-[#e0e0db] hover:text-[#21164c] hover:bg-[#eeeeee]"
+                        }`}
                       onClick={() => setSelectedCategory(cat)}
                     >
                       {labelMap[cat]}
@@ -753,13 +867,7 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
                         transition={{ duration: 0.2 }}
                         className="bg-[#ffffff] border border-[#e0e0db] p-6 rounded-[40px] flex flex-col justify-between hover:border-[#592eff]/30 transition-all group relative overflow-hidden shadow-[0_4px_24px_rgba(53,50,65,0.01)]"
                       >
-                        <div className="flex items-center justify-between mb-3">
-                          <span 
-                            className="px-3 py-1 rounded-[200px] text-[10px] font-bold uppercase tracking-wider border"
-                            style={{ borderColor: f.color, color: f.color }}
-                          >
-                            {f.badge}
-                          </span>
+                        <div className="flex items-center justify-end mb-3">
                           <button
                             onClick={() => handleCopy(`${f.integral} = ${f.result}`, id)}
                             className="p-1.5 text-[#5f5f69] hover:text-[#592eff] hover:bg-[#eeeeee] rounded-lg transition-all border-none bg-transparent cursor-pointer"
@@ -810,12 +918,10 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
         <section id="methods" className="mb-12 scroll-mt-36">
           <div className="flex flex-col items-center mb-12">
             <div className="flex items-center gap-2 mb-2">
-              <Calculator className="text-[#592eff] h-6 w-6" />
               <h2 className="adora-heading text-[32px] md:text-[38px] leading-[1.1] uppercase tracking-[-0.02em] m-0">
-                7. Các Phương Pháp Giải Tích Phân
+                Các Phương Pháp Giải Tích Phân
               </h2>
             </div>
-            <p className="text-[#5f5f69] text-sm m-0">4 kỹ năng cốt lõi được mô hình AI khuyên dùng khi phân tích</p>
           </div>
 
           <motion.div
@@ -833,11 +939,10 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
                 return (
                   <button
                     key={tabKey}
-                    className={`relative w-full text-left px-4 py-3 rounded-lg text-sm font-bold transition-all border-none cursor-pointer ${
-                      isActive
-                        ? "text-[#592eff] bg-white border border-[#e0e0db] shadow-[0_2px_8px_rgba(53,50,65,0.03)]"
-                        : "bg-transparent text-[#5f5f69] hover:text-[#21164c] hover:bg-white/40"
-                    }`}
+                    className={`relative w-full text-left px-4 py-3 rounded-lg text-sm font-bold transition-all border-none cursor-pointer ${isActive
+                      ? "text-[#592eff] bg-white border border-[#e0e0db] shadow-[0_2px_8px_rgba(53,50,65,0.03)]"
+                      : "bg-transparent text-[#5f5f69] hover:text-[#21164c] hover:bg-white/40"
+                      }`}
                     onClick={() => setActiveMethodTab(tabKey)}
                   >
                     {methods[tabKey].name.split(" (")[0]}
@@ -900,7 +1005,7 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
                         Ví dụ thực hành minh họa
                       </h4>
                       <div className="adora-heading text-base mb-4 flex items-center gap-1">
-                        Tính tích phân: 
+                        Tính tích phân:
                         <span className="text-[#592eff] ml-1">
                           <LatexRenderer latex={methods[activeMethodTab].example.problem} />
                         </span>
@@ -925,6 +1030,6 @@ export default function TheoryPage({ onNavigate, user, onLogout }) {
       </main>
 
       <Footer onNavigate={onNavigate} />
-    </div>
+    </div >
   );
 }

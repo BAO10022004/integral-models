@@ -96,4 +96,27 @@ public class FirestoreService
         }
         return null;
     }
+
+    public async Task<List<Account>> GetAllAccountsAsync()
+    {
+        var list = new List<Account>();
+        try
+        {
+            CollectionReference colRef = _db.Collection("accounts");
+            QuerySnapshot snapshot = await colRef.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in snapshot.Documents)
+            {
+                if (doc.Exists)
+                {
+                    var account = doc.ConvertTo<Account>();
+                    list.Add(account);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching all accounts from Firestore: {ex.Message}");
+        }
+        return list;
+    }
 }

@@ -6,8 +6,6 @@ import argparse
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
-
-# Tự động chuyển sang chạy bằng Python trong .venv nếu có và chưa kích hoạt
 _VENV_PYTHON = os.path.abspath(os.path.join(_ROOT, ".venv", "Scripts", "python.exe" if os.name == "nt" else "bin/python"))
 if os.path.exists(_VENV_PYTHON) and os.path.abspath(sys.executable) != _VENV_PYTHON and "VIRTUAL_ENV" not in os.environ:
     import subprocess
@@ -41,7 +39,5 @@ def main():
         workers=1 if args.dev else args.workers,
         log_level="info",
     )
-
-
 if __name__ == "__main__":
     main()
